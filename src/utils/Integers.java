@@ -24,4 +24,14 @@ public class Integers extends EuclideanDomain<Integer> {
 		return a % b;
 	}
 
+	@Override
+	public Integer add(Integer a, Integer b) {
+		return a + b;
+	}
+
+	@Override
+	public Integer multiply(Integer a, Integer b) {
+		return a * b;
+	}
+
 }
