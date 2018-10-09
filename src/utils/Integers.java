@@ -1,8 +1,9 @@
 package utils;
 
 import structures.EuclideanDomain;
+import structures.UnitRing;
 
-public class Integers extends EuclideanDomain<Integer> {
+public class Integers extends EuclideanDomain<Integer> implements UnitRing<Integer> {
 
 	@Override
 	public Integer getAddIdentity() {
@@ -32,6 +33,11 @@ public class Integers extends EuclideanDomain<Integer> {
 	@Override
 	public Integer multiply(Integer a, Integer b) {
 		return a * b;
+	}
+
+	@Override
+	public Integer getProductIdentity() {
+		return 1;
 	}
 
 }

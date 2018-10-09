@@ -7,7 +7,7 @@ import structures.Ring;
 
 /*COMMENT AND TEST*/
 
-public class Polynomials<T extends List<E>, E> implements Ring<T> {
+public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
 
 	private Ring<E> baseRing;
 
@@ -20,7 +20,7 @@ public class Polynomials<T extends List<E>, E> implements Ring<T> {
 	public T getAddIdentity() {
 		List<E> addIdentity = new ArrayList<E>();
 		addIdentity.add(baseRing.getAddIdentity());
-		return (T) (addIdentity);
+		return (T) new Polynomial<E>(addIdentity);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -30,7 +30,7 @@ public class Polynomials<T extends List<E>, E> implements Ring<T> {
 		for (int i = 0; i < a.size(); i++) {
 			addInverse.add(baseRing.getAddInverse(a.get(i)));
 		}
-		return (T) (addInverse);
+		return (T) new Polynomial<E>(addInverse);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -72,7 +72,7 @@ public class Polynomials<T extends List<E>, E> implements Ring<T> {
 		}
 
 		/* Cast and return the result */
-		return (T) (sum);
+		return (T) new Polynomial<E>(sum);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -121,7 +121,7 @@ public class Polynomials<T extends List<E>, E> implements Ring<T> {
 		}
 
 		/* Cast and return the result */
-		return (T) (product);
+		return (T) new Polynomial<E>(product);
 	}
 
 }
