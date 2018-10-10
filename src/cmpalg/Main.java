@@ -1,21 +1,16 @@
 package cmpalg;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import structures.UnitRing;
 import utils.Integers;
 import utils.Polynomial;
+import utils.Polynomials;
 
 public class Main {
 	public static void main(String[] args) {
 		System.out.println("I am the yeast of thoughts and mind!");
-		List<Integer> p = new ArrayList<Integer>();
-		p.add(1);
-		p.add(1);
-		p.add(1);
-		Polynomial<Integer> pol = new Polynomial<Integer>(p);
-		System.out.println((new Integers())instanceof UnitRing);
-		System.out.println(pol.toStringLaTeX(new Integers()));
+		Polynomial<Integer> pol;
+		Integers Z = new Integers();
+		Polynomials<Polynomial<Integer>, Integer> Zt = new Polynomials<Polynomial<Integer>, Integer>(Z);
+		pol = Zt.parseElement("6T^99+9T^0+8T^0");
+		System.out.println(pol);
 	}
 }

@@ -12,4 +12,7 @@ public interface Ring<T> {
 
 	/* Returns the product of two elements of the ring */
 	public T multiply(T a, T b);
+
+	/**/
+	public T parseElement(String s);
 }

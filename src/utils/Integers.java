@@ -40,4 +40,9 @@ public class Integers extends EuclideanDomain<Integer> implements UnitRing<Integ
 		return 1;
 	}
 
+	@Override
+	public Integer parseElement(String s) {
+		return Integer.parseInt(s);
+	}
+
 }
