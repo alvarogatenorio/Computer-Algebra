@@ -11,7 +11,7 @@ public class Main {
 		Integers Z = new Integers();
 		Polynomials<Polynomial<Integer>, Integer> Zt = new Polynomials<Polynomial<Integer>, Integer>(Z);
 		/* Problemas con la impresión (qué raro) */
-		pol = Zt.parseElement("0");
+		pol = Zt.parseElement("-15+0+9+8t+5t^8+4t^788+-8+900t^0");
 		System.out.println(pol);
 	}
 }

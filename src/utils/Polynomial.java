@@ -97,10 +97,11 @@ public class Polynomial<T> {
 					aux.add(coefficients.get(i).toString() + variable + "^" + i);
 				}
 			}
-			if (!coefficients.get(1).equals(baseRing.getAddIdentity())) {
+			if ((coefficients.size() >= 2) && !coefficients.get(1).equals(baseRing.getAddIdentity())) {
 				aux.add(coefficients.get(0).toString() + variable);
 			}
-			if (!coefficients.get(0).equals(baseRing.getAddIdentity())) {
+			/* If is a zero degree polynomial we have to print it */
+			if (!coefficients.get(0).equals(baseRing.getAddIdentity()) || !(coefficients.size() == 1)) {
 				aux.add(coefficients.get(0).toString());
 			}
 		} else {
@@ -114,12 +115,13 @@ public class Polynomial<T> {
 					}
 				}
 			}
-			if (coefficients.get(1).equals(((UnitRing<T>) (baseRing)).getProductIdentity())) {
+			if ((coefficients.size() >= 2)
+					&& coefficients.get(1).equals(((UnitRing<T>) (baseRing)).getProductIdentity())) {
 				aux.add("" + variable);
-			} else if (!coefficients.get(1).equals(baseRing.getAddIdentity())) {
+			} else if ((coefficients.size() >= 2) && !coefficients.get(1).equals(baseRing.getAddIdentity())) {
 				aux.add(coefficients.get(1).toString() + variable);
 			}
-			if (!coefficients.get(0).equals(baseRing.getAddIdentity())) {
+			if (!coefficients.get(0).equals(baseRing.getAddIdentity()) || (coefficients.size() == 1)) {
 				aux.add(coefficients.get(0).toString());
 			}
 		}
