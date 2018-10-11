@@ -26,7 +26,7 @@ public class Polynomial<T> {
 	 * This attribute is only relevant for printing issues it represents the name of
 	 * the polynomial variable, by default, it will be 'T'
 	 */
-	private char variable = 'T';
+	private char variable = 't';
 
 	private Ring<T> baseRing;
 
