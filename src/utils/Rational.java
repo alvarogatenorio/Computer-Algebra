@@ -4,11 +4,14 @@ public class Rational {
 	private int numerator;
 	private int denominator;
 
-	/* Sistema de excepciones con divisiones por cero y esas cosas */
-	/* Decidir si da la simplificación directa o no */
+	/* EXCEPCIÓN */
 	public Rational(int numerator, int denominator) {
-		this.numerator = numerator;
-		this.denominator = denominator;
+		Integers Z = new Integers();
+		int scale = Z.gcd(numerator, denominator);
+		if (scale != 0) {
+			this.numerator = numerator / scale;
+			this.denominator = denominator / scale;
+		}
 	}
 
 	public int getNumerator() {
@@ -17,5 +20,9 @@ public class Rational {
 
 	public int getDenominator() {
 		return this.denominator;
+	}
+
+	public String toString() {
+		return "" + numerator + "/" + denominator;
 	}
 }

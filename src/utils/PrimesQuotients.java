@@ -4,6 +4,10 @@ import structures.Field;
 
 public class PrimesQuotients extends Field<Polynomial<Integer>> {
 
+	public PrimesQuotients(int integerModule, Polynomial<Integer> polynomialModule) {
+
+	}
+
 	@Override
 	public Polynomial<Integer> getProductIdentity() {
 		// TODO Auto-generated method stub
