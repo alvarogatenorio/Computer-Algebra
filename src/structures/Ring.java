@@ -15,4 +15,6 @@ public interface Ring<T> {
 
 	/**/
 	public T parseElement(String s);
+
+	public boolean divides(T a, T b);
 }

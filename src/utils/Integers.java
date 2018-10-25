@@ -1,10 +1,8 @@
 package utils;
 
-import structures.EuclideanDomain;
-import structures.UnitRing;
+import structures.EuclideanUnitDomain;
 
-public class Integers extends EuclideanDomain<Integer> implements UnitRing<Integer> {
-
+public class Integers extends EuclideanUnitDomain<Integer> {
 	@Override
 	public Integer getAddIdentity() {
 		return 0;
@@ -45,4 +43,8 @@ public class Integers extends EuclideanDomain<Integer> implements UnitRing<Integ
 		return Integer.parseInt(s);
 	}
 
+	@Override
+	public boolean divides(Integer a, Integer b) {
+		return b % a == 0;
+	}
 }

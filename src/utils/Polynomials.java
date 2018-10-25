@@ -270,4 +270,9 @@ public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
 		}
 		return (String[]) result.toArray(new String[0]);
 	}
+
+	@Override
+	public boolean divides(T a, T b) {
+		return false;
+	}
 }

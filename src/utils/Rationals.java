@@ -45,4 +45,10 @@ public class Rationals extends Field<Rational> {
 		return new Rational(a.getDenominator(), a.getNumerator());
 	}
 
+	@Override
+	public boolean divides(Rational a, Rational b) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

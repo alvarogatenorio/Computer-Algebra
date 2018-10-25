@@ -6,7 +6,7 @@ public class PrimeModuleIntegers extends Field<Integer> {
 
 	int primeModule;
 
-	/* EXCEPTION */
+	/* EXCEPTION (quizá meter aquí el test de primalidad aks)*/
 	public PrimeModuleIntegers(int primeModule) {
 		this.primeModule = primeModule;
 	}
@@ -46,6 +46,12 @@ public class PrimeModuleIntegers extends Field<Integer> {
 	public Integer getProductInverse(Integer a) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean divides(Integer a, Integer b) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

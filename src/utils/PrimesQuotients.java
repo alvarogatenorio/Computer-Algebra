@@ -50,4 +50,10 @@ public class PrimesQuotients extends Field<Polynomial<Integer>> {
 		return null;
 	}
 
+	@Override
+	public boolean divides(Polynomial<Integer> a, Polynomial<Integer> b) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

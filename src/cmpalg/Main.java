@@ -7,15 +7,15 @@ import utils.Rationals;
 
 public class Main {
 	public static void main(String[] args) {
-		System.out.println("I am the yeast of thoughts and mind!");
+		System.out.println("A gato viejo rata tierna");
 		Polynomial<Integer> pol;
 		Integers Z = new Integers();
 		Polynomials<Polynomial<Integer>, Integer> Zt = new Polynomials<Polynomial<Integer>, Integer>(Z);
-		/* Problemas con la impresión (qué raro) */
-		pol = Zt.parseElement("-15+0+9+8t+5t^8+4t^788+-8+900t^0");
+		pol = Zt.parseElement("t^5+5t^6");
 		Rationals Q = new Rationals();
 		System.out.println(Q.add(Q.parseElement("1/45"), Q.parseElement("3/5")));
-
-		System.out.println(pol);
+		Polynomial<Integer> pol2;
+		pol2 = Zt.parseElement("t+1");
+		System.out.println(Zt.multiply(pol, pol2));
 	}
 }

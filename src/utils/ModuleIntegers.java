@@ -41,4 +41,9 @@ public class ModuleIntegers implements UnitRing<Integer> {
 		return 1;
 	}
 
+	@Override
+	public boolean divides(Integer a, Integer b) {
+		return false;
+	}
+
 }
