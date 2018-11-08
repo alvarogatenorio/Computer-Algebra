@@ -1,2 +1,2 @@
-# Computer-Algebra
-Collection of some computer algebra algorithms
+# Computer Algebra
+Collection of some computer algebra algorithms implemented in Java
