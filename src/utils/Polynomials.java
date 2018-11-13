@@ -10,7 +10,7 @@ import structures.UnitRing;
 
 public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
 
-	private Ring<E> baseRing;
+	protected Ring<E> baseRing;
 	private char variable = 't';
 
 	public Polynomials(Ring<E> baseRing) {

@@ -10,6 +10,6 @@ public class Main {
 
 		Integers Z = new Integers(); // declaring the integers
 		Pair<Integer> p = Z.bezout(33, 7);
-		System.out.println(p.getFirst()+","+p.getSecond());
+		System.out.println(p.getFirst() + "," + p.getSecond());
 	}
 }
