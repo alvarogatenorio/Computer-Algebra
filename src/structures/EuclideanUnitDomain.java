@@ -1,5 +1,7 @@
 package structures;
 
+import java.util.List;
+
 import utils.Pair;
 
 public abstract class EuclideanUnitDomain<T> extends EuclideanDomain<T> implements UnitRing<T> {
@@ -32,5 +34,26 @@ public abstract class EuclideanUnitDomain<T> extends EuclideanDomain<T> implemen
 			b = r;
 		}
 		return new Pair<T>(alphaMinus2, betaMinus2);
+	}
+
+	/*
+	 * Notice that every Euclidean domain is a principal ideal domain, so the ideals
+	 * are totally defined by its generators. Both lists have to be the same size.
+	 * Ideals have to be two-by-two co-maximal (so coprime).
+	 */
+	public T chineseReminderInverse(List<T> ideals, List<T> reminders) {
+		T inverse = getAddIdentity();
+		T m = getProductIdentity();
+		for (int i = 0; i < ideals.size(); i++) {
+			m = multiply(m, ideals.get(i));
+		}
+		for (int i = 0; i < reminders.size(); i++) {
+			T q = quotient(m, ideals.get(i));
+			T coefficient = bezout(q, ideals.get(i)).getFirst();
+			// inverse = add(inverse, multiply(reminder(multiply(reminders.get(i),
+			// coefficient), ideals.get(i)), q));
+			inverse = add(inverse, multiply(multiply(reminders.get(i), coefficient), q));
+		}
+		return inverse;
 	}
 }
