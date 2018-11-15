@@ -23,28 +23,35 @@ public class PrimeModuleIntegers extends Field<Integer> {
 
 	@Override
 	public Integer getAddInverse(Integer a) {
-		return (-a) % primeModule;
+		Integer result = (-a) % primeModule;
+		return result < 0 ? result + primeModule : result;
 	}
 
 	@Override
 	public Integer add(Integer a, Integer b) {
-		return (a + b) % primeModule;
+		Integer result = (a + b) % primeModule;
+		return result < 0 ? result + primeModule : result;
 	}
 
 	@Override
 	public Integer multiply(Integer a, Integer b) {
-		return (a * b) % primeModule;
+		Integer result = (a * b) % primeModule;
+		return result < 0 ? result + primeModule : result;
 	}
 
 	@Override
 	public Integer parseElement(String s) {
-		return Integer.parseInt(s) % primeModule;
+		Integer result = Integer.parseInt(s) % primeModule;
+		return result < 0 ? result + primeModule : result;
 	}
 
 	/* PAG 73 */
+	/* a not equals 0 */
 	@Override
 	public Integer getProductInverse(Integer a) {
-		return bezout(a, primeModule).getFirst();
+		Integers Z = new Integers();
+		Integer result = Z.bezout(a, primeModule).getFirst() % primeModule;
+		return result < 0 ? result + primeModule : result;
 	}
 
 	@Override
