@@ -59,4 +59,10 @@ public class PrimeModuleIntegers extends Field<Integer> {
 		Integer result = (a * k) % primeModule;
 		return result < 0 ? result + primeModule : result;
 	}
+
+	@Override
+	public Integer power(Integer a, int k) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

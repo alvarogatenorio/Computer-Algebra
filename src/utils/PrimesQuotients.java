@@ -56,4 +56,10 @@ public class PrimesQuotients extends Field<Polynomial<Integer>> {
 		return null;
 	}
 
+	@Override
+	public Polynomial<Integer> power(Polynomial<Integer> a, int k) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

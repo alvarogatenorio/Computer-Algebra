@@ -151,4 +151,23 @@ public class Polynomial<T> {
 
 		return result;
 	}
+
+	public Ring<T> getBaseRing() {
+		return baseRing;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean equals(Object o) {
+		Polynomial<T> p = (Polynomial<T>) o;
+		if (p.degree() == degree()) {
+			for (int i = 0; i < size(); i++) {
+				if (!get(i).equals(p.get(i))) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 }

@@ -25,4 +25,6 @@ public interface Ring<T> {
 	public boolean divides(T a, T b);
 
 	public T multiply(T a, int k);
+
+	public T power(T a, int k);
 }

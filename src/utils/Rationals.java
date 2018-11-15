@@ -50,4 +50,10 @@ public class Rationals extends Field<Rational> {
 		return null;
 	}
 
+	@Override
+	public Rational power(Rational a, int k) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -50,4 +50,10 @@ public class UFDPolynomials<T extends Polynomial<E>, E> extends UniqueFactorizat
 	public T multiply(T a, int k) {
 		return polyRing.multiply(a, k);
 	}
+
+	@Override
+	public T power(T a, int k) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

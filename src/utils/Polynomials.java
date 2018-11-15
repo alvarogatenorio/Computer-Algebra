@@ -323,8 +323,9 @@ public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
 				} else {
 					Triple<Integer, T> aux = pseudoDivision(h, b);
 					k = aux.getFirst() + 1;
-					q = add(aux.getSecond(),
-							baseRing.multiply(baseRing.multiply(b.leading(), a.leading()), aux.getFirst()));
+					// errors here
+					q = add(aux.getSecond(), multiply(parseElement("t^" + (a.degree() - b.degree())),
+							baseRing.multiply((baseRing.power(b.leading(), aux.getFirst())), a.leading())));
 					r = aux.getThird();
 				}
 			}
@@ -334,7 +335,9 @@ public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
 
 	@Override
 	public boolean divides(T a, T b) {
-		return pseudoDivision(a, b).getThird().equals(getAddIdentity());
+		T r = pseudoDivision(a, b).getThird();
+		T s = getAddIdentity();
+		return r.equals(s);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -345,5 +348,10 @@ public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
 			result.add(baseRing.multiply(a.get(i), k));
 		}
 		return (T) new Polynomial<E>(result, baseRing);
+	}
+
+	@Override
+	public T power(T a, int k) {
+		return null;
 	}
 }

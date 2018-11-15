@@ -57,5 +57,10 @@ public class Integers extends EuclideanUnitDomain<Integer> {
 		return a * k;
 	}
 
+	@Override
+	public Integer power(Integer a, int k) {
+		return (int) Math.pow(a, k);
+	}
+
 	/* Maybe implement the Garner's algorithm */
 }

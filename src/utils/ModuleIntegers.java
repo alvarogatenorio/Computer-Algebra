@@ -51,4 +51,9 @@ public class ModuleIntegers implements UnitRing<Integer> {
 		return (a * k) % module;
 	}
 
+	@Override
+	public Integer power(Integer a, int k) {
+		return null;
+	}
+
 }
