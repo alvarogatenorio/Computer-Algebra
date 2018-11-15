@@ -297,7 +297,7 @@ public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
 	 * 
 	 * If the leading coefficient of b is a unit, then k can be supposed to be 0.
 	 * 
-	 * If the ring is a field, the division is actually an euclidean division
+	 * If the ring is a field, the pseudo division is actually an euclidean division
 	 */
 	public Triple<Integer, T> pseudoDivision(T a, T b) {
 		int k = 0;
