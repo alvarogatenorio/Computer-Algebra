@@ -45,4 +45,9 @@ public class Rationals extends Field<Rational> {
 		return new Rational(a.getDenominator(), a.getNumerator());
 	}
 
+	@Override
+	public Rational multiply(Rational a, int k) {
+		return null;
+	}
+
 }

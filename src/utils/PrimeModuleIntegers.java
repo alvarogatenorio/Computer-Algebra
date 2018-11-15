@@ -53,4 +53,10 @@ public class PrimeModuleIntegers extends Field<Integer> {
 		Integer result = Z.bezout(a, primeModule).getFirst() % primeModule;
 		return result < 0 ? result + primeModule : result;
 	}
+
+	@Override
+	public Integer multiply(Integer a, int k) {
+		Integer result = (a * k) % primeModule;
+		return result < 0 ? result + primeModule : result;
+	}
 }

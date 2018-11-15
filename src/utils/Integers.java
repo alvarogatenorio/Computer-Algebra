@@ -52,5 +52,10 @@ public class Integers extends EuclideanUnitDomain<Integer> {
 		return b % a == 0;
 	}
 
+	@Override
+	public Integer multiply(Integer a, int k) {
+		return a * k;
+	}
+
 	/* Maybe implement the Garner's algorithm */
 }

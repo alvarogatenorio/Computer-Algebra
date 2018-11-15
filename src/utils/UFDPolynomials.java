@@ -37,12 +37,17 @@ public class UFDPolynomials<T extends Polynomial<E>, E> extends UniqueFactorizat
 
 	@Override
 	public boolean divides(T a, T b) {
-		return false;
+		return polyRing.divides(a, b);
 	}
 
 	/* Primitive euclid's algorithm. Read about Gauss lemma */
 	@Override
 	public T gcd(T a, T b) {
 		return null;
+	}
+
+	@Override
+	public T multiply(T a, int k) {
+		return polyRing.multiply(a, k);
 	}
 }

@@ -50,4 +50,10 @@ public class PrimesQuotients extends Field<Polynomial<Integer>> {
 		return null;
 	}
 
+	@Override
+	public Polynomial<Integer> multiply(Polynomial<Integer> a, int k) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

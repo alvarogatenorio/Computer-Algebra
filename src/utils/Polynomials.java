@@ -77,6 +77,17 @@ public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
 		return (T) new Polynomial<E>(sum, baseRing);
 	}
 
+	/* Maybe a more efficient implementation, when we have time... */
+	@SuppressWarnings("unchecked")
+	public T add(T a, E e) {
+		List<E> sum = new ArrayList<E>();
+		sum.add(baseRing.add(a.get(0), e));
+		for (int i = 1; i < a.size(); i++) {
+			sum.add(a.get(i));
+		}
+		return (T) new Polynomial<E>(sum, baseRing);
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public T multiply(T a, T b) {
@@ -282,7 +293,7 @@ public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
 
 	/*
 	 * Returns a triple representing the pseudo division of two polynomials over an
-	 * arbitrary ring
+	 * arbitrary ring. For details, see the docs.
 	 * 
 	 * If the leading coefficient of b is a unit, then k can be supposed to be 0.
 	 * 
@@ -298,10 +309,6 @@ public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
 			r = a;
 		} else {
 			if (a.degree() == 0) {
-				/*
-				 * Then the degree of b must be 0, and the following triple holds the pseudo
-				 * division identity
-				 */
 				k = 1;
 				q = a;
 				r = getAddIdentity();
@@ -311,10 +318,14 @@ public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
 						b));
 				if (h.degree() < b.degree()) {
 					k = 1;
-					// add quotient
+					q = multiply(parseElement("t^" + (a.degree() - b.degree())), a.leading());
 					r = h;
 				} else {
-					// recursive
+					Triple<Integer, T> aux = pseudoDivision(h, b);
+					k = aux.getFirst() + 1;
+					q = add(aux.getSecond(),
+							baseRing.multiply(baseRing.multiply(b.leading(), a.leading()), aux.getFirst()));
+					r = aux.getThird();
 				}
 			}
 		}
@@ -324,5 +335,15 @@ public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
 	@Override
 	public boolean divides(T a, T b) {
 		return pseudoDivision(a, b).getThird().equals(getAddIdentity());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public T multiply(T a, int k) {
+		List<E> result = new ArrayList<E>();
+		for (int i = 0; i < a.size(); i++) {
+			result.add(baseRing.multiply(a.get(i), k));
+		}
+		return (T) new Polynomial<E>(result, baseRing);
 	}
 }

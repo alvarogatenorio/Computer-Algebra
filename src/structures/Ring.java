@@ -23,4 +23,6 @@ public interface Ring<T> {
 
 	/* Returns true if there is some element c in the ring such that ac = b */
 	public boolean divides(T a, T b);
+
+	public T multiply(T a, int k);
 }

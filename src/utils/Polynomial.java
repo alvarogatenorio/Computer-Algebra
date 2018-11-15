@@ -65,6 +65,10 @@ public class Polynomial<T> {
 		return this.coefficients.get(degree());
 	}
 
+	public T independent() {
+		return this.coefficients.get(0);
+	}
+
 	/* Returns the coefficient corresponding to the index degree term */
 	public T get(int index) {
 		return this.coefficients.get(index);

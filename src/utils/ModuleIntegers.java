@@ -46,4 +46,9 @@ public class ModuleIntegers implements UnitRing<Integer> {
 		return false;
 	}
 
+	@Override
+	public Integer multiply(Integer a, int k) {
+		return (a * k) % module;
+	}
+
 }
