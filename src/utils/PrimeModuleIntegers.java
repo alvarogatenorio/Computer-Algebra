@@ -53,11 +53,4 @@ public class PrimeModuleIntegers extends Field<Integer> {
 		Integer result = Z.bezout(a, primeModule).getFirst() % primeModule;
 		return result < 0 ? result + primeModule : result;
 	}
-
-	@Override
-	public boolean divides(Integer a, Integer b) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }

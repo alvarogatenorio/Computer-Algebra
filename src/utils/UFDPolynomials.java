@@ -40,7 +40,7 @@ public class UFDPolynomials<T extends Polynomial<E>, E> extends UniqueFactorizat
 		return false;
 	}
 
-	/* Primitive euclid's algorithm */
+	/* Primitive euclid's algorithm. Read about Gauss lemma */
 	@Override
 	public T gcd(T a, T b) {
 		return null;

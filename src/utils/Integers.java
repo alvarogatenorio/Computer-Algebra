@@ -2,6 +2,10 @@ package utils;
 
 import structures.EuclideanUnitDomain;
 
+/**
+ * It may be a good idea to leave Integer as the base class, to introduce
+ * infinite precision integers
+ */
 public class Integers extends EuclideanUnitDomain<Integer> {
 	@Override
 	public Integer getAddIdentity() {

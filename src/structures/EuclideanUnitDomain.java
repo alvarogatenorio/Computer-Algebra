@@ -4,8 +4,16 @@ import java.util.List;
 
 import utils.Pair;
 
+/**
+ * This is a trivial extension of the EuclideanDomain class, just assuming the
+ * ring is actually a unit ring.
+ */
 public abstract class EuclideanUnitDomain<T> extends EuclideanDomain<T> implements UnitRing<T> {
 
+	/*
+	 * Computes the coefficients of the Bézout identity of the elements a and b. See
+	 * the docs for details.
+	 */
 	public Pair<T> bezout(T a, T b) {
 		T alphaMinus1 = getAddIdentity();
 		T alphaMinus2 = getProductIdentity();
@@ -37,9 +45,15 @@ public abstract class EuclideanUnitDomain<T> extends EuclideanDomain<T> implemen
 	}
 
 	/*
-	 * Notice that every Euclidean domain is a principal ideal domain, so the ideals
-	 * are totally defined by its generators. Both lists have to be the same size.
-	 * Ideals have to be two-by-two co-maximal (so coprime).
+	 * Computes the inverse function of the Chinese Reminder Theorem function
+	 * 
+	 * Notice that every euclidean domain is a principal ideal domain, so the ideals
+	 * are totally defined by its generators.
+	 * 
+	 * Both lists have to be the same size.
+	 * 
+	 * To follow the hypothesis of the theoream, ideals have to be two-by-two
+	 * co-maximal (so coprime).
 	 */
 	public T chineseReminderInverse(List<T> ideals, List<T> reminders) {
 		T inverse = getAddIdentity();
@@ -50,7 +64,7 @@ public abstract class EuclideanUnitDomain<T> extends EuclideanDomain<T> implemen
 		for (int i = 0; i < reminders.size(); i++) {
 			T q = quotient(m, ideals.get(i));
 			T coefficient = bezout(q, ideals.get(i)).getFirst();
-			/*Make sure of things*/
+			/* Make sure of things */
 			// inverse = add(inverse, multiply(reminder(multiply(reminders.get(i),
 			// coefficient), ideals.get(i)), q));
 			inverse = add(inverse, multiply(multiply(reminders.get(i), coefficient), q));
