@@ -4,8 +4,12 @@ import structures.Field;
 
 public class PrimesQuotients extends Field<Polynomial<Integer>> {
 
-	public PrimesQuotients(int integerModule, Polynomial<Integer> polynomialModule) {
+	private int primeIntMod;
+	private Polynomial<Integer> irrPolMod;
 
+	public PrimesQuotients(int primeIntMod, Polynomial<Integer> irrPolMod) {
+		this.primeIntMod = primeIntMod;
+		this.irrPolMod = irrPolMod;
 	}
 
 	@Override
