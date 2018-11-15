@@ -126,6 +126,15 @@ public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
 		return (T) new Polynomial<E>(product, baseRing);
 	}
 
+	@SuppressWarnings("unchecked")
+	public T multiply(T a, E e) {
+		List<E> product = new ArrayList<E>();
+		for (int i = 0; i < a.size(); i++) {
+			product.add(baseRing.multiply(a.get(i), e));
+		}
+		return (T) new Polynomial<E>(product, baseRing);
+	}
+
 	/*
 	 * It construct a polynomial from a valid LaTeX string, that is, something
 	 * adjusting the following regular expression
@@ -271,8 +280,49 @@ public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
 		return (String[]) result.toArray(new String[0]);
 	}
 
+	/*
+	 * Returns a triple representing the pseudo division of two polynomials over an
+	 * arbitrary ring
+	 * 
+	 * If the leading coefficient of b is a unit, then k can be supposed to be 0.
+	 * 
+	 * If the ring is a field, the division is actually an euclidean division
+	 */
+	public Triple<Integer, T> pseudoDivision(T a, T b) {
+		int k = 0;
+		T q = null;
+		T r = null;
+		if (a.degree() < b.degree()) {
+			k = 0;
+			q = getAddIdentity();
+			r = a;
+		} else {
+			if (a.degree() == 0) {
+				/*
+				 * Then the degree of b must be 0, and the following triple holds the pseudo
+				 * division identity
+				 */
+				k = 1;
+				q = a;
+				r = getAddIdentity();
+			} else {
+				T h = add(multiply(a, b.leading()), multiply(
+						multiply(parseElement("t^" + (a.degree() - b.degree())), baseRing.getAddInverse(a.leading())),
+						b));
+				if (h.degree() < b.degree()) {
+					k = 1;
+					// add quotient
+					r = h;
+				} else {
+					// recursive
+				}
+			}
+		}
+		return new Triple<Integer, T>(k, q, r);
+	}
+
 	@Override
 	public boolean divides(T a, T b) {
-		return false;
+		return pseudoDivision(a, b).getThird().equals(getAddIdentity());
 	}
 }

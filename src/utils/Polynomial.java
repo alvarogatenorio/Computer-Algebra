@@ -57,6 +57,14 @@ public class Polynomial<T> {
 		return this.coefficients.size();
 	}
 
+	public int degree() {
+		return size() - 1;
+	}
+
+	public T leading() {
+		return this.coefficients.get(degree());
+	}
+
 	/* Returns the coefficient corresponding to the index degree term */
 	public T get(int index) {
 		return this.coefficients.get(index);
