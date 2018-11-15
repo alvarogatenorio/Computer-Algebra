@@ -47,4 +47,6 @@ public class Integers extends EuclideanUnitDomain<Integer> {
 	public boolean divides(Integer a, Integer b) {
 		return b % a == 0;
 	}
+
+	/* Maybe implement the Garner's algorithm */
 }

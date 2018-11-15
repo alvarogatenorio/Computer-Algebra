@@ -50,6 +50,7 @@ public abstract class EuclideanUnitDomain<T> extends EuclideanDomain<T> implemen
 		for (int i = 0; i < reminders.size(); i++) {
 			T q = quotient(m, ideals.get(i));
 			T coefficient = bezout(q, ideals.get(i)).getFirst();
+			/*Make sure of things*/
 			// inverse = add(inverse, multiply(reminder(multiply(reminders.get(i),
 			// coefficient), ideals.get(i)), q));
 			inverse = add(inverse, multiply(multiply(reminders.get(i), coefficient), q));

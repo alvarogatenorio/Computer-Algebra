@@ -1,6 +1,6 @@
 package structures;
 
-public abstract class Field<T> extends EuclideanDomain<T> implements UnitRing<T> {
+public abstract class Field<T> extends EuclideanUnitDomain<T> implements UnitRing<T> {
 
 	@Override
 	public T quotient(T a, T b) {

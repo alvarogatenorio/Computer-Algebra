@@ -15,7 +15,7 @@ public class Main {
 		Pair<Integer> p = Z.bezout(33, 7);
 		System.out.println(Z.gcd(33, 7));
 		System.out.println(p.getFirst() + "," + p.getSecond());
-		System.out.println(p.getFirst()*33+p.getSecond()*7);
+		System.out.println(p.getFirst() * 33 + p.getSecond() * 7);
 		List<Integer> ideals = new ArrayList<Integer>();
 		ideals.add(6);
 		ideals.add(7);

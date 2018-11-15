@@ -6,7 +6,7 @@ public class PrimeModuleIntegers extends Field<Integer> {
 
 	int primeModule;
 
-	/* EXCEPTION (quizá meter aquí el test de primalidad aks)*/
+	/* EXCEPTION (quizá meter aquí el test de primalidad aks) */
 	public PrimeModuleIntegers(int primeModule) {
 		this.primeModule = primeModule;
 	}
@@ -41,11 +41,10 @@ public class PrimeModuleIntegers extends Field<Integer> {
 		return Integer.parseInt(s) % primeModule;
 	}
 
-	/* Esto es precisamente uno de los algoritmos (creo) */
+	/* PAG 73 */
 	@Override
 	public Integer getProductInverse(Integer a) {
-		// TODO Auto-generated method stub
-		return null;
+		return bezout(a, primeModule).getFirst();
 	}
 
 	@Override
