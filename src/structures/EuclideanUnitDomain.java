@@ -20,7 +20,7 @@ public abstract class EuclideanUnitDomain<T> extends EuclideanDomain<T> implemen
 		T alphaMinus2 = getProductIdentity();
 		T betaMinus1 = getProductIdentity();
 		T betaMinus2 = getAddIdentity();
-		while (b != getAddIdentity()) {
+		while (!b.equals(getAddIdentity())) {
 			/* Computes division of a and b */
 			T q = quotient(a, b);
 			T r = reminder(a, b);

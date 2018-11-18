@@ -253,8 +253,21 @@ public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
 			coefficients = updateCoefficients(coefficients, termDegree, coefficient);
 		}
 
+		coefficients = cleanIdentities(coefficients);
+
 		/* Returns the polynomial */
 		return (T) new Polynomial<E>(coefficients, baseRing);
+	}
+
+	private List<E> cleanIdentities(List<E> coefficients) {
+		for (int i = coefficients.size() - 1; i >= 0; i--) {
+			if (coefficients.get(i).equals(baseRing.getAddIdentity())) {
+				coefficients.remove(i);
+			} else {
+				break;
+			}
+		}
+		return coefficients;
 	}
 
 	/*

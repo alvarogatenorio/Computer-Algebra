@@ -62,7 +62,8 @@ public class PrimeModuleIntegers extends Field<Integer> {
 
 	@Override
 	public Integer power(Integer a, int k) {
-		// TODO Auto-generated method stub
-		return null;
+		Integers Z = new Integers();
+		Integer result = Z.power(a, k);
+		return result < 0 ? result + primeModule : result;
 	}
 }

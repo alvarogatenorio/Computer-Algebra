@@ -6,17 +6,20 @@ public class Rationals extends Field<Rational> {
 
 	@Override
 	public Rational getProductIdentity() {
-		return new Rational(1, 1);
+		Integers Z = new Integers();
+		return new Rational(Z.getProductIdentity(), Z.getProductIdentity());
 	}
 
 	@Override
 	public Rational getAddIdentity() {
-		return new Rational(0, 1);
+		Integers Z = new Integers();
+		return new Rational(Z.getAddIdentity(), Z.getProductIdentity());
 	}
 
 	@Override
 	public Rational getAddInverse(Rational a) {
-		return new Rational(-a.getNumerator(), a.getDenominator());
+		Integers Z = new Integers();
+		return new Rational(Z.getAddInverse(a.getNumerator()), a.getDenominator());
 	}
 
 	@Override
@@ -36,8 +39,12 @@ public class Rationals extends Field<Rational> {
 
 	@Override
 	public Rational parseElement(String s) {
-		String[] splittedString = s.split("/");
-		return new Rational(Integer.parseInt(splittedString[0]), Integer.parseInt(splittedString[1]));
+		if (s.contains("/")) {
+			String[] splittedString = s.split("/");
+			return new Rational(Integer.parseInt(splittedString[0]), Integer.parseInt(splittedString[1]));
+		} else {
+			return new Rational(Integer.parseInt(s));
+		}
 	}
 
 	@Override
@@ -47,13 +54,12 @@ public class Rationals extends Field<Rational> {
 
 	@Override
 	public Rational multiply(Rational a, int k) {
-		return null;
+		return multiply(a, new Rational(k));
 	}
 
 	@Override
 	public Rational power(Rational a, int k) {
-		// TODO Auto-generated method stub
-		return null;
+		Integers Z = new Integers();
+		return new Rational(Z.power(a.getNumerator(), k), Z.power(a.getDenominator(), k));
 	}
-
 }

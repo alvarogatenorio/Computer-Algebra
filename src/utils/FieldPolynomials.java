@@ -45,7 +45,7 @@ public class FieldPolynomials<T extends Polynomial<E>, E> extends EuclideanUnitD
 
 	@Override
 	public boolean divides(T a, T b) {
-		return polyRing.divides(a, b);
+		return division(a, b).getSecond().equals(getAddIdentity());
 	}
 
 	@Override
@@ -69,15 +69,19 @@ public class FieldPolynomials<T extends Polynomial<E>, E> extends EuclideanUnitD
 				q = multiply(a, baseRing.getProductInverse(b.independent()));
 				r = getAddIdentity();
 			} else {
-				T h = add(a, multiply(
-						multiply(parseElement("t^" + (a.degree() - b.degree())), baseRing.getAddInverse(a.leading())),
-						b));
+				T h = add(a,
+						multiply(
+								multiply(parseElement("t^" + (a.degree() - b.degree())), baseRing.multiply(
+										baseRing.getAddInverse(a.leading()), baseRing.getProductInverse(b.leading()))),
+								b));
 				if (h.degree() < b.degree()) {
-					q = multiply(parseElement("t^" + (a.degree() - b.degree())), a.leading());
+					q = multiply(parseElement("t^" + (a.degree() - b.degree())),
+							baseRing.multiply(a.leading(), baseRing.getProductInverse(b.leading())));
 					r = h;
 				} else {
 					Pair<T> aux = division(h, b);
-					q = add(aux.getSecond(), multiply(parseElement("t^" + (a.degree() - b.degree())), a.leading()));
+					q = add(multiply(parseElement("t^" + (a.degree() - b.degree())),
+							baseRing.multiply(a.leading(), baseRing.getProductInverse(b.leading()))), aux.getFirst());
 					r = aux.getSecond();
 				}
 			}
@@ -91,12 +95,11 @@ public class FieldPolynomials<T extends Polynomial<E>, E> extends EuclideanUnitD
 
 	@Override
 	public T quotient(T a, T b) {
-
-		return null;
+		return division(a, b).getFirst();
 	}
 
 	@Override
 	public T reminder(T a, T b) {
-		return null;
+		return division(a, b).getSecond();
 	}
 }
