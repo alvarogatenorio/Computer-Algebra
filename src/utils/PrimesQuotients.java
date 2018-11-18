@@ -3,16 +3,14 @@ package utils;
 import structures.Field;
 
 public class PrimesQuotients extends Field<Polynomial<Integer>> {
-
-	private int primeIntMod;
 	private Polynomial<Integer> irrPolMod;
-
+	private PrimeModuleIntegers baseField;
 	private FieldPolynomials<Polynomial<Integer>, Integer> polyRing;
 
 	public PrimesQuotients(int primeIntMod, Polynomial<Integer> irrPolMod) {
-		this.primeIntMod = primeIntMod;
 		this.irrPolMod = irrPolMod;
-		polyRing = new FieldPolynomials<Polynomial<Integer>, Integer>(new PrimeModuleIntegers(primeIntMod));
+		this.baseField = new PrimeModuleIntegers(primeIntMod);
+		polyRing = new FieldPolynomials<Polynomial<Integer>, Integer>(baseField);
 	}
 
 	@Override
@@ -45,10 +43,15 @@ public class PrimesQuotients extends Field<Polynomial<Integer>> {
 		return polyRing.reminder(polyRing.parseElement(s), irrPolMod);
 	}
 
-	/* Waiting for algorithm */
 	@Override
 	public Polynomial<Integer> getProductInverse(Polynomial<Integer> a) {
-		return polyRing.reminder(polyRing.bezout(a, irrPolMod).getFirst(), irrPolMod);
+		/*
+		 * The greater common divisor will always be a unit, we just normalize it to be
+		 * the product identity, so the product inverse matches with the first
+		 * coefficient of the Bézout's identity
+		 */
+		Integer factor = baseField.getProductInverse(polyRing.gcd(a, irrPolMod).leading());
+		return polyRing.reminder(polyRing.multiply((polyRing.bezout(a, irrPolMod).getFirst()), factor), irrPolMod);
 	}
 
 	@Override
