@@ -59,37 +59,30 @@ public class FieldPolynomials<T extends Polynomial<E>, E> extends EuclideanUnitD
 	}
 
 	public Pair<T> division(T a, T b) {
-		int k = 0;
 		T q = null;
 		T r = null;
 		if (a.degree() < b.degree()) {
-			k = 0;
 			q = getAddIdentity();
 			r = a;
 		} else {
 			if (a.degree() == 0) {
-				k = 0;
 				q = multiply(a, baseRing.getProductInverse(b.independent()));
 				r = getAddIdentity();
 			} else {
-				T h = add(multiply(a, b.leading()), multiply(
+				T h = add(a, multiply(
 						multiply(parseElement("t^" + (a.degree() - b.degree())), baseRing.getAddInverse(a.leading())),
 						b));
 				if (h.degree() < b.degree()) {
-					k = 1;
 					q = multiply(parseElement("t^" + (a.degree() - b.degree())), a.leading());
 					r = h;
 				} else {
-					Triple<Integer, T> aux = division(h, b);
-					k = aux.getFirst() + 1;
-					// errors here
-					q = add(aux.getSecond(), multiply(parseElement("t^" + (a.degree() - b.degree())),
-							baseRing.multiply((baseRing.power(b.leading(), aux.getFirst())), a.leading())));
-					r = aux.getThird();
+					Pair<T> aux = division(h, b);
+					q = add(aux.getSecond(), multiply(parseElement("t^" + (a.degree() - b.degree())), a.leading()));
+					r = aux.getSecond();
 				}
 			}
 		}
-		return null;
+		return new Pair<T>(q, r);
 	}
 
 	private T multiply(T a, E e) {
