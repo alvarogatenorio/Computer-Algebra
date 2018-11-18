@@ -62,4 +62,9 @@ public class Rationals extends Field<Rational> {
 		Integers Z = new Integers();
 		return new Rational(Z.power(a.getNumerator(), k), Z.power(a.getDenominator(), k));
 	}
+
+	@Override
+	public Rational exactQuotient(Rational a, Rational b) {
+		return quotient(a, b);
+	}
 }

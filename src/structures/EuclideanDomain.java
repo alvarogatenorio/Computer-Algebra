@@ -4,7 +4,7 @@ package structures;
  * This class represents an euclidean domain, that is, a ring equipped with an
  * euclidean division.
  */
-public abstract class EuclideanDomain<T> implements Ring<T> {
+public abstract class EuclideanDomain<T> extends UniqueFactorizationDomain<T> implements Ring<T> {
 
 	/* Returns the quotient of the euclidean division. b can't equal zero. */
 	public abstract T quotient(T a, T b);

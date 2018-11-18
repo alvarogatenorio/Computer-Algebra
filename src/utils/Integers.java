@@ -62,5 +62,10 @@ public class Integers extends EuclideanUnitDomain<Integer> {
 		return (int) Math.pow(a, k);
 	}
 
+	@Override
+	public Integer exactQuotient(Integer a, Integer b) {
+		return a / b;
+	}
+
 	/* Maybe implement the Garner's algorithm */
 }

@@ -48,7 +48,7 @@ public class PrimesQuotients extends Field<Polynomial<Integer>> {
 		/*
 		 * The greater common divisor will always be a unit, we just normalize it to be
 		 * the product identity, so the product inverse matches with the first
-		 * coefficient of the Bézout's identity
+		 * coefficient of the Bï¿½zout's identity
 		 */
 		Integer factor = baseField.getProductInverse(polyRing.gcd(a, irrPolMod).leading());
 		return polyRing.reminder(polyRing.multiply((polyRing.bezout(a, irrPolMod).getFirst()), factor), irrPolMod);
@@ -62,6 +62,11 @@ public class PrimesQuotients extends Field<Polynomial<Integer>> {
 	@Override
 	public Polynomial<Integer> power(Polynomial<Integer> a, int k) {
 		return polyRing.reminder(polyRing.power(a, k), irrPolMod);
+	}
+
+	@Override
+	public Polynomial<Integer> exactQuotient(Polynomial<Integer> a, Polynomial<Integer> b) {
+		return polyRing.reminder(polyRing.exactQuotient(a, b), irrPolMod);
 	}
 
 }

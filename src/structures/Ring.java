@@ -27,4 +27,6 @@ public interface Ring<T> {
 	public T multiply(T a, int k);
 
 	public T power(T a, int k);
+
+	public T exactQuotient(T a, T b);
 }

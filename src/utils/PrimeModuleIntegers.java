@@ -6,7 +6,7 @@ public class PrimeModuleIntegers extends Field<Integer> {
 
 	int primeModule;
 
-	/* EXCEPTION (quizá meter aquí el test de primalidad aks) */
+	/* EXCEPTION (quizï¿½ meter aquï¿½ el test de primalidad aks) */
 	public PrimeModuleIntegers(int primeModule) {
 		this.primeModule = primeModule;
 	}
@@ -65,5 +65,11 @@ public class PrimeModuleIntegers extends Field<Integer> {
 		Integers Z = new Integers();
 		Integer result = Z.power(a, k);
 		return result < 0 ? result + primeModule : result;
+	}
+
+	@Override
+	public Integer exactQuotient(Integer a, Integer b) {
+		Integers Z = new Integers();
+		return Z.exactQuotient(a, b);
 	}
 }

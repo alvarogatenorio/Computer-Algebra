@@ -102,4 +102,9 @@ public class FieldPolynomials<T extends Polynomial<E>, E> extends EuclideanUnitD
 	public T reminder(T a, T b) {
 		return division(a, b).getSecond();
 	}
+
+	@Override
+	public T exactQuotient(T a, T b) {
+		return quotient(a, b);
+	}
 }

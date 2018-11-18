@@ -6,7 +6,7 @@ public class ModuleIntegers implements UnitRing<Integer> {
 
 	int module;
 
-	/* EXCEPCIONES PARA NO HACER MÓDULO COSAS RARAS */
+	/* EXCEPCIONES PARA NO HACER Mï¿½DULO COSAS RARAS */
 	public ModuleIntegers(int module) {
 		this.module = module;
 	}
@@ -53,6 +53,11 @@ public class ModuleIntegers implements UnitRing<Integer> {
 
 	@Override
 	public Integer power(Integer a, int k) {
+		return null;
+	}
+
+	@Override
+	public Integer exactQuotient(Integer a, Integer b) {
 		return null;
 	}
 

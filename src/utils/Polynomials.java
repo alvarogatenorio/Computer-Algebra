@@ -158,7 +158,7 @@ public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
 	 * like "T+T", so we have to transform this to "2T" (in terms of our intern
 	 * representation).
 	 * 
-	 * Important, we don´t check if the parameter string is a valid LaTeX string,
+	 * Important, we donï¿½t check if the parameter string is a valid LaTeX string,
 	 * this is, for the moment, responsibility of the programmer/client.
 	 * 
 	 */
@@ -366,5 +366,11 @@ public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
 	@Override
 	public T power(T a, int k) {
 		return null;
+	}
+
+	/* We assume a divides b and k = 0 */
+	@Override
+	public T exactQuotient(T a, T b) {
+		return pseudoDivision(a, b).getSecond();
 	}
 }
