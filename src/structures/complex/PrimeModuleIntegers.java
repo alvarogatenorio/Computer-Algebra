@@ -1,6 +1,6 @@
-package utils;
+package structures.complex;
 
-import structures.Field;
+import structures.basic.Field;
 
 public class PrimeModuleIntegers extends Field<Integer> {
 
@@ -68,8 +68,8 @@ public class PrimeModuleIntegers extends Field<Integer> {
 	}
 
 	@Override
-	public Integer exactQuotient(Integer a, Integer b) {
+	public Integer divFactor(Integer a, Integer b) {
 		Integers Z = new Integers();
-		return Z.exactQuotient(a, b);
+		return Z.divFactor(a, b);
 	}
 }

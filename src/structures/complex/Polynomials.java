@@ -1,14 +1,13 @@
-package utils;
+package structures.complex;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import structures.Ring;
-import structures.UnitRing;
+import structures.basic.Ring;
 
 /*COMMENT AND TEST*/
 
-public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
+public class Polynomials<T extends Polynomial<E>, E> extends Ring<T> {
 
 	protected Ring<E> baseRing;
 	private char variable = 't';
@@ -208,7 +207,7 @@ public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
 
 				/* In this case, the monomial is T, so we know exactly what to insert */
 				termDegree = 1;
-				coefficient = ((UnitRing<E>) baseRing).getProductIdentity();
+				coefficient = baseRing.getProductIdentity();
 			} else if (monomial.length == 1) {
 
 				if (monomial[0].startsWith("^")) { /* Cases beginning with \^ */
@@ -223,7 +222,7 @@ public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
 					String[] productSplit = exponentCleaned.split("\\*");
 					if (productSplit.length == 1) {
 						termDegree = Integer.parseInt(productSplit[0]);
-						coefficient = ((UnitRing<E>) baseRing).getProductIdentity();
+						coefficient = baseRing.getProductIdentity();
 					} else {
 						termDegree = Integer.parseInt(productSplit[0]);
 						coefficient = baseRing.parseElement(productSplit[1]);
@@ -370,7 +369,16 @@ public class Polynomials<T extends Polynomial<E>, E> implements Ring<T> {
 
 	/* We assume a divides b and k = 0 */
 	@Override
-	public T exactQuotient(T a, T b) {
+	public T divFactor(T a, T b) {
 		return pseudoDivision(a, b).getSecond();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public T getProductIdentity() {
+		List<E> addIdentity = new ArrayList<E>();
+		addIdentity.add(baseRing.getProductIdentity());
+		return (T) new Polynomial<E>(addIdentity, baseRing);
+	}
+
 }

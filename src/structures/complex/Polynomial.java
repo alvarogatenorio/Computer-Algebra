@@ -1,10 +1,9 @@
-package utils;
+package structures.complex;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import structures.Ring;
-import structures.UnitRing;
+import structures.basic.Ring;
 
 /* 
  * A polynomial is just a list of several coefficients, formally, this coefficients have to belong to
@@ -83,7 +82,6 @@ public class Polynomial<T> {
 	@Override
 	public String toString() {
 		/* We only take care of product identities in the case this actually exists */
-		boolean unitRing = baseRing instanceof UnitRing;
 
 		/*
 		 * We will use an auxiliary list to print every term separately so we can avoid
@@ -102,40 +100,23 @@ public class Polynomial<T> {
 		 * efficient than other options we have came across, first we consider the case
 		 * in which multiplicative identity does not exists, then, the other case
 		 */
-		if (!unitRing) {
-			/* Notice the 0 and 1 degree terms are special */
-			for (int i = coefficients.size() - 1; i > 1; i--) {
-				if (!coefficients.get(i).equals(baseRing.getAddIdentity())) {
+		/* Notice the 0 and 1 degree terms are special */
+		for (int i = coefficients.size() - 1; i > 1; i--) {
+			if (!coefficients.get(i).equals(baseRing.getAddIdentity())) {
+				if (coefficients.get(i).equals(baseRing.getProductIdentity())) {
+					aux.add(variable + "^" + i);
+				} else {
 					aux.add(coefficients.get(i).toString() + variable + "^" + i);
 				}
 			}
-			if ((coefficients.size() >= 2) && !coefficients.get(1).equals(baseRing.getAddIdentity())) {
-				aux.add(coefficients.get(0).toString() + variable);
-			}
-			/* If is a zero degree polynomial we have to print it */
-			if (!coefficients.get(0).equals(baseRing.getAddIdentity()) || !(coefficients.size() == 1)) {
-				aux.add(coefficients.get(0).toString());
-			}
-		} else {
-			/* Notice the 0 and 1 degree terms are special */
-			for (int i = coefficients.size() - 1; i > 1; i--) {
-				if (!coefficients.get(i).equals(baseRing.getAddIdentity())) {
-					if (coefficients.get(i).equals(((UnitRing<T>) (baseRing)).getProductIdentity())) {
-						aux.add(variable + "^" + i);
-					} else {
-						aux.add(coefficients.get(i).toString() + variable + "^" + i);
-					}
-				}
-			}
-			if ((coefficients.size() >= 2)
-					&& coefficients.get(1).equals(((UnitRing<T>) (baseRing)).getProductIdentity())) {
-				aux.add("" + variable);
-			} else if ((coefficients.size() >= 2) && !coefficients.get(1).equals(baseRing.getAddIdentity())) {
-				aux.add(coefficients.get(1).toString() + variable);
-			}
-			if (!coefficients.get(0).equals(baseRing.getAddIdentity()) || (coefficients.size() == 1)) {
-				aux.add(coefficients.get(0).toString());
-			}
+		}
+		if ((coefficients.size() >= 2) && coefficients.get(1).equals(baseRing.getProductIdentity())) {
+			aux.add("" + variable);
+		} else if ((coefficients.size() >= 2) && !coefficients.get(1).equals(baseRing.getAddIdentity())) {
+			aux.add(coefficients.get(1).toString() + variable);
+		}
+		if (!coefficients.get(0).equals(baseRing.getAddIdentity()) || (coefficients.size() == 1)) {
+			aux.add(coefficients.get(0).toString());
 		}
 
 		/*

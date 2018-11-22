@@ -1,6 +1,6 @@
-package utils;
+package structures.complex;
 
-import structures.Field;
+import structures.basic.Field;
 
 public class PrimesQuotients extends Field<Polynomial<Integer>> {
 	private Polynomial<Integer> irrPolMod;
@@ -65,8 +65,8 @@ public class PrimesQuotients extends Field<Polynomial<Integer>> {
 	}
 
 	@Override
-	public Polynomial<Integer> exactQuotient(Polynomial<Integer> a, Polynomial<Integer> b) {
-		return polyRing.reminder(polyRing.exactQuotient(a, b), irrPolMod);
+	public Polynomial<Integer> divFactor(Polynomial<Integer> a, Polynomial<Integer> b) {
+		return polyRing.reminder(polyRing.divFactor(a, b), irrPolMod);
 	}
 
 }

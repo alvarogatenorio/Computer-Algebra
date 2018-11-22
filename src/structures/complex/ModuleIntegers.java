@@ -1,8 +1,8 @@
-package utils;
+package structures.complex;
 
-import structures.UnitRing;
+import structures.basic.Ring;
 
-public class ModuleIntegers implements UnitRing<Integer> {
+public class ModuleIntegers extends Ring<Integer> {
 
 	int module;
 
@@ -57,7 +57,8 @@ public class ModuleIntegers implements UnitRing<Integer> {
 	}
 
 	@Override
-	public Integer exactQuotient(Integer a, Integer b) {
+	public Integer divFactor(Integer a, Integer b) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

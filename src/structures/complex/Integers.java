@@ -1,12 +1,12 @@
-package utils;
+package structures.complex;
 
-import structures.EuclideanUnitDomain;
+import structures.basic.EuclideanDomain;
 
 /**
  * It may be a good idea to leave Integer as the base class, to introduce
  * infinite precision integers
  */
-public class Integers extends EuclideanUnitDomain<Integer> {
+public class Integers extends EuclideanDomain<Integer> {
 	@Override
 	public Integer getAddIdentity() {
 		return 0;
@@ -63,8 +63,9 @@ public class Integers extends EuclideanUnitDomain<Integer> {
 	}
 
 	@Override
-	public Integer exactQuotient(Integer a, Integer b) {
-		return a / b;
+	public Integer divFactor(Integer a, Integer b) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/* Maybe implement the Garner's algorithm */

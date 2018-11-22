@@ -1,4 +1,4 @@
-package utils;
+package structures.complex;
 
 public class ModuleInteger {
 

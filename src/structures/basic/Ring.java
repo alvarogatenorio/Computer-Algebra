@@ -1,0 +1,35 @@
+package structures.basic;
+
+/** Represents a commutative ring with product identity. */
+public abstract class Ring<T> {
+
+	/** Returns the additive identity of the ring. */
+	public abstract T getAddIdentity();
+
+	/** Returns the product identity of the ring. */
+	public abstract T getProductIdentity();
+
+	/** Returns the additive inverse of an element of the ring. */
+	public abstract T getAddInverse(T a);
+
+	/** Returns the sum of two elements of the ring. */
+	public abstract T add(T a, T b);
+
+	/** Returns the product of two elements of the ring. */
+	public abstract T multiply(T a, T b);
+
+	/** Returns the product of an element of the ring and an integer. */
+	public abstract T multiply(T a, int k);
+
+	/** Returns the power of an element of the ring with an integer exponent. */
+	public abstract T power(T a, int k);
+
+	/** Returns true if a divides b. */
+	public abstract boolean divides(T a, T b);
+
+	/** Assuming a divides b, returns the corresponding factor. */
+	public abstract T divFactor(T a, T b);
+
+	/** Given a correctly formatted string, returns an element of the ring. */
+	public abstract T parseElement(String s);
+}

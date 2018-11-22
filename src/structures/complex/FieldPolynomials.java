@@ -1,15 +1,15 @@
-package utils;
+package structures.complex;
 
-import structures.EuclideanUnitDomain;
-import structures.Field;
+import structures.basic.EuclideanDomain;
+import structures.basic.Field;
 
-public class FieldPolynomials<T extends Polynomial<E>, E> extends EuclideanUnitDomain<T> {
+public class FieldPolynomials<T extends Polynomial<E>, E> extends EuclideanDomain<T> {
 
-	private UnitPolynomials<T, E> polyRing;
+	private Polynomials<T, E> polyRing;
 	private Field<E> baseRing;
 
 	public FieldPolynomials(Field<E> baseRing) {
-		polyRing = new UnitPolynomials<T, E>(baseRing);
+		polyRing = new Polynomials<T, E>(baseRing);
 		this.baseRing = baseRing;
 	}
 
@@ -104,7 +104,7 @@ public class FieldPolynomials<T extends Polynomial<E>, E> extends EuclideanUnitD
 	}
 
 	@Override
-	public T exactQuotient(T a, T b) {
+	public T divFactor(T a, T b) {
 		return quotient(a, b);
 	}
 }

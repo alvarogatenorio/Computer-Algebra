@@ -1,6 +1,6 @@
-package utils;
+package structures.complex;
 
-import structures.Field;
+import structures.basic.Field;
 
 public class Rationals extends Field<Rational> {
 
@@ -64,7 +64,7 @@ public class Rationals extends Field<Rational> {
 	}
 
 	@Override
-	public Rational exactQuotient(Rational a, Rational b) {
+	public Rational divFactor(Rational a, Rational b) {
 		return quotient(a, b);
 	}
 }

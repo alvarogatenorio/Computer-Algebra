@@ -1,9 +1,9 @@
-package utils;
+package structures.complex;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import structures.UniqueFactorizationDomain;
+import structures.basic.UniqueFactorizationDomain;
 
 /**
  * Remember by the Gauss' theorem, if the base ring is an UFD, then the
@@ -67,7 +67,7 @@ public class UFDPolynomials<T extends Polynomial<E>, E> extends UniqueFactorizat
 	private T primitivePart(T r, E c) {
 		List<E> coefficients = new ArrayList<E>();
 		for (int i = 0; i < r.size(); i++) {
-			coefficients.add(baseRing.exactQuotient(r.get(i), c));
+			coefficients.add(baseRing.divFactor(r.get(i), c));
 		}
 		return r = (T) new Polynomial<E>(coefficients, baseRing);
 	}
@@ -91,7 +91,12 @@ public class UFDPolynomials<T extends Polynomial<E>, E> extends UniqueFactorizat
 	}
 
 	@Override
-	public T exactQuotient(T a, T b) {
-		return polyRing.exactQuotient(a, b);
+	public T divFactor(T a, T b) {
+		return polyRing.divFactor(a, b);
+	}
+
+	@Override
+	public T getProductIdentity() {
+		return polyRing.getProductIdentity();
 	}
 }

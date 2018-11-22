@@ -1,19 +1,39 @@
-package structures;
+package structures.basic;
 
 import java.util.List;
 
-import utils.Integers;
-import utils.Pair;
+import structures.complex.Pair;
 
-/**
- * This is a trivial extension of the EuclideanDomain class, just assuming the
- * ring is actually a unit ring.
- */
-public abstract class EuclideanUnitDomain<T> extends EuclideanDomain<T> implements UnitRing<T> {
+/** Represents an Euclidean Domain (ED). */
+public abstract class EuclideanDomain<T> extends Ring<T> {
 
-	/*
+	/**
+	 * Returns the quotient of the euclidean division. The denominator cannot be
+	 * zero.
+	 */
+	public abstract T quotient(T a, T b);
+
+	/**
+	 * Returns the reminder of the euclidean division. The denominator cannot be
+	 * zero.
+	 */
+	public abstract T reminder(T a, T b);
+
+	/**
+	 * Computes the greatest common divisor. See the documentation for details.
+	 */
+	public T gcd(T a, T b) {
+		while (!b.equals(getAddIdentity())) {
+			T r = reminder(a, b);
+			a = b;
+			b = r;
+		}
+		return a;
+	}
+
+	/**
 	 * Computes the coefficients of the Bézout identity of the elements a and b. See
-	 * the docs for details.
+	 * the documentation for details.
 	 */
 	public Pair<T> bezout(T a, T b) {
 		T alphaMinus1 = getAddIdentity();
@@ -45,16 +65,12 @@ public abstract class EuclideanUnitDomain<T> extends EuclideanDomain<T> implemen
 		return new Pair<T>(alphaMinus2, betaMinus2);
 	}
 
-	/*
-	 * Computes the inverse function of the Chinese Reminder Theorem function
-	 * 
-	 * Notice that every euclidean domain is a principal ideal domain, so the ideals
-	 * are totally defined by its generators.
+	/**
+	 * Computes the inverse function of the Chinese Reminder Theorem projection.
 	 * 
 	 * Both lists have to be the same size.
 	 * 
-	 * To follow the hypothesis of the theoream, ideals have to be two-by-two
-	 * co-maximal (so coprime).
+	 * Ideals have to be two-by-two comaximal (coprime).
 	 */
 	public T chineseReminderInverse(List<T> ideals, List<T> reminders) {
 		T inverse = getAddIdentity();
@@ -72,4 +88,5 @@ public abstract class EuclideanUnitDomain<T> extends EuclideanDomain<T> implemen
 		}
 		return inverse;
 	}
+
 }
