@@ -1,5 +1,7 @@
 package structures.basic;
 
+import java.math.BigInteger;
+
 /** Represents a commutative ring with product identity. */
 public abstract class Ring<T> {
 
@@ -19,10 +21,12 @@ public abstract class Ring<T> {
 	public abstract T multiply(T a, T b);
 
 	/** Returns the product of an element of the ring and an integer. */
-	public abstract T multiply(T a, int k);
+	public abstract T intMultiply(T a, BigInteger k);
 
 	/** Returns the power of an element of the ring with an integer exponent. */
-	public abstract T power(T a, int k);
+	public T power(T a, BigInteger k) {
+		return null;
+	}
 
 	/** Returns true if a divides b. */
 	public abstract boolean divides(T a, T b);

@@ -1,5 +1,6 @@
 package structures.complex;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -311,17 +312,17 @@ public class Polynomials<T extends Polynomial<E>, E> extends Ring<T> {
 	 * 
 	 * If the ring is a field, the pseudo division is actually an euclidean division
 	 */
-	public Triple<Integer, T> pseudoDivision(T a, T b) {
-		int k = 0;
+	public Triple<BigInteger, T> pseudoDivision(T a, T b) {
+		BigInteger k = BigInteger.ZERO;
 		T q = null;
 		T r = null;
 		if (a.degree() < b.degree()) {
-			k = 0;
+			k = BigInteger.ZERO;
 			q = getAddIdentity();
 			r = a;
 		} else {
 			if (a.degree() == 0) {
-				k = 1;
+				k = BigInteger.ONE;
 				q = a;
 				r = getAddIdentity();
 			} else {
@@ -329,12 +330,12 @@ public class Polynomials<T extends Polynomial<E>, E> extends Ring<T> {
 						multiply(parseElement("t^" + (a.degree() - b.degree())), baseRing.getAddInverse(a.leading())),
 						b));
 				if (h.degree() < b.degree()) {
-					k = 1;
+					k = BigInteger.ONE;
 					q = multiply(parseElement("t^" + (a.degree() - b.degree())), a.leading());
 					r = h;
 				} else {
-					Triple<Integer, T> aux = pseudoDivision(h, b);
-					k = aux.getFirst() + 1;
+					Triple<BigInteger, T> aux = pseudoDivision(h, b);
+					k = aux.getFirst().add(BigInteger.ONE);
 					// errors here
 					q = add(aux.getSecond(), multiply(parseElement("t^" + (a.degree() - b.degree())),
 							baseRing.multiply((baseRing.power(b.leading(), aux.getFirst())), a.leading())));
@@ -342,7 +343,7 @@ public class Polynomials<T extends Polynomial<E>, E> extends Ring<T> {
 				}
 			}
 		}
-		return new Triple<Integer, T>(k, q, r);
+		return new Triple<BigInteger, T>(k, q, r);
 	}
 
 	@Override
@@ -354,17 +355,12 @@ public class Polynomials<T extends Polynomial<E>, E> extends Ring<T> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public T multiply(T a, int k) {
+	public T intMultiply(T a, BigInteger k) {
 		List<E> result = new ArrayList<E>();
 		for (int i = 0; i < a.size(); i++) {
-			result.add(baseRing.multiply(a.get(i), k));
+			result.add(baseRing.intMultiply(a.get(i), k));
 		}
 		return (T) new Polynomial<E>(result, baseRing);
-	}
-
-	@Override
-	public T power(T a, int k) {
-		return null;
 	}
 
 	/* We assume a divides b and k = 0 */

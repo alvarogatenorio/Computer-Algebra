@@ -1,29 +1,30 @@
 package structures.complex;
 
-public class Rational {
-	private Integer numerator;
-	private Integer denominator;
+import java.math.BigInteger;
 
-	/* EXCEPCIÓN */
-	public Rational(Integer numerator, Integer denominator) {
+public class Rational {
+	private BigInteger numerator;
+	private BigInteger denominator;
+
+	public Rational(BigInteger numerator, BigInteger denominator) {
 		Integers Z = new Integers();
-		int scale = Z.gcd(numerator, denominator);
-		if (scale != 0) {
-			this.numerator = numerator / scale;
-			this.denominator = denominator / scale;
+		BigInteger scale = Z.gcd(numerator, denominator);
+		if (!scale.equals(BigInteger.ZERO)) {
+			this.numerator = numerator.divide(scale);
+			this.denominator = denominator.divide(scale);
 		}
 	}
 
-	public Rational(Integer numerator) {
+	public Rational(BigInteger numerator) {
 		this.numerator = numerator;
-		this.denominator = 1;
+		this.denominator = BigInteger.ONE;
 	}
 
-	public Integer getNumerator() {
+	public BigInteger getNumerator() {
 		return this.numerator;
 	}
 
-	public Integer getDenominator() {
+	public BigInteger getDenominator() {
 		return this.denominator;
 	}
 

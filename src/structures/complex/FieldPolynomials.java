@@ -1,5 +1,7 @@
 package structures.complex;
 
+import java.math.BigInteger;
+
 import structures.basic.EuclideanDomain;
 import structures.basic.Field;
 
@@ -49,13 +51,8 @@ public class FieldPolynomials<T extends Polynomial<E>, E> extends EuclideanDomai
 	}
 
 	@Override
-	public T multiply(T a, int k) {
-		return polyRing.multiply(a, k);
-	}
-
-	@Override
-	public T power(T a, int k) {
-		return polyRing.power(a, k);
+	public T intMultiply(T a, BigInteger  k) {
+		return polyRing.intMultiply(a, k);
 	}
 
 	public Pair<T> division(T a, T b) {
@@ -99,7 +96,7 @@ public class FieldPolynomials<T extends Polynomial<E>, E> extends EuclideanDomai
 	}
 
 	@Override
-	public T reminder(T a, T b) {
+	public T remainder(T a, T b) {
 		return division(a, b).getSecond();
 	}
 

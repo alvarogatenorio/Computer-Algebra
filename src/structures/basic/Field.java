@@ -17,7 +17,7 @@ public abstract class Field<T> extends EuclideanDomain<T> {
 
 	/** The reminder is always null in a field. */
 	@Override
-	public T reminder(T a, T b) {
+	public T remainder(T a, T b) {
 		return getAddIdentity();
 	}
 

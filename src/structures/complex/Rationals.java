@@ -1,5 +1,7 @@
 package structures.complex;
 
+import java.math.BigInteger;
+
 import structures.basic.Field;
 
 public class Rationals extends Field<Rational> {
@@ -25,25 +27,27 @@ public class Rationals extends Field<Rational> {
 	@Override
 	public Rational add(Rational a, Rational b) {
 		Integers Z = new Integers();
-		int commonDenominator = (a.getDenominator() * b.getDenominator())
-				/ Z.gcd(a.getDenominator(), b.getDenominator());
-		int aFactor = commonDenominator / a.getDenominator();
-		int bFactor = commonDenominator / b.getDenominator();
-		return new Rational(a.getNumerator() * aFactor + b.getNumerator() * bFactor, commonDenominator);
+		BigInteger commonDenominator = a.getDenominator().multiply(b.getDenominator())
+				.divide(Z.gcd(a.getDenominator(), b.getDenominator()));
+		BigInteger aFactor = commonDenominator.divide(a.getDenominator());
+		BigInteger bFactor = commonDenominator.divide(b.getDenominator());
+		return new Rational(a.getNumerator().multiply(aFactor).add(b.getNumerator().multiply(bFactor)),
+				commonDenominator);
 	}
 
 	@Override
 	public Rational multiply(Rational a, Rational b) {
-		return new Rational(a.getNumerator() * b.getNumerator(), a.getDenominator() * b.getDenominator());
+		return new Rational(a.getNumerator().multiply(b.getNumerator()),
+				a.getDenominator().multiply(b.getDenominator()));
 	}
 
 	@Override
 	public Rational parseElement(String s) {
 		if (s.contains("/")) {
 			String[] splittedString = s.split("/");
-			return new Rational(Integer.parseInt(splittedString[0]), Integer.parseInt(splittedString[1]));
+			return new Rational(new BigInteger(splittedString[0]), new BigInteger(splittedString[1]));
 		} else {
-			return new Rational(Integer.parseInt(s));
+			return new Rational(new BigInteger(s));
 		}
 	}
 
@@ -53,14 +57,8 @@ public class Rationals extends Field<Rational> {
 	}
 
 	@Override
-	public Rational multiply(Rational a, int k) {
+	public Rational intMultiply(Rational a, BigInteger k) {
 		return multiply(a, new Rational(k));
-	}
-
-	@Override
-	public Rational power(Rational a, int k) {
-		Integers Z = new Integers();
-		return new Rational(Z.power(a.getNumerator(), k), Z.power(a.getDenominator(), k));
 	}
 
 	@Override

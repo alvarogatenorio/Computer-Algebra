@@ -1,64 +1,59 @@
 package structures.complex;
 
+import java.math.BigInteger;
+
 import structures.basic.Ring;
 
-public class ModuleIntegers extends Ring<Integer> {
+public class ModuleIntegers extends Ring<BigInteger> {
 
-	int module;
+	BigInteger module;
 
-	/* EXCEPCIONES PARA NO HACER M�DULO COSAS RARAS */
-	public ModuleIntegers(int module) {
+	public ModuleIntegers(BigInteger module) {
 		this.module = module;
 	}
 
 	@Override
-	public Integer getAddIdentity() {
-		return 0;
+	public BigInteger getAddIdentity() {
+		return BigInteger.ZERO;
 	}
 
 	@Override
-	public Integer getAddInverse(Integer a) {
-		return (-a) % module;
+	public BigInteger getAddInverse(BigInteger a) {
+		return a.negate().mod(module);
 	}
 
 	@Override
-	public Integer add(Integer a, Integer b) {
-		return (a + b) % module;
+	public BigInteger add(BigInteger a, BigInteger b) {
+		return a.add(b).mod(module);
 	}
 
 	@Override
-	public Integer multiply(Integer a, Integer b) {
-		return (a * b) % module;
+	public BigInteger multiply(BigInteger a, BigInteger b) {
+		return a.multiply(b).mod(module);
 	}
 
 	@Override
-	public Integer parseElement(String s) {
-		return Integer.parseInt(s) % module;
+	public BigInteger parseElement(String s) {
+		return (new BigInteger(s)).mod(module);
 	}
 
 	@Override
-	public Integer getProductIdentity() {
-		return 1;
+	public BigInteger getProductIdentity() {
+		return BigInteger.ONE;
 	}
 
 	@Override
-	public boolean divides(Integer a, Integer b) {
+	public boolean divides(BigInteger a, BigInteger b) {
 		return false;
 	}
 
 	@Override
-	public Integer multiply(Integer a, int k) {
-		return (a * k) % module;
+	public BigInteger intMultiply(BigInteger a, BigInteger k) {
+		return a.multiply(k).mod(module);
 	}
 
 	@Override
-	public Integer power(Integer a, int k) {
-		return null;
-	}
-
-	@Override
-	public Integer divFactor(Integer a, Integer b) {
-		// TODO Auto-generated method stub
+	public BigInteger divFactor(BigInteger a, BigInteger b) {
 		return null;
 	}
 

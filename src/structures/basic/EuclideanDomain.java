@@ -17,14 +17,14 @@ public abstract class EuclideanDomain<T> extends Ring<T> {
 	 * Returns the reminder of the euclidean division. The denominator cannot be
 	 * zero.
 	 */
-	public abstract T reminder(T a, T b);
+	public abstract T remainder(T a, T b);
 
 	/**
 	 * Computes the greatest common divisor. See the documentation for details.
 	 */
 	public T gcd(T a, T b) {
 		while (!b.equals(getAddIdentity())) {
-			T r = reminder(a, b);
+			T r = remainder(a, b);
 			a = b;
 			b = r;
 		}
@@ -43,7 +43,7 @@ public abstract class EuclideanDomain<T> extends Ring<T> {
 		while (!b.equals(getAddIdentity())) {
 			/* Computes division of a and b */
 			T q = quotient(a, b);
-			T r = reminder(a, b);
+			T r = remainder(a, b);
 
 			/*
 			 * Just follow the formula for the new pseudo-bezout identity coefficients

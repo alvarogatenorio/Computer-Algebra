@@ -1,75 +1,61 @@
 package structures.complex;
 
+import java.math.BigInteger;
+
 import structures.basic.Field;
 
-public class PrimeModuleIntegers extends Field<Integer> {
+public class PrimeModuleIntegers extends Field<BigInteger> {
 
-	int primeModule;
+	BigInteger primeModule;
+	private Integers Z;
 
-	/* EXCEPTION (quiz� meter aqu� el test de primalidad aks) */
-	public PrimeModuleIntegers(int primeModule) {
+	public PrimeModuleIntegers(BigInteger primeModule) {
 		this.primeModule = primeModule;
+		Z = new Integers();
 	}
 
 	@Override
-	public Integer getProductIdentity() {
-		return 1;
+	public BigInteger getProductIdentity() {
+		return BigInteger.ONE;
 	}
 
 	@Override
-	public Integer getAddIdentity() {
-		return 0;
+	public BigInteger getAddIdentity() {
+		return BigInteger.ZERO;
 	}
 
 	@Override
-	public Integer getAddInverse(Integer a) {
-		Integer result = (-a) % primeModule;
-		return result < 0 ? result + primeModule : result;
+	public BigInteger getAddInverse(BigInteger a) {
+		return a.negate().mod(primeModule);
 	}
 
 	@Override
-	public Integer add(Integer a, Integer b) {
-		Integer result = (a + b) % primeModule;
-		return result < 0 ? result + primeModule : result;
+	public BigInteger add(BigInteger a, BigInteger b) {
+		return a.add(b).mod(primeModule);
 	}
 
 	@Override
-	public Integer multiply(Integer a, Integer b) {
-		Integer result = (a * b) % primeModule;
-		return result < 0 ? result + primeModule : result;
+	public BigInteger multiply(BigInteger a, BigInteger b) {
+		return a.multiply(b).mod(primeModule);
 	}
 
 	@Override
-	public Integer parseElement(String s) {
-		Integer result = Integer.parseInt(s) % primeModule;
-		return result < 0 ? result + primeModule : result;
-	}
-
-	/* PAG 73 */
-	/* a not equals 0 */
-	@Override
-	public Integer getProductInverse(Integer a) {
-		Integers Z = new Integers();
-		Integer result = Z.bezout(a, primeModule).getFirst() % primeModule;
-		return result < 0 ? result + primeModule : result;
+	public BigInteger parseElement(String s) {
+		return (new BigInteger(s)).mod(primeModule);
 	}
 
 	@Override
-	public Integer multiply(Integer a, int k) {
-		Integer result = (a * k) % primeModule;
-		return result < 0 ? result + primeModule : result;
+	public BigInteger getProductInverse(BigInteger a) {
+		return Z.bezout(a, primeModule).getFirst().mod(primeModule);
 	}
 
 	@Override
-	public Integer power(Integer a, int k) {
-		Integers Z = new Integers();
-		Integer result = Z.power(a, k);
-		return result < 0 ? result + primeModule : result;
+	public BigInteger intMultiply(BigInteger a, BigInteger k) {
+		return a.multiply(k).mod(primeModule);
 	}
 
 	@Override
-	public Integer divFactor(Integer a, Integer b) {
-		Integers Z = new Integers();
+	public BigInteger divFactor(BigInteger a, BigInteger b) {
 		return Z.divFactor(a, b);
 	}
 }

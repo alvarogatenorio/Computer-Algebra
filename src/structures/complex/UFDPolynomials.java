@@ -1,15 +1,11 @@
 package structures.complex;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 import structures.basic.UniqueFactorizationDomain;
 
-/**
- * Remember by the Gauss' theorem, if the base ring is an UFD, then the
- * polynomial ring is also a UFD. Also take into account that every Euclidean
- * domain is an UFD.
- */
 public class UFDPolynomials<T extends Polynomial<E>, E> extends UniqueFactorizationDomain<T> {
 
 	private Polynomials<T, E> polyRing;
@@ -81,13 +77,8 @@ public class UFDPolynomials<T extends Polynomial<E>, E> extends UniqueFactorizat
 	}
 
 	@Override
-	public T multiply(T a, int k) {
-		return polyRing.multiply(a, k);
-	}
-
-	@Override
-	public T power(T a, int k) {
-		return polyRing.power(a, k);
+	public T intMultiply(T a, BigInteger k) {
+		return polyRing.intMultiply(a, k);
 	}
 
 	@Override
