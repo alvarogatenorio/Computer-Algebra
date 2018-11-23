@@ -27,4 +27,10 @@ public abstract class Field<T> extends EuclideanDomain<T> {
 		return true;
 	}
 
+	/** The factor is just b over a. */
+	@Override
+	public T divFactor(T a, T b) {
+		return multiply(b, getProductInverse(a));
+	}
+
 }

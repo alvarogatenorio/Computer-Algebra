@@ -1,105 +1,104 @@
-package structures.complex;
+package utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import structures.basic.Ring;
 
-/* 
- * A polynomial is just a list of several coefficients, formally, this coefficients have to belong to
- * a certain ring, so we must specify it in the constructor.
+/**
+ * A polynomial is just a list of several coefficients, this coefficients have
+ * to belongs to a ring, specified it in the constructor. This is only relevant
+ * for printing issues.
  * 
- * The following invariant must hold. The i-th coefficient is the i degree coefficient,
- * the last coefficient (in other words, the leading coefficient) has to be non-zero.
- * */
-
+ * The following invariant must hold. The i-th coefficient is the i degree
+ * coefficient, the last coefficient (in other words, the leading coefficient)
+ * has to be non-zero.
+ */
 public class Polynomial<T> {
 
-	/*
-	 * This represents the polynomial coefficients, following the previously defined
-	 * invariant
+	/**
+	 * Represents the polynomial coefficients, following the previously defined
+	 * invariant.
 	 */
 	private List<T> coefficients;
 
-	/*
-	 * This attribute is only relevant for printing issues it represents the name of
-	 * the polynomial variable, by default, it will be 'T'
+	/**
+	 * Only relevant for printing issues it represents the name of the polynomial
+	 * variable, by default, it will be 't'.
 	 */
 	private char variable = 't';
 
+	/** Represents the ring in which the coefficients live. */
 	private Ring<T> baseRing;
 
-	/*
-	 * Just sets the coefficients to define the polynomial and sets the ring so we
-	 * can parse it from a LaTeX string
+	/**
+	 * Sets the coefficients to define the polynomial and sets the ring so we can
+	 * print it.
 	 */
 	public Polynomial(List<T> coefficients, Ring<T> baseRing) {
 		this.coefficients = coefficients;
 		this.baseRing = baseRing;
 	}
 
-	/* Sets a custom variable */
+	/** Returns the ring in which the coefficients live. */
+	public Ring<T> getBaseRing() {
+		return baseRing;
+	}
+
+	/** Sets a custom variable. */
 	public void setVariable(char variable) {
 		this.variable = variable;
 	}
 
-	/* Sets a custom ring */
-	public void setRing(Ring<T> baseRing) {
-		this.baseRing = baseRing;
-	}
-
-	/*
+	/**
 	 * Returns the size of the coefficients list, in terms of degrees is the
-	 * polynomial degree plus one (with the exception of a zero polynomial)
+	 * polynomial degree plus one (with the exception of the zero polynomial).
 	 */
 	public int size() {
 		return this.coefficients.size();
 	}
 
+	/**
+	 * Returns the degree of the polynomial. The programmer must take into account
+	 * the special case of the zero polynomial.
+	 */
 	public int degree() {
 		return size() - 1;
 	}
 
+	/** Returns the leading coefficient of the polynomial. */
 	public T leading() {
 		return this.coefficients.get(degree());
 	}
 
+	/** Returns the independent coefficient of the polynomial. */
 	public T independent() {
 		return this.coefficients.get(0);
 	}
 
-	/* Returns the coefficient corresponding to the index degree term */
+	/** Returns the coefficient corresponding to the index degree term. */
 	public T get(int index) {
 		return this.coefficients.get(index);
 	}
 
-	/*
-	 * This method will print the polynomial in a LaTeX friendly format, we will
-	 * print the coefficients from higher to lower degree. We need the ring in which
-	 * the polynomial coefficients are considered to live so we can omit zeroes and
-	 * ones in the final printing
+	/**
+	 * Prints the polynomial in a LaTeX friendly format, the coefficients will be
+	 * printed from higher to lower degree.
 	 */
 	@Override
 	public String toString() {
-		/* We only take care of product identities in the case this actually exists */
-
 		/*
 		 * We will use an auxiliary list to print every term separately so we can avoid
-		 * problems of printing more or less additive symbols than necessary
+		 * problems of printing more or less additive symbols than necessary.
 		 */
 		List<String> aux = new ArrayList<String>();
 
 		/*
 		 * The actual printing of the polynomial will be a proper concatenation of the
-		 * auxiliary list
+		 * auxiliary list.
 		 */
 		String result = "";
 
-		/*
-		 * We know this is kind of repeating a big chunk of code, but we think is more
-		 * efficient than other options we have came across, first we consider the case
-		 * in which multiplicative identity does not exists, then, the other case
-		 */
 		/* Notice the 0 and 1 degree terms are special */
 		for (int i = coefficients.size() - 1; i > 1; i--) {
 			if (!coefficients.get(i).equals(baseRing.getAddIdentity())) {
@@ -120,10 +119,10 @@ public class Polynomial<T> {
 		}
 
 		/*
-		 * Properly join the auxiliary list
+		 * Properly joins the auxiliary list
 		 * 
 		 * Not sure about the complexity of this little chunk of code, hope its not
-		 * quadratic
+		 * quadratic...
 		 */
 		result = aux.get(0);
 		for (int i = 1; i < aux.size(); i++) {
@@ -133,10 +132,10 @@ public class Polynomial<T> {
 		return result;
 	}
 
-	public Ring<T> getBaseRing() {
-		return baseRing;
-	}
-
+	/**
+	 * Two polynomials are equal if they have the same degree, and the same
+	 * coefficients.
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object o) {

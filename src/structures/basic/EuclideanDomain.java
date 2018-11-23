@@ -2,7 +2,7 @@ package structures.basic;
 
 import java.util.List;
 
-import structures.complex.Pair;
+import utils.Pair;
 
 /** Represents an Euclidean Domain (ED). */
 public abstract class EuclideanDomain<T> extends Ring<T> {

@@ -1,4 +1,4 @@
-package structures.complex;
+package utils;
 
 public class Triple<T1, T2> {
 	private T1 first;

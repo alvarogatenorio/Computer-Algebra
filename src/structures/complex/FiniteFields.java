@@ -3,6 +3,8 @@ package structures.complex;
 import java.math.BigInteger;
 
 import structures.basic.Field;
+import structures.concrete.PrimeModuleIntegers;
+import utils.Polynomial;
 
 public class FiniteFields extends Field<Polynomial<BigInteger>> {
 	private Polynomial<BigInteger> irrPolMod;

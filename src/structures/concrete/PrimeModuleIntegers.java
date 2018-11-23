@@ -1,9 +1,10 @@
-package structures.complex;
+package structures.concrete;
 
 import java.math.BigInteger;
 
 import structures.basic.Field;
 
+/** Represents the prime remainders fields (Zp). */
 public class PrimeModuleIntegers extends Field<BigInteger> {
 
 	BigInteger primeModule;
@@ -53,9 +54,5 @@ public class PrimeModuleIntegers extends Field<BigInteger> {
 	public BigInteger intMultiply(BigInteger a, BigInteger k) {
 		return a.multiply(k).mod(primeModule);
 	}
-
-	@Override
-	public BigInteger divFactor(BigInteger a, BigInteger b) {
-		return Z.divFactor(a, b);
-	}
+	
 }

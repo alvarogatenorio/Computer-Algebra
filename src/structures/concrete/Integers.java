@@ -1,13 +1,10 @@
-package structures.complex;
+package structures.concrete;
 
 import java.math.BigInteger;
 
 import structures.basic.EuclideanDomain;
 
-/**
- * It may be a good idea to leave Integer as the base class, to introduce
- * infinite precision integers
- */
+/** Represents the euclidean domain of integer numbers (Z). */
 public class Integers extends EuclideanDomain<BigInteger> {
 	@Override
 	public BigInteger getAddIdentity() {

@@ -5,8 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import structures.basic.Ring;
+import utils.Polynomial;
+import utils.Triple;
 
 /*COMMENT AND TEST*/
+
+/*MODULAR COMPOSITION*/
 
 public class Polynomials<T extends Polynomial<E>, E> extends Ring<T> {
 

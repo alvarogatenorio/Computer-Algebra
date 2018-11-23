@@ -20,12 +20,34 @@ public abstract class Ring<T> {
 	/** Returns the product of two elements of the ring. */
 	public abstract T multiply(T a, T b);
 
-	/** Returns the product of an element of the ring and an integer. */
-	public abstract T intMultiply(T a, BigInteger k);
+	/**
+	 * Returns the product of an element of the ring and an integer. For efficiency
+	 * purposes, it is highly recommended to override this method.
+	 */
+	public T intMultiply(T a, BigInteger k) {
+		T result = getAddIdentity();
+		for (BigInteger i = BigInteger.ZERO; i.compareTo(k) == -1; i.add(BigInteger.ONE)) {
+			result = add(result, a);
+		}
+		return result;
+	}
 
-	/** Returns the power of an element of the ring with an integer exponent. */
+	/**
+	 * Returns the power of an element of the ring with an integer exponent. See the
+	 * documentation for details.
+	 */
 	public T power(T a, BigInteger k) {
-		return null;
+		String binaryExponent = k.toString(2);
+		T result = a;
+		for (BigInteger i = (new BigInteger(Integer.toString(binaryExponent.length()))).subtract(BigInteger.ONE); i
+				.compareTo(BigInteger.ZERO) >= 0; i.subtract(BigInteger.ONE)) {
+			if (true) {
+				result = add(multiply(result, result), a);
+			} else {
+				result = multiply(result, result);
+			}
+		}
+		return result;
 	}
 
 	/** Returns true if a divides b. */
@@ -36,4 +58,5 @@ public abstract class Ring<T> {
 
 	/** Given a correctly formatted string, returns an element of the ring. */
 	public abstract T parseElement(String s);
+
 }

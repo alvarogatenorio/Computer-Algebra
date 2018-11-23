@@ -4,7 +4,10 @@ import java.math.BigInteger;
 
 import structures.basic.EuclideanDomain;
 import structures.basic.Field;
+import utils.Pair;
+import utils.Polynomial;
 
+/** Represents the ring of polynomials over a field */
 public class FieldPolynomials<T extends Polynomial<E>, E> extends EuclideanDomain<T> {
 
 	private Polynomials<T, E> polyRing;
@@ -51,7 +54,7 @@ public class FieldPolynomials<T extends Polynomial<E>, E> extends EuclideanDomai
 	}
 
 	@Override
-	public T intMultiply(T a, BigInteger  k) {
+	public T intMultiply(T a, BigInteger k) {
 		return polyRing.intMultiply(a, k);
 	}
 

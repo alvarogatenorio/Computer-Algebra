@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import structures.basic.UniqueFactorizationDomain;
+import utils.Polynomial;
 
 public class UFDPolynomials<T extends Polynomial<E>, E> extends UniqueFactorizationDomain<T> {
 

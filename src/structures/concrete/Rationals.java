@@ -1,9 +1,14 @@
-package structures.complex;
+package structures.concrete;
 
 import java.math.BigInteger;
 
 import structures.basic.Field;
+import utils.Rational;
 
+/**
+ * Represents the field of rational numbers (Q). Notice that every operation
+ * returns a rational in canonical form.
+ */
 public class Rationals extends Field<Rational> {
 
 	@Override
@@ -59,10 +64,5 @@ public class Rationals extends Field<Rational> {
 	@Override
 	public Rational intMultiply(Rational a, BigInteger k) {
 		return multiply(a, new Rational(k));
-	}
-
-	@Override
-	public Rational divFactor(Rational a, Rational b) {
-		return quotient(a, b);
 	}
 }

@@ -1,12 +1,13 @@
-package structures.complex;
+package structures.concrete;
 
 import java.math.BigInteger;
 
 import structures.basic.Ring;
 
+/** Represents the remainders rings (Zm). (Low priority) */
 public class ModuleIntegers extends Ring<BigInteger> {
 
-	BigInteger module;
+	private BigInteger module;
 
 	public ModuleIntegers(BigInteger module) {
 		this.module = module;

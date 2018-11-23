@@ -1,4 +1,4 @@
-package structures.complex;
+package utils;
 
 public class Pair<T> {
 	private T first;
