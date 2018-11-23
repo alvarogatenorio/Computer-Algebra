@@ -37,15 +37,17 @@ public abstract class Ring<T> {
 	 * documentation for details.
 	 */
 	public T power(T a, BigInteger k) {
+		/* Repeated squaring algorithm. */
 		String binaryExponent = k.toString(2);
 		T result = a;
-		for (BigInteger i = (new BigInteger(Integer.toString(binaryExponent.length()))).subtract(BigInteger.ONE); i
-				.compareTo(BigInteger.ZERO) >= 0; i.subtract(BigInteger.ONE)) {
-			if (true) {
-				result = add(multiply(result, result), a);
+		BigInteger i = new BigInteger(Integer.toString(binaryExponent.length() - 2));
+		while (i.compareTo(BigInteger.ZERO) >= 0) {
+			if (binaryExponent.charAt(binaryExponent.length() - 1 - i.intValue()) == '1') {
+				result = multiply(multiply(result, result), a);
 			} else {
 				result = multiply(result, result);
 			}
+			i = i.subtract(BigInteger.ONE);
 		}
 		return result;
 	}

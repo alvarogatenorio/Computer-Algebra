@@ -381,4 +381,8 @@ public class Polynomials<T extends Polynomial<E>, E> extends Ring<T> {
 		return (T) new Polynomial<E>(addIdentity, baseRing);
 	}
 
+	public T modularComposition() {
+		return null;
+	}
+
 }

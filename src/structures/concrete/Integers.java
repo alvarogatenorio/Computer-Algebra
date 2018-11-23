@@ -61,4 +61,10 @@ public class Integers extends EuclideanDomain<BigInteger> {
 		return a.multiply(k);
 	}
 
+	/** Returns true if a is prime. */
+	public boolean isPrime(BigInteger a) {
+		/* AKS algorithm. */
+		return false;
+	}
+
 }
