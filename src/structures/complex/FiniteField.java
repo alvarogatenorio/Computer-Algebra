@@ -3,16 +3,19 @@ package structures.complex;
 import java.math.BigInteger;
 
 import structures.basic.Field;
+import structures.concrete.Integers;
 import structures.concrete.PrimeModuleIntegers;
 import utils.Polynomial;
 
-public class FiniteFields extends Field<Polynomial<BigInteger>> {
+public class FiniteField extends Field<Polynomial<BigInteger>> {
 	private Polynomial<BigInteger> irrPolMod;
 	private PrimeModuleIntegers baseField;
 	private FieldPolynomials<Polynomial<BigInteger>, BigInteger> polyRing;
+	private BigInteger primeIntMod;
 
-	public FiniteFields(BigInteger primeIntMod, Polynomial<BigInteger> irrPolMod) {
+	public FiniteField(BigInteger primeIntMod, Polynomial<BigInteger> irrPolMod) {
 		this.irrPolMod = irrPolMod;
+		this.primeIntMod = primeIntMod;
 		this.baseField = new PrimeModuleIntegers(primeIntMod);
 		polyRing = new FieldPolynomials<Polynomial<BigInteger>, BigInteger>(baseField);
 	}
@@ -66,6 +69,12 @@ public class FiniteFields extends Field<Polynomial<BigInteger>> {
 	@Override
 	public Polynomial<BigInteger> divFactor(Polynomial<BigInteger> a, Polynomial<BigInteger> b) {
 		return polyRing.remainder(polyRing.divFactor(a, b), irrPolMod);
+	}
+
+	/** Returns the order of the finite field */
+	public BigInteger getOrder() {
+		Integers Z = new Integers();
+		return Z.power(primeIntMod, new BigInteger(Integer.toString(irrPolMod.degree())));
 	}
 
 }

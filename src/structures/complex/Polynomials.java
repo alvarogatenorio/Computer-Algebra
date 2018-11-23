@@ -15,7 +15,7 @@ import utils.Triple;
 public class Polynomials<T extends Polynomial<E>, E> extends Ring<T> {
 
 	protected Ring<E> baseRing;
-	private char variable = 't';
+	protected char variable = 't';
 
 	public Polynomials(Ring<E> baseRing) {
 		this.baseRing = baseRing;
@@ -381,7 +381,9 @@ public class Polynomials<T extends Polynomial<E>, E> extends Ring<T> {
 		return (T) new Polynomial<E>(addIdentity, baseRing);
 	}
 
-	public T modularComposition() {
+	/** Returns remainder(g(h),f). */
+	public T modularComposition(T f, T g, T h) {
+		/* Fast modular composition algorithm. */
 		return null;
 	}
 

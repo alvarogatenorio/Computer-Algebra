@@ -11,7 +11,7 @@ import utils.Polynomial;
 public class FieldPolynomials<T extends Polynomial<E>, E> extends EuclideanDomain<T> {
 
 	private Polynomials<T, E> polyRing;
-	private Field<E> baseRing;
+	protected Field<E> baseRing;
 
 	public FieldPolynomials(Field<E> baseRing) {
 		polyRing = new Polynomials<T, E>(baseRing);
