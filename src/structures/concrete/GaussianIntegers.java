@@ -3,71 +3,66 @@ package structures.concrete;
 import java.math.BigInteger;
 
 import structures.basic.EuclideanDomain;
-import utils.Polynomial;
+import utils.GaussianInteger;
 
 /**
- * Represents the Gaussian integers Z[i]. (We will see how to do that, low
- * priority).
+ * Represents the Gaussian integers Z[i].
  */
-public class GaussianIntegers extends EuclideanDomain<Polynomial<BigInteger>> {
+public class GaussianIntegers extends EuclideanDomain<GaussianInteger> {
 
 	@Override
-	public Polynomial<BigInteger> quotient(Polynomial<BigInteger> a, Polynomial<BigInteger> b) {
+	public GaussianInteger quotient(GaussianInteger a, GaussianInteger b) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Polynomial<BigInteger> remainder(Polynomial<BigInteger> a, Polynomial<BigInteger> b) {
+	public GaussianInteger remainder(GaussianInteger a, GaussianInteger b) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Polynomial<BigInteger> getAddIdentity() {
+	public GaussianInteger getAddIdentity() {
+		return new GaussianInteger(BigInteger.ZERO);
+	}
+
+	@Override
+	public GaussianInteger getProductIdentity() {
+		return new GaussianInteger(BigInteger.ZERO);
+	}
+
+	@Override
+	public GaussianInteger getAddInverse(GaussianInteger a) {
+		return new GaussianInteger(a.getRealPart().negate(), a.getImaginaryPart().negate());
+	}
+
+	@Override
+	public GaussianInteger add(GaussianInteger a, GaussianInteger b) {
+		return new GaussianInteger(a.getRealPart().add(b.getRealPart()),
+				a.getImaginaryPart().add(b.getImaginaryPart()));
+	}
+
+	@Override
+	public GaussianInteger multiply(GaussianInteger a, GaussianInteger b) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Polynomial<BigInteger> getProductIdentity() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Polynomial<BigInteger> getAddInverse(Polynomial<BigInteger> a) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Polynomial<BigInteger> add(Polynomial<BigInteger> a, Polynomial<BigInteger> b) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Polynomial<BigInteger> multiply(Polynomial<BigInteger> a, Polynomial<BigInteger> b) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean divides(Polynomial<BigInteger> a, Polynomial<BigInteger> b) {
+	public boolean divides(GaussianInteger a, GaussianInteger b) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public Polynomial<BigInteger> divFactor(Polynomial<BigInteger> a, Polynomial<BigInteger> b) {
+	public GaussianInteger divFactor(GaussianInteger a, GaussianInteger b) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Polynomial<BigInteger> parseElement(String s) {
-		// TODO Auto-generated method stub
+	public GaussianInteger parseElement(String s) {
 		return null;
 	}
 }

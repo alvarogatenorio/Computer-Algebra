@@ -26,7 +26,7 @@ public abstract class Ring<T> {
 	 */
 	public T intMultiply(T a, BigInteger k) {
 		T result = getAddIdentity();
-		for (BigInteger i = BigInteger.ZERO; i.compareTo(k) == -1; i.add(BigInteger.ONE)) {
+		for (BigInteger i = BigInteger.ZERO; i.compareTo(k) == -1; i = i.add(BigInteger.ONE)) {
 			result = add(result, a);
 		}
 		return result;

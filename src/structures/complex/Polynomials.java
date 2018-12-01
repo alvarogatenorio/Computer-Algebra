@@ -5,43 +5,50 @@ import java.util.ArrayList;
 import java.util.List;
 
 import structures.basic.Ring;
+import utils.Matrix;
+import utils.Matrixes;
 import utils.Polynomial;
 import utils.Triple;
 
-/*COMMENT AND TEST*/
-
-/*MODULAR COMPOSITION*/
-
-public class Polynomials<T extends Polynomial<E>, E> extends Ring<T> {
+/**
+ * Represents the ring of polynomials over a certain ring. T represents a
+ * polynomial over a ring E.
+ */
+public class Polynomials<E> extends Ring<Polynomial<E>> {
 
 	protected Ring<E> baseRing;
 	protected char variable = 't';
 
+	/** Constructs the polynomial ring, given the base ring. */
 	public Polynomials(Ring<E> baseRing) {
 		this.baseRing = baseRing;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public T getAddIdentity() {
+	public Polynomial<E> getAddIdentity() {
 		List<E> addIdentity = new ArrayList<E>();
 		addIdentity.add(baseRing.getAddIdentity());
-		return (T) new Polynomial<E>(addIdentity, baseRing);
+		return new Polynomial<E>(addIdentity, baseRing);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public T getAddInverse(T a) {
+	public Polynomial<E> getProductIdentity() {
+		List<E> addIdentity = new ArrayList<E>();
+		addIdentity.add(baseRing.getProductIdentity());
+		return new Polynomial<E>(addIdentity, baseRing);
+	}
+
+	@Override
+	public Polynomial<E> getAddInverse(Polynomial<E> a) {
 		List<E> addInverse = new ArrayList<E>();
 		for (int i = 0; i < a.size(); i++) {
 			addInverse.add(baseRing.getAddInverse(a.get(i)));
 		}
-		return (T) new Polynomial<E>(addInverse, baseRing);
+		return new Polynomial<E>(addInverse, baseRing);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public T add(T a, T b) {
+	public Polynomial<E> add(Polynomial<E> a, Polynomial<E> b) {
 		/* We create the result polynomial */
 		List<E> sum = new ArrayList<E>();
 
@@ -78,23 +85,11 @@ public class Polynomials<T extends Polynomial<E>, E> extends Ring<T> {
 		}
 
 		/* Cast and return the result */
-		return (T) new Polynomial<E>(sum, baseRing);
+		return new Polynomial<E>(sum, baseRing);
 	}
 
-	/* Maybe a more efficient implementation, when we have time... */
-	@SuppressWarnings("unchecked")
-	public T add(T a, E e) {
-		List<E> sum = new ArrayList<E>();
-		sum.add(baseRing.add(a.get(0), e));
-		for (int i = 1; i < a.size(); i++) {
-			sum.add(a.get(i));
-		}
-		return (T) new Polynomial<E>(sum, baseRing);
-	}
-
-	@SuppressWarnings("unchecked")
 	@Override
-	public T multiply(T a, T b) {
+	public Polynomial<E> multiply(Polynomial<E> a, Polynomial<E> b) {
 		/* We create the result polynomial */
 		List<E> product = new ArrayList<E>();
 
@@ -138,79 +133,77 @@ public class Polynomials<T extends Polynomial<E>, E> extends Ring<T> {
 		}
 
 		/* Cast and return the result */
-		return (T) new Polynomial<E>(product, baseRing);
+		return new Polynomial<E>(product, baseRing);
 	}
 
-	@SuppressWarnings("unchecked")
-	public T multiply(T a, E e) {
-		List<E> product = new ArrayList<E>();
-		for (int i = 0; i < a.size(); i++) {
-			product.add(baseRing.multiply(a.get(i), e));
-		}
-		return (T) new Polynomial<E>(product, baseRing);
-	}
-
-	/*
-	 * It construct a polynomial from a valid LaTeX string, that is, something
-	 * adjusting the following regular expression
-	 * ((T(\^i)\*a|T(\^i)?|a(\*)?T(\^i)?|a)\+)*(T(\^i)\*a|T(\^i)?|a(\*)?T(\^i)?|a),
-	 * being a an String representation of any element of the class parameter T, i
-	 * an integer positive number (maybe zero), and T the variable.
-	 * 
-	 * To maintain the invariant of this class we need the ring in which the
-	 * coefficients are considered to live, for example, we may have a parameter
-	 * like "T+T", so we have to transform this to "2T" (in terms of our intern
-	 * representation).
-	 * 
-	 * Important, we don�t check if the parameter string is a valid LaTeX string,
-	 * this is, for the moment, responsibility of the programmer/client.
-	 * 
-	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public T parseElement(String latexString) {
+	public Polynomial<E> intMultiply(Polynomial<E> a, BigInteger k) {
+		List<E> result = new ArrayList<E>();
+		for (int i = 0; i < a.size(); i++) {
+			result.add(baseRing.intMultiply(a.get(i), k));
+		}
+		return new Polynomial<E>(result, baseRing);
+	}
 
-		/*
-		 * We know the implementation is a little bit "quick and dirty", but it was made
-		 * like this for the sake of simplicity
-		 */
+	@Override
+	public boolean divides(Polynomial<E> a, Polynomial<E> b) {
+		Polynomial<E> r = pseudoDivision(a, b).getThird();
+		Polynomial<E> s = getAddIdentity();
+		return r.equals(s);
+	}
 
-		/* We clean the string of white characters */
+	@Override
+	public Polynomial<E> divFactor(Polynomial<E> a, Polynomial<E> b) {
+		return pseudoDivision(a, b).getSecond();
+	}
+
+	/**
+	 * It construct a polynomial from a valid string, that is, something adjusting
+	 * the following regular expression:
+	 * 
+	 * ((T(\^i)\*a|T(\^i)?|a(\*)?T(\^i)?|a)\+)*(T(\^i)\*a|T(\^i)?|a(\*)?T(\^i)?|a)
+	 * 
+	 * Being "a" an String representation of any element of the class parameter E,
+	 * "i" a positive integer (maybe zero), and "T" the variable.
+	 */
+	@Override
+	public Polynomial<E> parseElement(String latexString) {
+
+		/* Cleaning white characters... */
 		latexString = latexString.replaceAll("( |\\t|\\n)", "");
 
-		/* Initializing the list of coefficients of the polynomial */
+		/* Initializing the list of coefficients... */
 		List<E> coefficients = new ArrayList<E>();
 
 		/*
-		 * First we split the string by the regular expression "+", so we should have
-		 * something like ( T(\^i)\*a | T(\^i)? | a(\*)?T(\^i)? |a )
+		 * Splitting the string by the regular expression "+" we should have something
+		 * like ( T(\^i)\*a | T(\^i)? | a(\*)?T(\^i)? |a ).
 		 */
 		String[] monomials = latexString.split("\\+");
 
-		/* The we work on each token separately */
+		/* Working on each token separately... */
 		for (int i = 0; i < monomials.length; i++) {
 
 			int termDegree;
 			E coefficient;
 
 			/*
-			 * We split by the variable, so we will get a single token like ( \^i\*a | \*a |
-			 * \^i | a | a\*), an empty string, or two tokens like ([a,\^i] | [a\*,\^i])
+			 * Splitting by the variable we will get a single token like ( \^i\*a | \*a |
+			 * \^i | a | a\*), an empty string, or two tokens like ([a,\^i] | [a\*,\^i]).
 			 * 
 			 * We also need here to know, before splitting the string, if it actually
 			 * contains the variable, in order to compute the term degrees correctly in the
-			 * "a" cases
+			 * "a" cases.
 			 */
 			boolean containsVariable = monomials[i].contains("" + variable);
 			String[] monomial = monomials[i].split("" + variable);
 
-			/* Cleaning the possible empty strings generated by the splitting */
+			/* Cleaning the possible empty strings generated by the splitting... */
 			monomial = cleanEmptyStrings(monomial);
 
-			/* We consider every case, first, the empty string case */
+			/* Considering every case... */
 			if (monomial.length == 0) {
-
-				/* In this case, the monomial is T, so we know exactly what to insert */
+				/* In this case, the monomial is "T", so we know exactly what to insert */
 				termDegree = 1;
 				coefficient = baseRing.getProductIdentity();
 			} else if (monomial.length == 1) {
@@ -219,11 +212,11 @@ public class Polynomials<T extends Polynomial<E>, E> extends Ring<T> {
 
 					/*
 					 * We take out the exponent symbol, so the possible strings are now (i\*a) and
-					 * (i)
+					 * (i).
 					 */
 					String exponentCleaned = monomial[0].replaceFirst("\\^", "");
 
-					/* We split by \*, so we may get two tokens, [i,a] or one token (i) */
+					/* Splitting by \* we may get two tokens, [i,a] or one token (i) */
 					String[] productSplit = exponentCleaned.split("\\*");
 					if (productSplit.length == 1) {
 						termDegree = Integer.parseInt(productSplit[0]);
@@ -232,7 +225,7 @@ public class Polynomials<T extends Polynomial<E>, E> extends Ring<T> {
 						termDegree = Integer.parseInt(productSplit[0]);
 						coefficient = baseRing.parseElement(productSplit[1]);
 					}
-				} else { /* a cases */
+				} else { /* "a" cases */
 					if (containsVariable) {
 						termDegree = 1;
 					} else {
@@ -260,7 +253,7 @@ public class Polynomials<T extends Polynomial<E>, E> extends Ring<T> {
 		coefficients = cleanIdentities(coefficients);
 
 		/* Returns the polynomial */
-		return (T) new Polynomial<E>(coefficients, baseRing);
+		return new Polynomial<E>(coefficients, baseRing);
 	}
 
 	private List<E> cleanIdentities(List<E> coefficients) {
@@ -274,9 +267,9 @@ public class Polynomials<T extends Polynomial<E>, E> extends Ring<T> {
 		return coefficients;
 	}
 
-	/*
+	/**
 	 * Auxiliary private method for the parseElement() method, it just sums up some
-	 * coefficient in the right position of the coefficients list
+	 * coefficient in the right position of the coefficients list.
 	 */
 	private List<E> updateCoefficients(List<E> coefficients, int termDegree, E coefficient) {
 		/* Adding zeroes if necessary */
@@ -294,9 +287,9 @@ public class Polynomials<T extends Polynomial<E>, E> extends Ring<T> {
 		return coefficients;
 	}
 
-	/*
+	/**
 	 * Auxiliary private method for the parseElement() method, it just removes the
-	 * empty strings of an String array
+	 * empty strings of an String array.
 	 */
 	private String[] cleanEmptyStrings(String[] strings) {
 		List<String> result = new ArrayList<String>();
@@ -308,18 +301,31 @@ public class Polynomials<T extends Polynomial<E>, E> extends Ring<T> {
 		return (String[]) result.toArray(new String[0]);
 	}
 
-	/*
+	public Polynomial<E> add(Polynomial<E> a, E e) {
+		List<E> sum = new ArrayList<E>();
+		sum.add(baseRing.add(a.get(0), e));
+		for (int i = 1; i < a.size(); i++) {
+			sum.add(a.get(i));
+		}
+		return new Polynomial<E>(sum, baseRing);
+	}
+
+	public Polynomial<E> multiply(Polynomial<E> a, E e) {
+		List<E> product = new ArrayList<E>();
+		for (int i = 0; i < a.size(); i++) {
+			product.add(baseRing.multiply(a.get(i), e));
+		}
+		return new Polynomial<E>(product, baseRing);
+	}
+
+	/**
 	 * Returns a triple representing the pseudo division of two polynomials over an
-	 * arbitrary ring. For details, see the docs.
-	 * 
-	 * If the leading coefficient of b is a unit, then k can be supposed to be 0.
-	 * 
-	 * If the ring is a field, the pseudo division is actually an euclidean division
+	 * arbitrary ring. See the documentation for details.
 	 */
-	public Triple<BigInteger, T> pseudoDivision(T a, T b) {
+	public Triple<BigInteger, Polynomial<E>> pseudoDivision(Polynomial<E> a, Polynomial<E> b) {
 		BigInteger k = BigInteger.ZERO;
-		T q = null;
-		T r = null;
+		Polynomial<E> q = null;
+		Polynomial<E> r = null;
 		if (a.degree() < b.degree()) {
 			k = BigInteger.ZERO;
 			q = getAddIdentity();
@@ -330,61 +336,117 @@ public class Polynomials<T extends Polynomial<E>, E> extends Ring<T> {
 				q = a;
 				r = getAddIdentity();
 			} else {
-				T h = add(multiply(a, b.leading()), multiply(
-						multiply(parseElement("t^" + (a.degree() - b.degree())), baseRing.getAddInverse(a.leading())),
-						b));
+				Polynomial<E> h = add(multiply(a, b.leading()),
+						multiply(multiply(parseElement(variable + "^" + (a.degree() - b.degree())),
+								baseRing.getAddInverse(a.leading())), b));
 				if (h.degree() < b.degree()) {
 					k = BigInteger.ONE;
-					q = multiply(parseElement("t^" + (a.degree() - b.degree())), a.leading());
+					q = multiply(parseElement(variable + "^" + (a.degree() - b.degree())), a.leading());
 					r = h;
 				} else {
-					Triple<BigInteger, T> aux = pseudoDivision(h, b);
+					Triple<BigInteger, Polynomial<E>> aux = pseudoDivision(h, b);
 					k = aux.getFirst().add(BigInteger.ONE);
-					// errors here
-					q = add(aux.getSecond(), multiply(parseElement("t^" + (a.degree() - b.degree())),
+					q = add(aux.getSecond(), multiply(parseElement(variable + "^" + (a.degree() - b.degree())),
 							baseRing.multiply((baseRing.power(b.leading(), aux.getFirst())), a.leading())));
 					r = aux.getThird();
 				}
 			}
 		}
-		return new Triple<BigInteger, T>(k, q, r);
+		return new Triple<BigInteger, Polynomial<E>>(k, q, r);
 	}
 
-	@Override
-	public boolean divides(T a, T b) {
-		T r = pseudoDivision(a, b).getThird();
-		T s = getAddIdentity();
-		return r.equals(s);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public T intMultiply(T a, BigInteger k) {
-		List<E> result = new ArrayList<E>();
-		for (int i = 0; i < a.size(); i++) {
-			result.add(baseRing.intMultiply(a.get(i), k));
-		}
-		return (T) new Polynomial<E>(result, baseRing);
-	}
-
-	/* We assume a divides b and k = 0 */
-	@Override
-	public T divFactor(T a, T b) {
-		return pseudoDivision(a, b).getSecond();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public T getProductIdentity() {
-		List<E> addIdentity = new ArrayList<E>();
-		addIdentity.add(baseRing.getProductIdentity());
-		return (T) new Polynomial<E>(addIdentity, baseRing);
-	}
-
-	/** Returns remainder(g(h),f). */
-	public T modularComposition(T f, T g, T h) {
+	/**
+	 * Returns remainder(g(h),f). f has to be a monic polynomial such that deg(g),
+	 * deg(h)<deg(f).
+	 */
+	public Polynomial<E> modularComposition(Polynomial<E> f, Polynomial<E> g, Polynomial<E> h) {
 		/* Fast modular composition algorithm. */
-		return null;
+
+		int n = f.degree();
+		int m = (int) Math.ceil(Math.sqrt(n));
+
+		/* Building the auxiliary matrixes... */
+		List<List<E>> hPowers = computeHPowers(h, f, m);
+		List<List<E>> gPolynomials = buildGPolynomials(g, m);
+
+		/* Computing the matrix product... */
+		Matrixes<E> M = new Matrixes<E>(baseRing);
+		Matrix<E> H = M.fill(hPowers.subList(0, hPowers.size() - 1), m, n);
+		Matrix<E> G = M.fill(gPolynomials, m, m);
+		Matrix<E> A = M.multiply(G, H);
+
+		/* Building the huge polynomial... */
+		Polynomial<Polynomial<E>> b = buildHugePoly(A);
+
+		/* Evaluating the huge polynomial modulo f... */
+		Polynomial<E> p = new Polynomial<E>(hPowers.get(hPowers.size() - 1), baseRing);
+		return evaluate(p, b, f);
+	}
+
+	/**
+	 * Auxiliary private method for the modularComposition() method. Computes a
+	 * pseudo matrix whose rows are the coefficients of the powers of h modulo f.
+	 */
+	private List<List<E>> computeHPowers(Polynomial<E> h, Polynomial<E> f, int m) {
+		List<List<E>> coefficients = new ArrayList<List<E>>();
+		coefficients.add(getProductIdentity().getCoefficients());
+		coefficients.add(pseudoDivision(h, f).getThird().getCoefficients());
+		Polynomial<E> hPower = h;
+		for (int i = 2; i <= m; i++) {
+			hPower = pseudoDivision(multiply(hPower, h), f).getThird();
+			coefficients.add(hPower.getCoefficients());
+		}
+		return coefficients;
+	}
+
+	/**
+	 * Auxiliary private method for the modularComposition() method. Computes a
+	 * pseudo matrix whose rows are the coefficients of g packaged in groups of m
+	 * coefficients.
+	 */
+	private List<List<E>> buildGPolynomials(Polynomial<E> g, int m) {
+		List<List<E>> coefficients = new ArrayList<List<E>>();
+		List<E> gCoefficients = g.getCoefficients();
+		int l = gCoefficients.size();
+		for (int i = 0; i < m; i++) {
+			if (m * i >= l || m * (1 + i) > l) {
+				break;
+			}
+			coefficients.add(gCoefficients.subList(m * i, m * (1 + i)));
+		}
+		return coefficients;
+	}
+
+	private Polynomial<Polynomial<E>> buildHugePoly(Matrix<E> A) {
+		List<Polynomial<E>> coefficients = new ArrayList<Polynomial<E>>();
+		for (int i = 0; i < A.getRows(); i++) {
+			coefficients.add(new Polynomial<E>(A.getCoefficients().get(i), baseRing));
+		}
+		return new Polynomial<Polynomial<E>>(coefficients, (Ring<Polynomial<E>>) this);
+	}
+
+	/**
+	 * Evaluates the polynomial g modulo f in the specified value. See the
+	 * documentation for details.
+	 */
+	private Polynomial<E> evaluate(Polynomial<E> a, Polynomial<Polynomial<E>> g, Polynomial<E> f) {
+		/* Horner's algorithm */
+		Polynomial<E> evaluation = getAddIdentity();
+		for (int i = g.degree(); i >= 0; i--) {
+			evaluation = pseudoDivision(add(multiply(evaluation, a), g.get(i)), f).getThird();
+		}
+		return evaluation;
+	}
+
+	@Deprecated
+	public Polynomial<E> bruteForceModularComposition(Polynomial<E> f, Polynomial<E> g, Polynomial<E> h) {
+		/* This is just the brute force algorithm. */
+		Polynomial<E> composition = getAddIdentity();
+		int n = g.degree();
+		for (int i = 0; i <= n; i++) {
+			composition = add(composition, multiply(power(h, new BigInteger(Integer.toString(i))), g.get(i)));
+		}
+		return pseudoDivision(composition, f).getThird();
 	}
 
 }

@@ -1,6 +1,8 @@
 package structures.concrete;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import structures.basic.EuclideanDomain;
 
@@ -65,6 +67,21 @@ public class Integers extends EuclideanDomain<BigInteger> {
 	public boolean isPrime(BigInteger a) {
 		/* Agrawal-Kayal-Saxena (AKS) algorithm. */
 		return false;
+	}
+
+	/** Returns a list with the prime factors of the given number. */
+	public List<BigInteger> factor(BigInteger a) {
+		/* Just a really dumb algorithm. */
+		ArrayList<BigInteger> factors = new ArrayList<BigInteger>();
+		for (BigInteger i = BigInteger.ONE; i.compareTo(a) <= 0; i = i.add(BigInteger.ONE)) {
+			if (a.mod(i).equals(BigInteger.ZERO)) {
+				factors.add(i);
+				if (!i.equals(a.divide(i))) {
+					factors.add(a.divide(i));
+				}
+			}
+		}
+		return factors;
 	}
 
 }

@@ -1,33 +1,80 @@
 package structures.concrete;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import structures.complex.FieldPolynomials;
 import structures.complex.FiniteField;
+import utils.FiniteFieldElement;
 import utils.Polynomial;
 
-/*¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡APAÑAR PARSING!!!!!!!!!!!*/
-
 /** Represents the set of polynomials over Fq (Fq[t]). */
-public class FiniteFieldPolynomials
-		extends FieldPolynomials<Polynomial<Polynomial<BigInteger>>, Polynomial<BigInteger>> {
-	
+public class FiniteFieldPolynomials extends FieldPolynomials<FiniteFieldElement> {
+
 	private FiniteField baseField;
-	
+
+	public enum FactorAlgorithm {
+		CANTOR, BERLEKAMP
+	};
+
+	private FactorAlgorithm factorAlgorithm = FactorAlgorithm.CANTOR;
+
 	public FiniteFieldPolynomials(FiniteField baseField) {
 		super(baseField);
 		this.baseField = baseField;
 	}
 
-	public boolean isIrreducible(Polynomial<Polynomial<BigInteger>> f) {
-		/*REVISAR TOODO Y ARREGLAR PARSING DE POLINOMIOS SOBRE CUERPOS FINITOS, ELEMENTOS SOBRE CUERPOS FINITOS O LO QUE COÑO HAYA FALTA*/
-		/*Compute x^q rem f (use power)*/
-		/*Compute a = x^(q^n) rem f (modular comp)**********/
-		/*if a!=x reducible*/
-		/*Para todo primo t divisor de n (ni idea de como)****************/
-			/*Calcular  b =  x^(q^(n/t)) rem f*/
-			/*si gcd(b-x,f)!=1 reducible*/
-		/*irreducible*/
+	/**
+	 * EXPLODES!!
+	 * 
+	 * NEW POLYNOMIAL REPRESENTATION PROBABLY REQUIRED FOR SPEEDING UP ISSUES
+	 * 
+	 * FAST MODULAR COMPOSITION FOR SURE REQUIRED
+	 */
+	public boolean isIrreducible(Polynomial<FiniteFieldElement> f) {
+		BigInteger n = new BigInteger(Integer.toString(f.degree()));
+		BigInteger q = baseField.getOrder();
+
+		Integers Z = new Integers();
+		List<BigInteger> factors = Z.factor(n);
+
+		if (modularPower(parseElement("t"), Z.power(q, n), f).equals(parseElement("t"))) {
+			for (int i = 0; i < factors.size(); i++) {
+				Polynomial<FiniteFieldElement> b = remainder(parseElement("t^" + Z.power(q, n.divide(factors.get(i)))),
+						f);
+				if (!gcd(add(b, parseElement("-1t")), parseElement("t")).equals(baseField.getProductIdentity())) {
+					return false;
+				}
+			}
+			return true;
+		}
 		return false;
+	}
+
+	public void setFactorAlgorithm(FactorAlgorithm factorAlgorithm) {
+		this.factorAlgorithm = factorAlgorithm;
+	}
+
+	/**
+	 * Returns the factors list of the given polynomial. See the documentation for
+	 * details.
+	 */
+	public List<Polynomial<FiniteFieldElement>> factor(Polynomial<FiniteFieldElement> f) {
+		switch (factorAlgorithm) {
+		case CANTOR:
+			return cantor(f);
+		case BERLEKAMP:
+			return berlekamp(f);
+		default:
+			return null;
+		}
+	}
+
+	public List<Polynomial<FiniteFieldElement>> cantor(Polynomial<FiniteFieldElement> f) {
+		return null;
+	}
+
+	public List<Polynomial<FiniteFieldElement>> berlekamp(Polynomial<FiniteFieldElement> f) {
+		return null;
 	}
 }

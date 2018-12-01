@@ -133,6 +133,23 @@ public class Polynomial<T> {
 	}
 
 	/**
+	 * Evaluates the polynomial in the specified value. See the documentation for
+	 * details.
+	 */
+	public T evaluate(T a) {
+		/* Horner's algorithm */
+		T evaluation = baseRing.getAddIdentity();
+		for (int i = degree(); i >= 0; i--) {
+			evaluation = baseRing.add(baseRing.multiply(evaluation, a), get(i));
+		}
+		return evaluation;
+	}
+
+	public List<T> getCoefficients() {
+		return coefficients;
+	}
+
+	/**
 	 * Two polynomials are equal if they have the same degree, and the same
 	 * coefficients.
 	 */

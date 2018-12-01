@@ -1,74 +1,92 @@
 package structures.complex;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import structures.basic.Field;
 import structures.concrete.Integers;
 import structures.concrete.PrimeModuleIntegers;
+import utils.FiniteFieldElement;
 import utils.Polynomial;
 
-public class FiniteField extends Field<Polynomial<BigInteger>> {
+public class FiniteField extends Field<FiniteFieldElement> {
 	private Polynomial<BigInteger> irrPolMod;
 	private PrimeModuleIntegers baseField;
-	private FieldPolynomials<Polynomial<BigInteger>, BigInteger> polyRing;
+	private FieldPolynomials<BigInteger> polyRing;
 	private BigInteger primeIntMod;
 
 	public FiniteField(BigInteger primeIntMod, Polynomial<BigInteger> irrPolMod) {
 		this.irrPolMod = irrPolMod;
 		this.primeIntMod = primeIntMod;
 		this.baseField = new PrimeModuleIntegers(primeIntMod);
-		polyRing = new FieldPolynomials<Polynomial<BigInteger>, BigInteger>(baseField);
+		polyRing = new FieldPolynomials<BigInteger>(baseField);
 	}
 
 	@Override
-	public Polynomial<BigInteger> getProductIdentity() {
-		return polyRing.getProductIdentity();
+	public FiniteFieldElement getProductIdentity() {
+		return new FiniteFieldElement(polyRing.getProductIdentity());
 	}
 
 	@Override
-	public Polynomial<BigInteger> getAddIdentity() {
-		return polyRing.getAddIdentity();
+	public FiniteFieldElement getAddIdentity() {
+		return new FiniteFieldElement(polyRing.getAddIdentity());
 	}
 
 	@Override
-	public Polynomial<BigInteger> getAddInverse(Polynomial<BigInteger> a) {
-		return polyRing.remainder(polyRing.getAddInverse(a), irrPolMod);
+	public FiniteFieldElement getAddInverse(FiniteFieldElement a) {
+		return new FiniteFieldElement(polyRing.remainder(polyRing.getAddInverse(a.getPolynomial()), irrPolMod));
 	}
 
 	@Override
-	public Polynomial<BigInteger> add(Polynomial<BigInteger> a, Polynomial<BigInteger> b) {
-		return polyRing.remainder(polyRing.add(a, b), irrPolMod);
+	public FiniteFieldElement add(FiniteFieldElement a, FiniteFieldElement b) {
+		return new FiniteFieldElement(
+				polyRing.remainder(polyRing.add(a.getPolynomial(), b.getPolynomial()), irrPolMod));
 	}
 
 	@Override
-	public Polynomial<BigInteger> multiply(Polynomial<BigInteger> a, Polynomial<BigInteger> b) {
-		return polyRing.remainder(polyRing.multiply(a, b), irrPolMod);
+	public FiniteFieldElement multiply(FiniteFieldElement a, FiniteFieldElement b) {
+		return new FiniteFieldElement(
+				polyRing.remainder(polyRing.multiply(a.getPolynomial(), b.getPolynomial()), irrPolMod));
+	}
+
+	/**
+	 * We will represent an element in a finite field as a n tuple, that is a string
+	 * like "(a,...,a)". Being n the degree of the irreducible polynomial.
+	 */
+	@Override
+	public FiniteFieldElement parseElement(String s) {
+		s = s.replaceAll("[()]", "");
+		String[] aux = s.split(",");
+		List<BigInteger> coefficients = new ArrayList<BigInteger>();
+		for (int i = 0; i < aux.length; i++) {
+			coefficients.add(new BigInteger(aux[i]));
+		}
+		Polynomial<BigInteger> p = new Polynomial<BigInteger>(coefficients, baseField);
+		return new FiniteFieldElement(polyRing.remainder(p, irrPolMod));
 	}
 
 	@Override
-	public Polynomial<BigInteger> parseElement(String s) {
-		return polyRing.remainder(polyRing.parseElement(s), irrPolMod);
-	}
-
-	@Override
-	public Polynomial<BigInteger> getProductInverse(Polynomial<BigInteger> a) {
+	public FiniteFieldElement getProductInverse(FiniteFieldElement a) {
 		/*
 		 * The greater common divisor will always be a unit, we just normalize it to be
 		 * the product identity, so the product inverse matches with the first
-		 * coefficient of the B�zout's identity
+		 * coefficient of the Bezout's identity.
 		 */
-		BigInteger factor = baseField.getProductInverse(polyRing.gcd(a, irrPolMod).leading());
-		return polyRing.remainder(polyRing.intMultiply((polyRing.bezout(a, irrPolMod).getFirst()), factor), irrPolMod);
+		BigInteger factor = baseField.getProductInverse(polyRing.gcd(a.getPolynomial(), irrPolMod).leading());
+		return new FiniteFieldElement(polyRing.remainder(
+				polyRing.intMultiply((polyRing.bezout(a.getPolynomial(), irrPolMod).getFirst()), factor), irrPolMod));
 	}
 
 	@Override
-	public Polynomial<BigInteger> intMultiply(Polynomial<BigInteger> a, BigInteger k) {
-		return polyRing.remainder(polyRing.intMultiply(a, k), irrPolMod);
+	public FiniteFieldElement intMultiply(FiniteFieldElement a, BigInteger k) {
+		return new FiniteFieldElement(polyRing.remainder(polyRing.intMultiply(a.getPolynomial(), k), irrPolMod));
 	}
 
 	@Override
-	public Polynomial<BigInteger> divFactor(Polynomial<BigInteger> a, Polynomial<BigInteger> b) {
-		return polyRing.remainder(polyRing.divFactor(a, b), irrPolMod);
+	public FiniteFieldElement divFactor(FiniteFieldElement a, FiniteFieldElement b) {
+		return new FiniteFieldElement(
+				polyRing.remainder(polyRing.divFactor(a.getPolynomial(), b.getPolynomial()), irrPolMod));
 	}
 
 	/** Returns the order of the finite field */
@@ -76,5 +94,4 @@ public class FiniteField extends Field<Polynomial<BigInteger>> {
 		Integers Z = new Integers();
 		return Z.power(primeIntMod, new BigInteger(Integer.toString(irrPolMod.degree())));
 	}
-
 }

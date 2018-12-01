@@ -1,5 +1,6 @@
 package structures.basic;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import utils.Pair;
@@ -66,7 +67,8 @@ public abstract class EuclideanDomain<T> extends Ring<T> {
 	}
 
 	/**
-	 * Computes the inverse function of the Chinese Reminder Theorem projection.
+	 * Computes the inverse function of the Chinese Reminder Theorem projection. See
+	 * the documentation for details.
 	 * 
 	 * Both lists have to be the same size.
 	 * 
@@ -89,4 +91,20 @@ public abstract class EuclideanDomain<T> extends Ring<T> {
 		return inverse;
 	}
 
+	public T modularPower(T a, BigInteger k, T module) {
+		/* Repeated squaring algorithm. */
+		String binaryExponent = k.toString(2);
+		T result = a;
+		BigInteger i = new BigInteger(Integer.toString(binaryExponent.length() - 2));
+		while (i.compareTo(BigInteger.ZERO) >= 0) {
+			if (binaryExponent.charAt(binaryExponent.length() - 1 - i.intValue()) == '1') {
+				result = remainder(multiply(multiply(result, result), a), module);
+			} else {
+				result = remainder(multiply(result, result), module);
+			}
+			i = i.subtract(BigInteger.ONE);
+		}
+		return result;
+	}
+	
 }

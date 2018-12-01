@@ -7,51 +7,51 @@ import java.util.List;
 import structures.basic.UniqueFactorizationDomain;
 import utils.Polynomial;
 
-public class UFDPolynomials<T extends Polynomial<E>, E> extends UniqueFactorizationDomain<T> {
+public class UFDPolynomials<E> extends UniqueFactorizationDomain<Polynomial<E>> {
 
-	private Polynomials<T, E> polyRing;
+	private Polynomials<E> polyRing;
 	private UniqueFactorizationDomain<E> baseRing;
 
 	public UFDPolynomials(UniqueFactorizationDomain<E> baseRing) {
 		this.baseRing = baseRing;
-		polyRing = new Polynomials<T, E>(baseRing);
+		polyRing = new Polynomials<E>(baseRing);
 	}
 
 	@Override
-	public T getAddIdentity() {
+	public Polynomial<E> getAddIdentity() {
 		return polyRing.getAddIdentity();
 	}
 
 	@Override
-	public T getAddInverse(T a) {
+	public Polynomial<E> getAddInverse(Polynomial<E> a) {
 		return polyRing.getAddInverse(a);
 	}
 
 	@Override
-	public T add(T a, T b) {
+	public Polynomial<E> add(Polynomial<E> a, Polynomial<E> b) {
 		return polyRing.add(a, b);
 	}
 
 	@Override
-	public T multiply(T a, T b) {
+	public Polynomial<E> multiply(Polynomial<E> a, Polynomial<E> b) {
 		return polyRing.multiply(a, b);
 	}
 
 	@Override
-	public T parseElement(String latexString) {
+	public Polynomial<E> parseElement(String latexString) {
 		return polyRing.parseElement(latexString);
 	}
 
 	@Override
-	public boolean divides(T a, T b) {
+	public boolean divides(Polynomial<E> a, Polynomial<E> b) {
 		return polyRing.divides(a, b);
 	}
 
 	/* Primitive euclid's algorithm. Read about Gauss lemma */
 	@Override
-	public T gcd(T a, T b) {
+	public Polynomial<E> gcd(Polynomial<E> a, Polynomial<E> b) {
 		while (!b.equals(getAddIdentity())) {
-			T r = polyRing.pseudoDivision(a, b).getThird();
+			Polynomial<E> r = polyRing.pseudoDivision(a, b).getThird();
 			E c = content(a);
 			r = primitivePart(r, c);
 			a = b;
@@ -60,16 +60,15 @@ public class UFDPolynomials<T extends Polynomial<E>, E> extends UniqueFactorizat
 		return a;
 	}
 
-	@SuppressWarnings("unchecked")
-	private T primitivePart(T r, E c) {
+	private Polynomial<E> primitivePart(Polynomial<E> r, E c) {
 		List<E> coefficients = new ArrayList<E>();
 		for (int i = 0; i < r.size(); i++) {
 			coefficients.add(baseRing.divFactor(r.get(i), c));
 		}
-		return r = (T) new Polynomial<E>(coefficients, baseRing);
+		return r = new Polynomial<E>(coefficients, baseRing);
 	}
 
-	public E content(T a) {
+	public E content(Polynomial<E> a) {
 		E c = a.leading();
 		for (int i = a.size() - 2; i >= 0; i--) {
 			c = baseRing.gcd(c, a.get(i));
@@ -78,17 +77,17 @@ public class UFDPolynomials<T extends Polynomial<E>, E> extends UniqueFactorizat
 	}
 
 	@Override
-	public T intMultiply(T a, BigInteger k) {
+	public Polynomial<E> intMultiply(Polynomial<E> a, BigInteger k) {
 		return polyRing.intMultiply(a, k);
 	}
 
 	@Override
-	public T divFactor(T a, T b) {
+	public Polynomial<E> divFactor(Polynomial<E> a, Polynomial<E> b) {
 		return polyRing.divFactor(a, b);
 	}
 
 	@Override
-	public T getProductIdentity() {
+	public Polynomial<E> getProductIdentity() {
 		return polyRing.getProductIdentity();
 	}
 }
