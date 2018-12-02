@@ -25,29 +25,30 @@ public class FiniteField extends Field<FiniteFieldElement> {
 
 	@Override
 	public FiniteFieldElement getProductIdentity() {
-		return new FiniteFieldElement(polyRing.getProductIdentity());
+		return new FiniteFieldElement(polyRing.getProductIdentity(), irrPolMod);
 	}
 
 	@Override
 	public FiniteFieldElement getAddIdentity() {
-		return new FiniteFieldElement(polyRing.getAddIdentity());
+		return new FiniteFieldElement(polyRing.getAddIdentity(), irrPolMod);
 	}
 
 	@Override
 	public FiniteFieldElement getAddInverse(FiniteFieldElement a) {
-		return new FiniteFieldElement(polyRing.remainder(polyRing.getAddInverse(a.getPolynomial()), irrPolMod));
+		return new FiniteFieldElement(polyRing.remainder(polyRing.getAddInverse(a.getPolynomial()), irrPolMod),
+				irrPolMod);
 	}
 
 	@Override
 	public FiniteFieldElement add(FiniteFieldElement a, FiniteFieldElement b) {
-		return new FiniteFieldElement(
-				polyRing.remainder(polyRing.add(a.getPolynomial(), b.getPolynomial()), irrPolMod));
+		return new FiniteFieldElement(polyRing.remainder(polyRing.add(a.getPolynomial(), b.getPolynomial()), irrPolMod),
+				irrPolMod);
 	}
 
 	@Override
 	public FiniteFieldElement multiply(FiniteFieldElement a, FiniteFieldElement b) {
 		return new FiniteFieldElement(
-				polyRing.remainder(polyRing.multiply(a.getPolynomial(), b.getPolynomial()), irrPolMod));
+				polyRing.remainder(polyRing.multiply(a.getPolynomial(), b.getPolynomial()), irrPolMod), irrPolMod);
 	}
 
 	/**
@@ -63,7 +64,7 @@ public class FiniteField extends Field<FiniteFieldElement> {
 			coefficients.add(new BigInteger(aux[i]));
 		}
 		Polynomial<BigInteger> p = new Polynomial<BigInteger>(coefficients, baseField);
-		return new FiniteFieldElement(polyRing.remainder(p, irrPolMod));
+		return new FiniteFieldElement(polyRing.remainder(p, irrPolMod), irrPolMod);
 	}
 
 	@Override
@@ -75,18 +76,20 @@ public class FiniteField extends Field<FiniteFieldElement> {
 		 */
 		BigInteger factor = baseField.getProductInverse(polyRing.gcd(a.getPolynomial(), irrPolMod).leading());
 		return new FiniteFieldElement(polyRing.remainder(
-				polyRing.intMultiply((polyRing.bezout(a.getPolynomial(), irrPolMod).getFirst()), factor), irrPolMod));
+				polyRing.intMultiply((polyRing.bezout(a.getPolynomial(), irrPolMod).getFirst()), factor), irrPolMod),
+				irrPolMod);
 	}
 
 	@Override
 	public FiniteFieldElement intMultiply(FiniteFieldElement a, BigInteger k) {
-		return new FiniteFieldElement(polyRing.remainder(polyRing.intMultiply(a.getPolynomial(), k), irrPolMod));
+		return new FiniteFieldElement(polyRing.remainder(polyRing.intMultiply(a.getPolynomial(), k), irrPolMod),
+				irrPolMod);
 	}
 
 	@Override
 	public FiniteFieldElement divFactor(FiniteFieldElement a, FiniteFieldElement b) {
 		return new FiniteFieldElement(
-				polyRing.remainder(polyRing.divFactor(a.getPolynomial(), b.getPolynomial()), irrPolMod));
+				polyRing.remainder(polyRing.divFactor(a.getPolynomial(), b.getPolynomial()), irrPolMod), irrPolMod);
 	}
 
 	/** Returns the order of the finite field */

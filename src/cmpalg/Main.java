@@ -2,18 +2,23 @@ package cmpalg;
 
 import java.math.BigInteger;
 
+import structures.complex.FiniteField;
 import structures.complex.UFDPolynomials;
+import structures.concrete.FiniteFieldPolynomials;
 import structures.concrete.Integers;
+import utils.FiniteFieldElement;
 import utils.Polynomial;
 
 public class Main {
 	public static void main(String[] args) {
 		Integers Z = new Integers();
-		UFDPolynomials<BigInteger> Zt = new UFDPolynomials<BigInteger>(Z);
+		UFDPolynomials<BigInteger> ZX = new UFDPolynomials<BigInteger>(Z);
+		FiniteField Fq = new FiniteField(new BigInteger("5"), ZX.parseElement("t^2+-1t+1"));
+		FiniteFieldPolynomials FqX = new FiniteFieldPolynomials(Fq);
 
-		Polynomial<BigInteger> p1 = Zt.parseElement("t^3+1");
-		Polynomial<BigInteger> p2 = Zt.parseElement("t^6+1+2t^3");
+		Polynomial<FiniteFieldElement> p1 = FqX.parseElement("(3,3)t^3+(1,1)");
+		Polynomial<FiniteFieldElement> p2 = FqX.parseElement("(2,2)t^6+(1,1)+(4,4)t^3");
 
-		System.out.println(Zt.gcd(p1, p2));
+		System.out.println(FqX.quotient(p2, p1));
 	}
 }
