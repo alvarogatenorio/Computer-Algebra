@@ -14,7 +14,6 @@ public class FiniteFieldElement {
 		this.tupleSize = irrPolMod.degree();
 	}
 
-	/* arreglar la representación */
 	public String toString() {
 		Integers Z = new Integers();
 		String result = "(";
