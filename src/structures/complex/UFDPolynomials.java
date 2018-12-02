@@ -63,7 +63,12 @@ public class UFDPolynomials<E> extends UniqueFactorizationDomain<Polynomial<E>> 
 	private Polynomial<E> primitivePart(Polynomial<E> r, E c) {
 		List<E> coefficients = new ArrayList<E>();
 		for (int i = 0; i < r.size(); i++) {
-			coefficients.add(baseRing.divFactor(r.get(i), c));
+			E aux = r.get(i);
+			if (!aux.equals(baseRing.getAddIdentity())) {
+				coefficients.add(baseRing.divFactor(c, aux));
+			} else {
+				coefficients.add(aux);
+			}
 		}
 		return r = new Polynomial<E>(coefficients, baseRing);
 	}
