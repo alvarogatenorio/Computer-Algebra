@@ -16,9 +16,9 @@ public class Main {
 		FiniteField Fq = new FiniteField(new BigInteger("5"), ZX.parseElement("t^2+-1t+1"));
 		FiniteFieldPolynomials FqX = new FiniteFieldPolynomials(Fq);
 
-		Polynomial<FiniteFieldElement> p1 = FqX.parseElement("(1,0)t^3");
+		Polynomial<FiniteFieldElement> p1 = FqX.parseElement("t");
 		Polynomial<FiniteFieldElement> p2 = FqX.parseElement("(1,0)t^2");
 
-		System.out.println(FqX.gcd(p2, p1));
+		System.out.println(FqX.isIrreducible(p1));
 	}
 }

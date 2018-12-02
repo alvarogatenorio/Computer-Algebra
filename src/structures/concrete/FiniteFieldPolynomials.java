@@ -38,11 +38,11 @@ public class FiniteFieldPolynomials extends FieldPolynomials<FiniteFieldElement>
 		Integers Z = new Integers();
 		List<BigInteger> factors = Z.factor(n);
 
-		if (modularPower(parseElement("t"), Z.power(q, n), f).equals(parseElement("t"))) {
+		if (modularPower(parseElement("t"), Z.power(q, n), f).equals(remainder(parseElement("t"), f))) {
 			for (int i = 0; i < factors.size(); i++) {
-				Polynomial<FiniteFieldElement> b = remainder(parseElement("t^" + Z.power(q, n.divide(factors.get(i)))),
+				Polynomial<FiniteFieldElement> b = modularPower(parseElement("t"), Z.power(q, n.divide(factors.get(i))),
 						f);
-				if (!gcd(add(b, parseElement("-1t")), parseElement("t")).equals(baseField.getProductIdentity())) {
+				if (!gcd(add(b, parseElement("-1t")), f).equals(getProductIdentity())) {
 					return false;
 				}
 			}
