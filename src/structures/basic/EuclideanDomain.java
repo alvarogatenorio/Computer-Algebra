@@ -6,7 +6,7 @@ import java.util.List;
 import utils.Pair;
 
 /** Represents an Euclidean Domain (ED). */
-public abstract class EuclideanDomain<T> extends Ring<T> {
+public abstract class EuclideanDomain<T> extends UniqueFactorizationDomain<T> {
 
 	/**
 	 * Returns the quotient of the euclidean division. The denominator cannot be
@@ -106,5 +106,5 @@ public abstract class EuclideanDomain<T> extends Ring<T> {
 		}
 		return result;
 	}
-	
+
 }
