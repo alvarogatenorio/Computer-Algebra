@@ -60,7 +60,13 @@ public class FiniteField extends Field<FiniteFieldElement> {
 		s = s.replaceAll("[()]", "");
 		String[] aux = s.split(",");
 		List<BigInteger> coefficients = new ArrayList<BigInteger>();
-		for (int i = 0; i < aux.length; i++) {
+
+		int i = aux.length - 1;
+		while (i >= 0 && aux[i].equals("0")) {
+			i--;
+		}
+
+		for (; i >= 0; i--) {
 			coefficients.add(new BigInteger(aux[i]));
 		}
 		Polynomial<BigInteger> p = new Polynomial<BigInteger>(coefficients, baseField);
