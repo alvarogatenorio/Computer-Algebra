@@ -1,2 +1,4 @@
 # Computer Algebra
-Collection of some computer algebra algorithms implemented in Java
+An experimental CAS (Computer Algebra System) writen in Java.
+
+As we like memes very much, we should name it "AlJebra" (at least provisionally).
