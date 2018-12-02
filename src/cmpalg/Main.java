@@ -19,6 +19,6 @@ public class Main {
 		Polynomial<FiniteFieldElement> p1 = FqX.parseElement("(3,3)t^3+(1,1)");
 		Polynomial<FiniteFieldElement> p2 = FqX.parseElement("(2,2)t^6+(1,1)+(4,4)t^3");
 
-		System.out.println(FqX.quotient(p2, p1));
+		System.out.println(FqX.gcd(p2, p1));
 	}
 }
