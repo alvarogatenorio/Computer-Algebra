@@ -24,13 +24,6 @@ public class FiniteFieldPolynomials extends FieldPolynomials<FiniteFieldElement>
 		this.baseField = baseField;
 	}
 
-	/**
-	 * EXPLODES!!
-	 * 
-	 * NEW POLYNOMIAL REPRESENTATION PROBABLY REQUIRED FOR SPEEDING UP ISSUES
-	 * 
-	 * FAST MODULAR COMPOSITION FOR SURE REQUIRED
-	 */
 	public boolean isIrreducible(Polynomial<FiniteFieldElement> f) {
 		BigInteger n = new BigInteger(Integer.toString(f.degree()));
 		BigInteger q = baseField.getOrder();
@@ -38,10 +31,10 @@ public class FiniteFieldPolynomials extends FieldPolynomials<FiniteFieldElement>
 		Integers Z = new Integers();
 		List<BigInteger> factors = Z.factor(n);
 
-		if (modularPower(parseElement("t"), Z.power(q, n), f).equals(remainder(parseElement("t"), f))) {
+		if (remainder(power(parseElement("t"), Z.power(q, n)), f).equals(remainder(parseElement("t"), f))) {
 			for (int i = 0; i < factors.size(); i++) {
-				Polynomial<FiniteFieldElement> b = modularPower(parseElement("t"), Z.power(q, n.divide(factors.get(i))),
-						f);
+				Polynomial<FiniteFieldElement> b = remainder(
+						power(parseElement("t"), Z.power(q, n.divide(factors.get(i)))), f);
 				if (!gcd(add(b, parseElement("-1t")), f).equals(getProductIdentity())) {
 					return false;
 				}
