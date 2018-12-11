@@ -66,6 +66,20 @@ public class Integers extends EuclideanDomain<BigInteger> {
 	/** Returns true if a is prime. */
 	public boolean isPrime(BigInteger a) {
 		/* Agrawal-Kayal-Saxena (AKS) algorithm. */
+		if (perfectPowerTest(a)) {
+			return false;
+		}
+		BigInteger r = null;
+		/*Find r*/
+		if (r.equals(a)) {
+			return true;
+		}
+		if (gcd(a, r).compareTo(BigInteger.ONE) > 1) {
+			return false;
+		}
+		for (BigInteger i = BigInteger.ZERO; i.compareTo(sqrtFloor(r)) <= 1; i = i.add(BigInteger.ONE)) {
+
+		}
 		return false;
 	}
 
@@ -84,4 +98,15 @@ public class Integers extends EuclideanDomain<BigInteger> {
 		return factors;
 	}
 
+	public BigInteger sqrtFloor(BigInteger a) {
+		return null;
+	}
+
+	public BigInteger nthrootFloor() {
+		return null;
+	}
+
+	public boolean perfectPowerTest(BigInteger a) {
+		return false;
+	}
 }
