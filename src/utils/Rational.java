@@ -44,7 +44,7 @@ public class Rational {
 
 	/** Prints the rational number. */
 	public String toString() {
-		return "" + numerator + "/" + denominator;
+		return denominator.equals(BigInteger.ONE) ? "" + numerator : "" + numerator + "/" + denominator;
 	}
 
 	/**
