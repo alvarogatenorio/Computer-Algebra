@@ -70,7 +70,7 @@ public class Integers extends EuclideanDomain<BigInteger> {
 			return false;
 		}
 		BigInteger r = null;
-		/*Find r*/
+		/* Find r */
 		if (r.equals(a)) {
 			return true;
 		}
@@ -87,7 +87,7 @@ public class Integers extends EuclideanDomain<BigInteger> {
 	public List<BigInteger> factor(BigInteger a) {
 		/* Just a really dumb algorithm. */
 		ArrayList<BigInteger> factors = new ArrayList<BigInteger>();
-		for (BigInteger i = BigInteger.ONE; i.compareTo(a) <= 0; i = i.add(BigInteger.ONE)) {
+		for (BigInteger i = new BigInteger("2"); i.compareTo(a) <= 0; i = i.add(BigInteger.ONE)) {
 			if (a.mod(i).equals(BigInteger.ZERO)) {
 				factors.add(i);
 				if (!i.equals(a.divide(i))) {
@@ -107,6 +107,7 @@ public class Integers extends EuclideanDomain<BigInteger> {
 	}
 
 	public boolean perfectPowerTest(BigInteger a) {
+
 		return false;
 	}
 }
