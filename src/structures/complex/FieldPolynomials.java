@@ -166,6 +166,10 @@ public class FieldPolynomials<E> extends EuclideanDomain<Polynomial<E>> {
 		List<List<E>> coefficients = new ArrayList<List<E>>();
 		List<E> gCoefficients = g.getCoefficients();
 		int l = gCoefficients.size();
+		for (int i = 0; i < l % m; i++) {
+			gCoefficients.add(baseRing.getAddIdentity());
+		}
+		l = gCoefficients.size();
 		for (int i = 0; i < m; i++) {
 			if (m * i >= l || m * (1 + i) > l) {
 				break;
@@ -178,7 +182,20 @@ public class FieldPolynomials<E> extends EuclideanDomain<Polynomial<E>> {
 	private Polynomial<Polynomial<E>> buildHugePoly(Matrix<E> A) {
 		List<Polynomial<E>> coefficients = new ArrayList<Polynomial<E>>();
 		for (int i = 0; i < A.getRows(); i++) {
-			coefficients.add(new Polynomial<E>(A.getCoefficients().get(i), baseRing));
+			/* Cleaning extra identities. */
+			List<E> c = A.getCoefficients().get(i);
+			int k = c.size() - 1;
+			for (; k >= 0; k--) {
+				if (!c.get(k).equals(baseRing.getAddIdentity())) {
+					c = c.subList(0, k + 1);
+					break;
+				}
+			}
+			if (k != -1) {
+				coefficients.add(new Polynomial<E>(c, baseRing));
+			} else if (i != A.getRows() - 1) {
+				coefficients.add(new Polynomial<E>(c.subList(0, 1), baseRing));
+			}
 		}
 		return new Polynomial<Polynomial<E>>(coefficients, (Ring<Polynomial<E>>) this);
 	}
