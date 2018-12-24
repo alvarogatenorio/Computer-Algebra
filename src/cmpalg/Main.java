@@ -16,7 +16,9 @@ public class Main {
 	public static void main(String[] args) {
 		Integers Z = new Integers();
 		Rationals Q = new Rationals();
-
+		
+		System.out.println(Z.power(new BigInteger("2"), new BigInteger("15")));
+		
 		FieldPolynomials<Rational> QT = new FieldPolynomials<Rational>(Q);
 		UFDPolynomials<BigInteger> ZT = new UFDPolynomials<BigInteger>(Z);
 

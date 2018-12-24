@@ -17,6 +17,53 @@
 	\end{abstract}
 	\tableofcontents
 	\chapter{Algoritmos implementados}
+	\section{Algoritmos auxiliares}
+	\subsection{Algoritmo de exponenciación binaria}
+	Sea $A$ un anillo conmutativo unitario. Consideremos $a\in A$ y $n\in \N$ de manera que $n>0$. Nuestro objetivo es tener un algoritmo eficiente para calcular $a^n$.
+	
+	Para ello, tomemos la representación binaria de $n$, es decir, $n= 2^k+\sum_{i=0}^{k-1}n_i2^i$, así como la sucesión $\{r_i\}_{i=0}^{k}$ definida de la siguiente manera.
+	\begin{equation*}
+		r_i:=\left\{\begin{array}{lcr}
+			a &\text{ si }& i=k\\
+			r_{i+1}^2a &\text{si}& n_i=1\\
+			r_{i+1}^2a &\text{si}& n_i=0
+		\end{array}\right.
+	\end{equation*}
+	Demostremos que $r_0$ es $a^n$. Para ello, veamos por inducción que, $r_i= a^{\lfloor n/2^i\rfloor}$. La demostración es inmediata, una vez se comprueba que
+	\begin{equation*}
+		\lfloor n/2^i\rfloor = \sum_{l=0}^{k-i}n_{l+i}2^{l}
+	\end{equation*}
+De esta manera, para obtener $a^n$ basta con calcular la sucesión desde el término $k$ hasta el término $0$. Como $k=\lfloor\log n\rfloor$, tenemos un algoritmo de exponenciación lineal respecto del número de cifras del exponente.
+	\begin{figure}[H]
+		\begin{minted}
+			[frame=lines,
+			framesep=2mm,
+			baselinestretch=1,
+			fontsize=\scriptsize,
+			tabsize=4]
+			{java}
+public E power(E a, BigInteger k) {
+	E result = getProductIdentity();
+	if (!k.equals(BigInteger.ZERO)) {
+		/* Repeated squaring algorithm. */
+		String binaryExponent = k.toString(2);
+		result = a;
+		for (BigInteger i = new BigInteger(Integer.toString(binaryExponent.length() - 2)); i
+		.compareTo(BigInteger.ZERO) >= 0; i = i.subtract(BigInteger.ONE)) {
+			if (binaryExponent.charAt(binaryExponent.length() - 1 - i.intValue()) == '1') {
+				result = multiply(multiply(result, result), a);
+			} else {
+				result = multiply(result, result);
+			}
+		}
+	}
+	return result;
+}
+		\end{minted}
+		\caption{Código Java del algoritmo de exponenciación binaria.}
+		\label{rep_sqr}
+	\end{figure}
+Este algoritmo está programado en la clase \mintinline{java}{Ring}.
 	\section{Algoritmos de Euclides}
 	A continuación presentamos las diferentes variantes implementadas del algoritmo de Euclides.
 	\subsection{Algoritmo de Euclides simple}
