@@ -33,7 +33,7 @@ public class FiniteFieldPolynomials extends FieldPolynomials<FiniteFieldElement>
 		Integers Z = new Integers();
 		List<BigInteger> factors = Z.factor(n);
 
-		Polynomial<FiniteFieldElement> tq = modularPower(parseElement("t"), q, f);
+		Polynomial<FiniteFieldElement> tq = power(parseElement("t"), q, f);
 		String binaryN = n.toString(2);
 		List<Polynomial<FiniteFieldElement>> powers = computePowersOfTwo(binaryN.length(), tq, f);
 		Polynomial<FiniteFieldElement> tqn = computePower(binaryN, powers, f);

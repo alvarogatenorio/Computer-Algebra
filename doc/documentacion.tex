@@ -26,7 +26,7 @@
 		r_i:=\left\{\begin{array}{lcr}
 			a &\text{ si }& i=k\\
 			r_{i+1}^2a &\text{si}& n_i=1\\
-			r_{i+1}^2a &\text{si}& n_i=0
+			r_{i+1}^2 &\text{si}& n_i=0
 		\end{array}\right.
 	\end{equation*}
 	Demostremos que $r_0$ es $a^n$. Para ello, veamos por inducción que, $r_i= a^{\lfloor n/2^i\rfloor}$. La demostración es inmediata, una vez se comprueba que
@@ -63,29 +63,47 @@ public E power(E a, BigInteger k) {
 		\caption{Código Java del algoritmo de exponenciación binaria.}
 		\label{rep_sqr}
 	\end{figure}
-Este algoritmo está programado en la clase \mintinline{java}{Ring}.
-	\section{Algoritmos de Euclides}
-	A continuación presentamos las diferentes variantes implementadas del algoritmo de Euclides.
-	\subsection{Algoritmo de Euclides simple}
+Este algoritmo está programado en la clase \mintinline{java}{Ring<E>}.
+\subsection{Algoritmo de composición modular rápida}
+\section{Algoritmo de Euclides simple}
 	Sea $A$ un dominio euclídeo con función de grado $\varphi$. Recordemos, antes de comenzar, el siguiente resultado.
 	\begin{lem}[Euclides]
 		\label{lem_euclides}
-		Dado $A$ un dominio, consideremos $a,b,q,r\in A$ que verifican $a=bq+r$. Entonces, si existen, tanto el máximo común divisor de $a$ y $b$, como el de $b$ y $r$, esto coinciden \textbf{(salvo unidades)}.
+		Dado $A$ un dominio, consideremos $a,b,q,r\in A$ que verifican $a=bq+r$. Entonces, si existen, tanto el máximo común divisor de $a$ y $b$, como el de $b$ y $r$, coinciden \textbf{salvo unidades}.
 	\end{lem}
 	
 	Consideramos dos elementos $a,b\in A$, siendo $b\not=0$. Nuestro objetivo es \tb{calcular el máximo común divisor} de $a$ y $b$.
 	
 	Para ello, dividimos $a$ entre $b$, obteniendo dos elementos $q_1,r_1\in A$ tales que $a=bq_1+r_1$, siendo, o bien $r_1=0$, o bien $r_1\not=0$ y $\varphi(r_1)<\varphi(b)$. Esto es debido a que $A$ es un dominio euclídeo.
 	
-	Es claro que si $r_1=0$, $b$ es divisor de $a$, y por tanto $b=\text{mcd}(a,b)$, con lo que habríamos terminado. En caso contrario, como por el lema \eqref{lem_euclides} se cumple que $\text{mcd}(a,b)=\text{mcd}(b,r_1)$, podemos repetir el proceso con $b$ y $r_1$, obteniendo dos nuevos elementos $q_2,r_2\in A$, cumpliendo hipótesis análogas a $q_1$ y $r_1$.
+	Es claro que, si $r_1=0$, $b$ es divisor de $a$, y por tanto $b=\text{mcd}(a,b)$, con lo que habríamos terminado. En caso contrario, como por el lema \eqref{lem_euclides} se cumple que $\text{mcd}(a,b)=\text{mcd}(b,r_1)$, podemos repetir el proceso con $b$ y $r_1$, obteniendo dos nuevos elementos $q_2,r_2\in A$, cumpliendo hipótesis análogas a las que cumplían $q_1$ y $r_1$.
 	
 	Nótese que este proceso \tb{solo puede ser repetido un número finito de veces}, ya que, cada vez que repetimos el proceso, la función de grado del resto de la división decrece estrictamente.
 	
-	A este método de cálculo del máximo común divisor se le conoce como \tbi{algoritmo de Euclides}, y es precisamente el algoritmo que implementa el método \mintinline{java}{gcd(T a, T b)} de la clase \mintinline{java}{EuclideanDomain<T>}.
-	\subsection{Algoritmo de Euclides extendido}
-	Basándonos en el algoritmo de Euclides, podemos, además de calcular el máximo común divisor de dos números, extraer una \textbf{identidad de Bézout} que los relacione. Si bien esta extensión del algoritmo de Euclides sólo es válida para dominios euclídeos con unidad, como veremos a continuación.
-	
-	Partimos de un dominio euclídeo con unidad $A$, considerando dos elementos $a,b\in A$, siendo $b$ no nulo.
+	A este método de cálculo del máximo común divisor se le conoce como \tbi{algoritmo de Euclides}, y es precisamente el algoritmo que implementa el método \mintinline{java}{gcd(E a, E b)} de la clase \mintinline{java}{EuclideanDomain<E>}.
+	\begin{figure}[H]
+		\begin{minted}
+			[frame=lines,
+			framesep=2mm,
+			baselinestretch=1,
+			fontsize=\scriptsize,
+			tabsize=4]
+			{java}
+public E gcd(E a, E b) {
+	/* Euclid's algorithm. */
+	while (!b.equals(getAddIdentity())) {
+		E r = remainder(a, b);
+		a = b;
+		b = r;
+	}
+	return a;
+}
+		\end{minted}
+		\caption{Código Java del algoritmo de Euclides.}
+		\label{euclides}
+	\end{figure}
+\section{Algoritmo de Euclides extendido}
+	Basándonos en el algoritmo de Euclides, podemos, además de calcular el máximo común divisor de dos números, extraer una \textbf{identidad de Bézout} que los relacione. Partimos de un dominio euclídeo $A$, considerando dos elementos $a,b\in A$, siendo $b$ no nulo.
 	
 	Procedemos, como en el algoritmo de Euclides, dividiendo $a$ y $b$, obteniendo $q_1,r_1\in A$ cumpliendo las hipótesis habituales que garantizan que nuestro procedimiento es finito.
 	
@@ -118,8 +136,62 @@ Este algoritmo está programado en la clase \mintinline{java}{Ring}.
 	
 	De esta manera, cuando llegamos a una iteración del procedimiento en la cual $r_l=0$, es decir, $r_{l-1}$ es el máximo común divisor, para obtener la identidad de Bézout basta recuperar los coeficientes $\alpha_{l-1}$ y $\beta_{l-1}$.
 	
-	Esto puede ir haciéndose sobre la marcha, con una implementación muy similar a la del cálculo de términos de la sucesión de Fibonacci. A este algoritmo se le conoce como \tbi{algoritmo de Euclides extendido}, y es el algoritmo programado en el método \mintinline{java}{bezout} de la clase \mintinline{java}{EuclideanUnitDomain}.
-	\subsection{Algoritmo de Euclides para polinomios sobre DFU's}
+	Esto puede ir haciéndose sobre la marcha, con una implementación muy similar a la del cálculo de términos de la sucesión de Fibonacci. A este algoritmo se le conoce como \tbi{algoritmo de Euclides extendido}, y es el algoritmo programado en el método \mintinline{java}{bezout(E a, E b)} de la clase \mintinline{java}{EuclideanDomain<E>}.
+	
+	En el caso particular en el que $A[\texttt{x}]$ es un anillo de polinomios que es dominio euclídeo, se tiene el siguiente resultado, que usaremos más adelante.
+	\begin{cor}[Grados de los coeficientes]
+		Dados $f,g\in A[\texttt{x}]$ tales que el algoritmo de Euclides extendido devuelve la identidad de Bézout $uf+vg=h$, entonces se cumple que  $\deg(u)<\deg(g)-\deg(h)$ y $\deg(v)<\deg(f)-\deg(h)$.
+	\end{cor}
+	\begin{proof}
+		Llamemos $\{u_i\}_{i=2}^{n}$ y $\{v_i\}_{i=2}^{n}$ a los coeficientes de las pseudo--identidades que va generando el algoritmo en cada iteración.
+		
+		Por inducción se demuestra muy fácilmente que $\deg(v_i)=\deg(f)-\deg(r_{i-1})$ y que $\deg(u_i)=\deg(g)-\deg(r_{i-1})$.
+		
+		Finalmente, como $\deg(r_n)<\deg(r_{n-1})$, se tienen ambas desigualdades.
+	\end{proof}
+	\begin{figure}[H]
+		\begin{minted}
+			[frame=lines,
+			framesep=2mm,
+			baselinestretch=1,
+			fontsize=\scriptsize,
+			tabsize=4]
+			{java}
+public Pair<E> bezout(E a, E b) {
+	/* Extended Euclid's algorithm. */
+	E alphaMinus1 = getAddIdentity();
+	E alphaMinus2 = getProductIdentity();
+	E betaMinus1 = getProductIdentity();
+	E betaMinus2 = getAddIdentity();
+	while (!b.equals(getAddIdentity())) {
+		/* Computes division of a and b */
+		E q = quotient(a, b);
+		E r = remainder(a, b);
+		
+		/*
+		* Just follow the formula for the new pseudo-bezout identity coefficients
+		*/
+		E alphaAux = add(alphaMinus2, getAddInverse(multiply(q, alphaMinus1)));
+		E betaAux = add(betaMinus2, getAddInverse(multiply(q, betaMinus1)));
+		
+		/* Maintaining alphaMinusX and betaMinusX coherent */
+		alphaMinus2 = alphaMinus1;
+		betaMinus2 = betaMinus1;
+		
+		alphaMinus1 = alphaAux;
+		betaMinus1 = betaAux;
+		
+		/* By euclid's lemma gcd(a,b) = gcd(b,r) */
+		a = b;
+		b = r;
+	}
+	return new Pair<E>(alphaMinus2, betaMinus2);
+}
+		\end{minted}
+		\caption{Código Java del algoritmo de Euclides extendido.}
+		\label{euclides_extendido}
+	\end{figure}
+\section{Algoritmo de Euclides primitivo}
 	\section{Algoritmo del teorema chino de los restos}
 	Recordamos brevemente el teorema chino de los restos.
 	\begin{theo}[Teorema chino de los restos]
@@ -133,7 +205,7 @@ Este algoritmo está programado en la clase \mintinline{java}{Ring}.
 		es sobreyectiva.
 	\end{theo}
 	Lo que tratamos de hacer nosotros, por medio de un algoritmo, es hallar $\phi^{-1}$ de un elemento $(a_1+I_1,\dots,a_r+I_r)\in A/I_1\times\dots\times A/I_r$.
-	\section{Algoritmo de inversión de elementos en $\Z_p$ y $\mathbb{F}_q$}
+	\section{Algoritmo de inversión de elementos en $\mathbb{F}_q$}
 	El algoritmo de inversión se basa en el siguiente resultado.
 	\begin{prop}
 		\label{prop_inversoFinito}
@@ -147,4 +219,38 @@ Este algoritmo está programado en la clase \mintinline{java}{Ring}.
 	Únicamente hay que ser cuidadoso, sobre todo en $\mathbb{F}_q$, pues la identidad de Bézout obtenida puede estar expresada, no respecto del elemento neutro del producto, sino respecto de cualquier otra unidad.
 	
 	Se puede consultar el código de este algoritmo en los métodos \mintinline{java}{getProductInverse(T a)} de la clases \mintinline{java}{PrimeModuleIntegers} (que representan a los cuerpos $\Z_p$) y \mintinline{java}{PrimeQuotients}, que representan a los cuerpos $\mathbb{F}_q$.
+		\begin{figure}[H]
+		\begin{minted}
+			[frame=lines,
+			framesep=2mm,
+			baselinestretch=1,
+			fontsize=\scriptsize,
+			tabsize=4]
+			{java}
+public FiniteFieldElement getProductInverse(FiniteFieldElement a) {
+	/*
+	* The greater common divisor will always be a unit, we just normalize it to be
+	* the product identity, so the product inverse matches with the first
+	* coefficient of the Bezout's identity.
+	*/
+	BigInteger factor = baseField.getProductInverse
+	(polyRing.gcd(a.getPolynomial(), irrPolMod).leading());
+	return new FiniteFieldElement(polyRing.remainder(
+	polyRing.intMultiply((polyRing.bezout(a.getPolynomial(), irrPolMod).getFirst()), 
+	factor), irrPolMod), irrPolMod);
+}
+		\end{minted}
+		\caption{Código Java del algoritmo de Euclides de inversión de elementos en cuerpos finitos de orden potencia de primo.}
+		\label{inversion}
+	\end{figure}
+	\section{Criterio de irreducibilidad en $\mathbb{F}_q[\texttt{x}]$}
+	\section{Algoritmo de Cantor y Zassenhaus en $\mathbb{F}_q[\texttt{x}]$}
+	\subsection{Fase I}
+	\subsection{Fase II}
+	\subsection{Fase III}
+	\section{Algoritmo de Berlekamp en $\mathbb{F}_q[\texttt{x}]$}
+	\section{Algoritmo de Kronecker en $\mathbb{Z}[\texttt{x}]$}
+	\section{Algoritmo de factorización modular en $\mathbb{Z}[\texttt{x}]$}
+	\section{Criterio de primalidad AKS en $\Z$}
+	\section{Logaritmo discreto}
 \end{document}
