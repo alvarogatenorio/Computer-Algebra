@@ -2,27 +2,27 @@ package cmpalg;
 
 import java.math.BigInteger;
 
-import structures.complex.FieldPolynomials;
-import structures.complex.FiniteField;
-import structures.complex.UFDPolynomials;
-import structures.concrete.FiniteFieldPolynomials;
-import structures.concrete.Integers;
-import structures.concrete.Rationals;
-import utils.FiniteFieldElement;
-import utils.Polynomial;
-import utils.Rational;
+import cmpalg.generic.finiteFields.PrimeField;
+import cmpalg.generic.finiteFields.PrimeFieldElement;
+import cmpalg.generic.finiteFields.PrimePowerField;
+import cmpalg.generic.finiteFields.PrimePowerFieldElement;
+import structures.concrete.euclideanDomains.Integers;
+import structures.concrete.polynomials.FiniteFieldPolynomials;
+import structures.concrete.rationals.Rational;
+import structures.concrete.rationals.Rationals;
+import structures.generic.polynomials.FieldPolynomials;
+import structures.generic.polynomials.Polynomial;
 
 public class Main {
 	public static void main(String[] args) {
 		Integers Z = new Integers();
 		Rationals Q = new Rationals();
-		
-		System.out.println(Z.power(new BigInteger("2"), new BigInteger("15")));
-		
-		FieldPolynomials<Rational> QT = new FieldPolynomials<Rational>(Q);
-		UFDPolynomials<BigInteger> ZT = new UFDPolynomials<BigInteger>(Z);
+		PrimeField Z5 = new PrimeField(new BigInteger("5"));
 
-		FiniteField Fq = new FiniteField(new BigInteger("5"), ZT.parseElement("t^3+4t+2"));
+		System.out.println(Z.power(new BigInteger("2"), new BigInteger("15")));
+
+		FieldPolynomials<Rational> QT = new FieldPolynomials<Rational>(Q);
+		FieldPolynomials<PrimeFieldElement> Z5T = new FieldPolynomials<PrimeFieldElement>(Z5);
 
 		Polynomial<Rational> f = QT.parseElement("t^6+t^5+t^4+3t^2+1");
 		Polynomial<Rational> g = QT.parseElement("t^2+t");
@@ -33,8 +33,9 @@ public class Main {
 		System.out.println("h:= " + h);
 		System.out.println("g(h) mod f:= " + r);
 
-		FiniteFieldPolynomials FqT = new FiniteFieldPolynomials(Fq);
-		Polynomial<FiniteFieldElement> ff = FqT.parseElement("t");
+		PrimePowerField Fq = new PrimePowerField(new BigInteger("5"), Z5T.parseElement("t^3+4t+2"));
+		FiniteFieldPolynomials<PrimePowerFieldElement> FqT = new FiniteFieldPolynomials<PrimePowerFieldElement>(Fq);
+		Polynomial<PrimePowerFieldElement> ff = FqT.parseElement("t");
 		System.out.println(FqT.isIrreducible(ff));
 	}
 }

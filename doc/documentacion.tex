@@ -300,10 +300,17 @@ public Polynomial<E> gcd(Polynomial<E> a, Polynomial<E> b) {
 	\end{figure}
 	Este algoritmo está implementado en el método \mintinline{java}{chineseRemainderInverse} de la clase \mintinline{java}{EuclideanDomain}.
 	\section{Algoritmo de inversión de elementos en $\mathbb{F}_q$}
+	Antes de comenzar, veamos un pequeño lema auxiliar.
+	\begin{lem}[Identidad de Bézout y coprimalidad]
+		Dados $a,b\in A$, siendo $A$ un DE, $a$ y $b$ son coprimos si y solo si existen $\alpha,\beta\in A$ tales que $\alpha a+\beta b = 1$.
+	\end{lem}
+	\begin{proof}
+		La implicación a la derecha es evidente. Recíprocamente, si existen $\alpha,\beta\in A$ tales que $\alpha a+\beta b = 1$, entonces, si $d:=\text{mcd}(a,b)$, es claro que $d$ divide a $\alpha a+\beta b=1$, luego $d$ es una unidad. En otras palabras, $a$ y $b$ son coprimos.
+	\end{proof}
 	El algoritmo de inversión se basa en el siguiente resultado.
 	\begin{prop}
 		\label{prop_inversoFinito}
-		Dado $A$ un dominio euclídeo con unidad y $a,m\in A$. $A$ es invertible en $A/mA$ si y solo si $\mathrm{mcd}(a,m)=1$.
+		Dado $A$ un dominio euclídeo y $a,m\in A$. $A$ es invertible en $A/mA$ si y solo si $\mathrm{mcd}(a,m)=1$.
 	\end{prop}
 	\begin{proof}
 		En efecto, $a$ es una unidad si y solo si existe un $c\in A$ tal que $ac=1+\lambda m$. Despejando la igualdad obtenemos que $ac-\lambda m=1$, que es una identidad de Bézout con el elemento neutro del producto.
@@ -311,9 +318,7 @@ public Polynomial<E> gcd(Polynomial<E> a, Polynomial<E> b) {
 	Basta por tanto con darse cuenta de que el inverso de $a$ en la proposición \eqref{prop_inversoFinito} es el coeficiente de la identidad de Bézout que acompaña a $a$. Como podemos calcular los coeficientes de dicha identidad mediante el algoritmo de Euclides extendido, el algoritmo para obtener el inverso es inmediato.
 	
 	Únicamente hay que ser cuidadoso, sobre todo en $\mathbb{F}_q$, pues la identidad de Bézout obtenida puede estar expresada, no respecto del elemento neutro del producto, sino respecto de cualquier otra unidad.
-	
-	Se puede consultar el código de este algoritmo en los métodos \mintinline{java}{getProductInverse(T a)} de la clases \mintinline{java}{PrimeModuleIntegers} (que representan a los cuerpos $\Z_p$) y \mintinline{java}{PrimeQuotients}, que representan a los cuerpos $\mathbb{F}_q$.
-		\begin{figure}[H]
+		\begin{figure}[h!]
 		\begin{minted}
 			[frame=lines,
 			framesep=2mm,

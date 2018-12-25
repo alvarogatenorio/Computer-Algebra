@@ -1,4 +1,4 @@
-package structures.basic;
+package cmpalg.generic.basic;
 
 import java.math.BigInteger;
 import java.util.List;

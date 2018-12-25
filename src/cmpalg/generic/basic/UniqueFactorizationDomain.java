@@ -1,4 +1,4 @@
-package structures.basic;
+package cmpalg.generic.basic;
 
 /** Represents an unique factorization domain (UFD). */
 public abstract class UniqueFactorizationDomain<E> extends Ring<E> {

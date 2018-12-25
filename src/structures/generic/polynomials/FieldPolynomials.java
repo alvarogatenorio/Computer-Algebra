@@ -1,26 +1,25 @@
-package structures.complex;
+package structures.generic.polynomials;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import structures.basic.EuclideanDomain;
-import structures.basic.Field;
-import structures.basic.Ring;
-import utils.Matrix;
-import utils.Matrixes;
+import cmpalg.generic.basic.EuclideanDomain;
+import cmpalg.generic.basic.Field;
+import cmpalg.generic.basic.Ring;
+import structures.generic.matrixes.Matrix;
+import structures.generic.matrixes.Matrixes;
 import utils.Pair;
-import utils.Polynomial;
 
 /** Represents the ring of polynomials over a field */
 public class FieldPolynomials<E> extends EuclideanDomain<Polynomial<E>> {
 
 	protected Polynomials<E> polyRing;
-	protected Field<E> baseRing;
+	protected Field<E> baseField;
 
 	public FieldPolynomials(Field<E> baseRing) {
 		polyRing = new Polynomials<E>(baseRing);
-		this.baseRing = baseRing;
+		this.baseField = baseRing;
 	}
 
 	@Override
@@ -71,22 +70,22 @@ public class FieldPolynomials<E> extends EuclideanDomain<Polynomial<E>> {
 			r = a;
 		} else {
 			if (a.degree() == 0) {
-				q = multiply(a, baseRing.getProductInverse(b.independent()));
+				q = multiply(a, baseField.getProductInverse(b.independent()));
 				r = getAddIdentity();
 			} else {
 				Polynomial<E> h = add(a,
 						multiply(
-								multiply(parseElement("t^" + (a.degree() - b.degree())), baseRing.multiply(
-										baseRing.getAddInverse(a.leading()), baseRing.getProductInverse(b.leading()))),
+								multiply(parseElement("t^" + (a.degree() - b.degree())), baseField.multiply(
+										baseField.getAddInverse(a.leading()), baseField.getProductInverse(b.leading()))),
 								b));
 				if (h.degree() < b.degree()) {
 					q = multiply(parseElement("t^" + (a.degree() - b.degree())),
-							baseRing.multiply(a.leading(), baseRing.getProductInverse(b.leading())));
+							baseField.multiply(a.leading(), baseField.getProductInverse(b.leading())));
 					r = h;
 				} else {
 					Pair<Polynomial<E>> aux = division(h, b);
 					q = add(multiply(parseElement("t^" + (a.degree() - b.degree())),
-							baseRing.multiply(a.leading(), baseRing.getProductInverse(b.leading()))), aux.getFirst());
+							baseField.multiply(a.leading(), baseField.getProductInverse(b.leading()))), aux.getFirst());
 					r = aux.getSecond();
 				}
 			}
@@ -128,7 +127,7 @@ public class FieldPolynomials<E> extends EuclideanDomain<Polynomial<E>> {
 		List<List<E>> gPolynomials = buildGPolynomials(g, m);
 
 		/* Computing the matrix product... */
-		Matrixes<E> M = new Matrixes<E>(baseRing);
+		Matrixes<E> M = new Matrixes<E>(baseField);
 		Matrix<E> H = M.fill(hPowers.subList(0, hPowers.size() - 1), m, n);
 		Matrix<E> G = M.fill(gPolynomials, m, m);
 		Matrix<E> A = M.multiply(G, H);
@@ -137,7 +136,7 @@ public class FieldPolynomials<E> extends EuclideanDomain<Polynomial<E>> {
 		Polynomial<Polynomial<E>> b = buildHugePoly(A);
 
 		/* Evaluating the huge polynomial modulo f... */
-		Polynomial<E> p = new Polynomial<E>(hPowers.get(hPowers.size() - 1), baseRing);
+		Polynomial<E> p = new Polynomial<E>(hPowers.get(hPowers.size() - 1), baseField);
 		return evaluate(p, b, f);
 	}
 
@@ -167,7 +166,7 @@ public class FieldPolynomials<E> extends EuclideanDomain<Polynomial<E>> {
 		List<E> gCoefficients = g.getCoefficients();
 		int l = gCoefficients.size();
 		for (int i = 0; i < l % m; i++) {
-			gCoefficients.add(baseRing.getAddIdentity());
+			gCoefficients.add(baseField.getAddIdentity());
 		}
 		l = gCoefficients.size();
 		for (int i = 0; i < m; i++) {
@@ -186,15 +185,15 @@ public class FieldPolynomials<E> extends EuclideanDomain<Polynomial<E>> {
 			List<E> c = A.getCoefficients().get(i);
 			int k = c.size() - 1;
 			for (; k >= 0; k--) {
-				if (!c.get(k).equals(baseRing.getAddIdentity())) {
+				if (!c.get(k).equals(baseField.getAddIdentity())) {
 					c = c.subList(0, k + 1);
 					break;
 				}
 			}
 			if (k != -1) {
-				coefficients.add(new Polynomial<E>(c, baseRing));
+				coefficients.add(new Polynomial<E>(c, baseField));
 			} else if (i != A.getRows() - 1) {
-				coefficients.add(new Polynomial<E>(c.subList(0, 1), baseRing));
+				coefficients.add(new Polynomial<E>(c.subList(0, 1), baseField));
 			}
 		}
 		return new Polynomial<Polynomial<E>>(coefficients, (Ring<Polynomial<E>>) this);

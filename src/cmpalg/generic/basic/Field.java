@@ -1,4 +1,4 @@
-package structures.basic;
+package cmpalg.generic.basic;
 
 /** Represents a field. */
 public abstract class Field<E> extends EuclideanDomain<E> {

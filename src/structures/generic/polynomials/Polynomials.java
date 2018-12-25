@@ -1,13 +1,12 @@
-package structures.complex;
+package structures.generic.polynomials;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import structures.basic.Ring;
-import utils.Matrix;
-import utils.Matrixes;
-import utils.Polynomial;
+import cmpalg.generic.basic.Ring;
+import structures.generic.matrixes.Matrix;
+import structures.generic.matrixes.Matrixes;
 import utils.Triple;
 
 /**

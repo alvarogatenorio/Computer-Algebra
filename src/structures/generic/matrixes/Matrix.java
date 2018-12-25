@@ -1,4 +1,4 @@
-package utils;
+package structures.generic.matrixes;
 
 import java.util.List;
 

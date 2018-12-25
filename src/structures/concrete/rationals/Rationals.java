@@ -1,9 +1,9 @@
-package structures.concrete;
+package structures.concrete.rationals;
 
 import java.math.BigInteger;
 
-import structures.basic.Field;
-import utils.Rational;
+import cmpalg.generic.basic.Field;
+import structures.concrete.euclideanDomains.Integers;
 
 /**
  * Represents the field of rational numbers (Q). Notice that every operation

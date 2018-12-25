@@ -1,9 +1,9 @@
-package utils;
+package structures.generic.matrixes;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import structures.basic.Ring;
+import cmpalg.generic.basic.Ring;
 
 public class Matrixes<T> {
 

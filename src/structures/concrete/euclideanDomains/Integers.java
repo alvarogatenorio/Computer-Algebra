@@ -1,10 +1,10 @@
-package structures.concrete;
+package structures.concrete.euclideanDomains;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import structures.basic.EuclideanDomain;
+import cmpalg.generic.basic.EuclideanDomain;
 
 /** Represents the euclidean domain of integer numbers (Z). */
 public class Integers extends EuclideanDomain<BigInteger> {
@@ -64,6 +64,7 @@ public class Integers extends EuclideanDomain<BigInteger> {
 	}
 
 	/** Returns true if a is prime. */
+	@SuppressWarnings("null")
 	public boolean isPrime(BigInteger a) {
 		/* Agrawal-Kayal-Saxena (AKS) algorithm. */
 		if (perfectPowerTest(a)) {

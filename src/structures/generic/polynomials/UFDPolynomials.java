@@ -1,11 +1,10 @@
-package structures.complex;
+package structures.generic.polynomials;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import structures.basic.UniqueFactorizationDomain;
-import utils.Polynomial;
+import cmpalg.generic.basic.UniqueFactorizationDomain;
 
 /**
  * Represents the ring of polynomials over an UFD. By Gauss' lemma, this will be

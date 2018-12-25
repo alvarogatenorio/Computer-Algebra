@@ -1,8 +1,8 @@
-package utils;
+package structures.concrete.rationals;
 
 import java.math.BigInteger;
 
-import structures.concrete.Integers;
+import structures.concrete.euclideanDomains.Integers;
 
 /** Represents a rational number. */
 public class Rational {
