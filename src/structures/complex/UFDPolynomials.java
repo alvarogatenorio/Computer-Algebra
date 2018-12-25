@@ -7,6 +7,10 @@ import java.util.List;
 import structures.basic.UniqueFactorizationDomain;
 import utils.Polynomial;
 
+/**
+ * Represents the ring of polynomials over an UFD. By Gauss' lemma, this will be
+ * as well an UFD.
+ */
 public class UFDPolynomials<E> extends UniqueFactorizationDomain<Polynomial<E>> {
 
 	private Polynomials<E> polyRing;

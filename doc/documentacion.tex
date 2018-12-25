@@ -34,7 +34,7 @@
 		\lfloor n/2^i\rfloor = \sum_{l=0}^{k-i}n_{l+i}2^{l}
 	\end{equation*}
 De esta manera, para obtener $a^n$ basta con calcular la sucesión desde el término $k$ hasta el término $0$. Como $k=\lfloor\log n\rfloor$, tenemos un algoritmo de exponenciación lineal respecto del número de cifras del exponente.
-	\begin{figure}[H]
+	\begin{figure}[h!]
 		\begin{minted}
 			[frame=lines,
 			framesep=2mm,
@@ -81,7 +81,7 @@ Este algoritmo está programado en la clase \mintinline{java}{Ring<E>}.
 	Nótese que este proceso \tb{solo puede ser repetido un número finito de veces}, ya que, cada vez que repetimos el proceso, la función de grado del resto de la división decrece estrictamente.
 	
 	A este método de cálculo del máximo común divisor se le conoce como \tbi{algoritmo de Euclides}, y es precisamente el algoritmo que implementa el método \mintinline{java}{gcd(E a, E b)} de la clase \mintinline{java}{EuclideanDomain<E>}.
-	\begin{figure}[H]
+	\begin{figure}[h!]
 		\begin{minted}
 			[frame=lines,
 			framesep=2mm,
@@ -149,7 +149,7 @@ public E gcd(E a, E b) {
 		
 		Finalmente, como $\deg(r_n)<\deg(r_{n-1})$, se tienen ambas desigualdades.
 	\end{proof}
-	\begin{figure}[H]
+	\begin{figure}[h!]
 		\begin{minted}
 			[frame=lines,
 			framesep=2mm,
@@ -222,6 +222,29 @@ Con estos resultados en la mano, podemos adaptar el algoritmo de Euclides para c
 	En definitiva, $d_1$ y $d_2$ son asociados, como queríamos demostrar.
 \end{proof}
 Esto nos permite adaptar de manera directa el algoritmo de Euclides visto anteriormente.
+	\begin{figure}[h!]
+	\begin{minted}
+		[frame=lines,
+		framesep=2mm,
+		baselinestretch=1,
+		fontsize=\scriptsize,
+		tabsize=4]
+		{java}
+public Polynomial<E> gcd(Polynomial<E> a, Polynomial<E> b) {
+	/* Primitive euclid's algorithm */
+	while (!b.equals(getAddIdentity())) {
+		Polynomial<E> r = polyRing.pseudoDivision(a, b).getThird();
+		E c = content(a);
+		r = primitivePart(r, c);
+		a = b;
+		b = r;
+	}
+	return a;
+}
+	\end{minted}
+	\caption{Código Java del algoritmo de Euclides primitivo.}
+	\label{euclides_primitivo}
+\end{figure}
 	\section{Algoritmo del teorema chino de los restos}
 	Recordamos brevemente el teorema chino de los restos.
 	\begin{theo}[Teorema chino de los restos]
@@ -234,7 +257,48 @@ Esto nos permite adaptar de manera directa el algoritmo de Euclides visto anteri
 		\end{equation*}
 		es sobreyectiva.
 	\end{theo}
-	Lo que tratamos de hacer nosotros, por medio de un algoritmo, es hallar $\phi^{-1}$ de un elemento $(a_1+I_1,\dots,a_r+I_r)\in A/I_1\times\dots\times A/I_r$.
+	\begin{proof}
+		En primer lugar, es sencillo demostrar por inducción que, para todo $i\in\{1,\dots,r\}$ $I_i$ e $\prod_{j\not= i}I_j$ son comaximales, o sea que, para ciertos $u_i\in I_i$ y $v_i\in\prod_{j\not= i}I_j$, se cumple que $u_i+v_i=1$.
+		
+		Dicho esto, si consideramos $(a_1+I_1,\dots,a_r+I_r)$, es sencillo demostrar que $\phi(\sum_{i=1}^ra_iv_i)=(a_1+I_1,\dots,a_r+I_r)$, quedando el teorema demostrado.
+	\end{proof}
+	Lo que tratamos de hacer nosotros, por medio de un algoritmo, es hallar una imagen inversa $\phi^{-1}$ de un elemento $(a_1+I_1,\dots,a_r+I_r)\in A/I_1\times\dots\times A/I_r$.
+	
+	Por la demostración del teorema, tenemos que dicha imagen inversa es $\sum_{i=1}^ra_iv_i$, luego solo tenemos que encontrar los coeficientes $v_i$. Esto es una tarea imposible en la mayoría de circunstancias, pero no si $A$ es un DE.
+	
+	En tal caso, $A$ también es un dominio de ideales principales, luego podemos suponer que el ideal $I_i$ está generado por el elemento $b_i$ para todo $i\in\{1,\dots,r\}$. Asimismo, es sencillo comprobar que el ideal $\prod_{j\not= i}I_j$ está generado por $q:=\prod_{j\not= i}b_j$.
+	
+	Por la comaximalidad de $I_i$ y $\prod_{j\not= i}I_j$, habrá un elemento de $I_i$, es decir $b_i\alpha$ para cierto $\alpha\in A$ y un elemento de $\prod_{j\not= i}I_j$, o sea, $q\beta$ para cierto $\beta\in A$ de manera que $b_i\alpha+q\beta=1$. Estos $\alpha$ y $\beta$ los podemos hallar mediante una identidad de Bézout. De esta manera, basta definir $v_i:=q\beta$, con lo que ya tendríamos el algoritmo.
+	\begin{figure}[h!]
+		\begin{minted}
+			[frame=lines,
+			framesep=2mm,
+			baselinestretch=1,
+			fontsize=\scriptsize,
+			tabsize=4]
+			{java}
+	public E chineseRemainderInverse(List<E> ideals, List<E> remainders) {
+	
+	/* m is a generator of the product of ideals. */
+	E m = getProductIdentity();
+	for (int i = 0; i < ideals.size(); i++) {
+		m = multiply(m, ideals.get(i));
+	}
+	
+	E inverse = getAddIdentity();
+	for (int i = 0; i < remainders.size(); i++) {
+		/* q is the generator of the product of ideals except the i-th one. */
+		E q = quotient(m, ideals.get(i));
+		E coefficient = bezout(q, ideals.get(i)).getFirst();
+		inverse = add(inverse, multiply(multiply(remainders.get(i), coefficient), q));
+	}
+	return inverse;
+}
+		\end{minted}
+		\caption{Código Java del algoritmo del Teorema Chino de los Restos.}
+		\label{chino}
+	\end{figure}
+	Este algoritmo está implementado en el método \mintinline{java}{chineseRemainderInverse} de la clase \mintinline{java}{EuclideanDomain}.
 	\section{Algoritmo de inversión de elementos en $\mathbb{F}_q$}
 	El algoritmo de inversión se basa en el siguiente resultado.
 	\begin{prop}
@@ -270,7 +334,7 @@ public FiniteFieldElement getProductInverse(FiniteFieldElement a) {
 	factor), irrPolMod), irrPolMod);
 }
 		\end{minted}
-		\caption{Código Java del algoritmo de Euclides de inversión de elementos en cuerpos finitos de orden potencia de primo.}
+		\caption{Código Java del algoritmo de inversión de elementos en cuerpos finitos de orden potencia de primo.}
 		\label{inversion}
 	\end{figure}
 	\section{Criterio de irreducibilidad en $\mathbb{F}_q[\texttt{x}]$}

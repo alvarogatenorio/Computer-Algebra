@@ -76,19 +76,20 @@ public abstract class EuclideanDomain<E> extends UniqueFactorizationDomain<E> {
 	 * 
 	 * Ideals have to be two-by-two comaximal (coprime).
 	 */
-	public E chineseReminderInverse(List<E> ideals, List<E> reminders) {
-		E inverse = getAddIdentity();
+	public E chineseRemainderInverse(List<E> ideals, List<E> remainders) {
+
+		/* m is a generator of the product of ideals. */
 		E m = getProductIdentity();
 		for (int i = 0; i < ideals.size(); i++) {
 			m = multiply(m, ideals.get(i));
 		}
-		for (int i = 0; i < reminders.size(); i++) {
+
+		E inverse = getAddIdentity();
+		for (int i = 0; i < remainders.size(); i++) {
+			/* q is the generator of the product of ideals except the i-th one. */
 			E q = quotient(m, ideals.get(i));
 			E coefficient = bezout(q, ideals.get(i)).getFirst();
-			/* Make sure of things */
-			// inverse = add(inverse, multiply(reminder(multiply(reminders.get(i),
-			// coefficient), ideals.get(i)), q));
-			inverse = add(inverse, multiply(multiply(reminders.get(i), coefficient), q));
+			inverse = add(inverse, multiply(multiply(remainders.get(i), coefficient), q));
 		}
 		return inverse;
 	}
