@@ -192,6 +192,36 @@ public Pair<E> bezout(E a, E b) {
 		\label{euclides_extendido}
 	\end{figure}
 \section{Algoritmo de Euclides primitivo}
+Nuestro objetivo es desarrollar un algoritmo que nos permita calcular el máximo común divisor de dos polinomios $f,g\in A[\texttt{x}]$, siendo $A[\texttt{x}]$ un dominio de factorización única. Antes de comenzar, recordemos brevemente un par de resultados.
+\begin{defi}[Contenido de un polinomio]
+	Dado un polinomio $f\in A[\texttt{x}]$, siendo $A$ un dominio de factorización única, llamamos \tbi{contenido} de $f$ al máximo común divisor de sus coeficientes. Lo denotaremos por $\text{c}(f)$. Si $\text{c}(f)=1$, diremos que $f$ es \tbi{primitivo}.
+\end{defi}
+\begin{defi}[Parte primitiva]
+	Dado un polinomio $f\in A[\texttt{x}]$, siendo $A$ un DFU, es claro que $\text{c}(f)$ divide a $f$, luego $\text{c}(f)\alpha = f$. A dicho polinomio $\alpha$ lo llamamos \tbi{parte primitiva} de $f$, y lo denotamos por $\text{pp}(f)$.
+\end{defi}
+\begin{lem}[Buen comportamiento del contenido]
+	Dados dos polinomios $f,g\in A[\texttt{x}]$, siendo $A$ un DFU, se tiene que $\mathrm{c}(fg)=\mathrm{c}(f)\mathrm{c}(g)$.
+\end{lem}
+\begin{lem}[Lema de Gauss]
+	$A[\texttt{x}]$ es un DFU si y solo si $A$ es un DFU.
+\end{lem}
+\begin{lem}[Pseudodivisión de polinomios]
+	Sea $A$ un anillo conmutativo unitario, y $f,g\in A[\texttt{x}]$, entonces, existen $q,r\in A[\texttt{x}]$, con $\deg(r)<\deg(g)$ tales que $\mathrm{l}(g)^kf=gq+r$, siendo $k\geq0$.
+\end{lem}
+Con estos resultados en la mano, podemos adaptar el algoritmo de Euclides para calcular el máximo común divisor de dos polinomios primitivos $f,g\in A[\texttt{x}]$, siendo $A[\texttt{x}]$ un $DFU$. Nuestra adaptación se basará en el siguiente resultado.
+\begin{prop}[Lema de Euclides primitivo]
+	Dados $f,g\in A[\texttt{x}]$ primitivos, entonces $\mathrm{mcd}(f,g)=\mathrm{mcd}(g,\mathrm{pp}(r))$, siendo $r$ el resto de la pseudodivisión de $f$ y $g$.
+\end{prop}
+\begin{proof}
+	Es sencillo demostrar que el máximo común divisor de dos polinomios primitivos es primitivo, a partir de ahí, consideremos $d_1=\text{mcd}(f,g)$ y $d_2=\text{mcd}(g,\text{pp}(r))$.
+	
+	Es claro que $d_1$ divide a $f$ y a $g$. Como, haciendo la pseudodivisión, $\text{l}(g)^kf=gq+r$, tenemos que $d_1$ divide a $r$, luego $d_1\alpha = \text{c}(r)\text{pp}(r)$. Veamos que $\text{c}(r)$ divide a $\alpha$, en efecto, esto sucede si y solo si $\text{c}(r)$ divide a $\text{c}(\alpha)$. Pero tenemos que $\text{c}(\alpha)=\text{c}(d_1\alpha)=\text{c}(r)\text{pp}(r)=\text{c}(r)$. Luego, por la propiedad cancelativa, $d_1$ divide a $\text{pp}(r)$, y, por ser $d_2=\text{mcd}(g,\text{pp}(r))$, se cumple que $d_1$ divide a $d_2$.
+	
+	Recíprocramente, $d_2$ divide a $g$ y a $\text{pp}(r)$, luego $d_2$ divide a $\text{l}(g)^kf$, es decir, $\text{l}(g)^kf=\beta d_2$. Veamos que $\text{l}(g)^k$ divide a $\beta$. Esto ocurre si y solo si $\text{l}(g)^k$ divide a $\text{c}(\beta)$, pero, $\text{c}(\beta)=\text{c}(\beta d_2)=\text{c}(\text{l}(g)^kf)=\text{l}(g)^k$. Luego, de nuevo, por la propiedad cancelativa, $d_2$ divide a $f$, y, por ser $d_1$ es máximo común divisor de $f$ y $g$, $d_2$ divide a $d_1$.
+	
+	En definitiva, $d_1$ y $d_2$ son asociados, como queríamos demostrar.
+\end{proof}
+Esto nos permite adaptar de manera directa el algoritmo de Euclides visto anteriormente.
 	\section{Algoritmo del teorema chino de los restos}
 	Recordamos brevemente el teorema chino de los restos.
 	\begin{theo}[Teorema chino de los restos]

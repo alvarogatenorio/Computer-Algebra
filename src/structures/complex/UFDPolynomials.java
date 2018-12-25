@@ -47,9 +47,13 @@ public class UFDPolynomials<E> extends UniqueFactorizationDomain<Polynomial<E>> 
 		return polyRing.divides(a, b);
 	}
 
-	/* Primitive euclid's algorithm. Read about Gauss lemma */
+	/**
+	 * Given two primitive polynomials, computes the greatest common divisor. See
+	 * the documentation for details.
+	 */
 	@Override
 	public Polynomial<E> gcd(Polynomial<E> a, Polynomial<E> b) {
+		/* Primitive euclid's algorithm */
 		while (!b.equals(getAddIdentity())) {
 			Polynomial<E> r = polyRing.pseudoDivision(a, b).getThird();
 			E c = content(a);
@@ -60,7 +64,8 @@ public class UFDPolynomials<E> extends UniqueFactorizationDomain<Polynomial<E>> 
 		return a;
 	}
 
-	private Polynomial<E> primitivePart(Polynomial<E> r, E c) {
+	/** Computes the primitive part of a polynomial. */
+	public Polynomial<E> primitivePart(Polynomial<E> r, E c) {
 		List<E> coefficients = new ArrayList<E>();
 		for (int i = 0; i < r.size(); i++) {
 			E aux = r.get(i);
@@ -73,6 +78,10 @@ public class UFDPolynomials<E> extends UniqueFactorizationDomain<Polynomial<E>> 
 		return r = new Polynomial<E>(coefficients, baseRing);
 	}
 
+	/**
+	 * Computes the polynomial content, i.e. the greatest common divisor of its
+	 * coefficients.
+	 */
 	public E content(Polynomial<E> a) {
 		E c = a.leading();
 		for (int i = a.size() - 2; i >= 0; i--) {
