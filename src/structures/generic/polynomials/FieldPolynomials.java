@@ -73,11 +73,8 @@ public class FieldPolynomials<E> extends EuclideanDomain<Polynomial<E>> {
 				q = multiply(a, baseField.getProductInverse(b.independent()));
 				r = getAddIdentity();
 			} else {
-				Polynomial<E> h = add(a,
-						multiply(
-								multiply(parseElement("t^" + (a.degree() - b.degree())), baseField.multiply(
-										baseField.getAddInverse(a.leading()), baseField.getProductInverse(b.leading()))),
-								b));
+				Polynomial<E> h = add(a, multiply(multiply(parseElement("t^" + (a.degree() - b.degree())), baseField
+						.multiply(baseField.getAddInverse(a.leading()), baseField.getProductInverse(b.leading()))), b));
 				if (h.degree() < b.degree()) {
 					q = multiply(parseElement("t^" + (a.degree() - b.degree())),
 							baseField.multiply(a.leading(), baseField.getProductInverse(b.leading())));
@@ -203,13 +200,17 @@ public class FieldPolynomials<E> extends EuclideanDomain<Polynomial<E>> {
 	 * Evaluates the polynomial g modulo f in the specified value. See the
 	 * documentation for details.
 	 */
-	private Polynomial<E> evaluate(Polynomial<E> a, Polynomial<Polynomial<E>> g, Polynomial<E> f) {
+	public Polynomial<E> evaluate(Polynomial<E> a, Polynomial<Polynomial<E>> g, Polynomial<E> f) {
 		/* Horner's algorithm */
 		Polynomial<E> evaluation = getAddIdentity();
 		for (int i = g.degree(); i >= 0; i--) {
 			evaluation = remainder(add(multiply(evaluation, a), g.get(i)), f);
 		}
 		return evaluation;
+	}
+
+	public Polynomial<E> derivative(Polynomial<E> f) {
+		return polyRing.derivative(f);
 	}
 
 }

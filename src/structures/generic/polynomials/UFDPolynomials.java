@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cmpalg.generic.basic.UniqueFactorizationDomain;
+import utils.Triple;
 
 /**
  * Represents the ring of polynomials over an UFD. By Gauss' lemma, this will be
@@ -67,7 +68,7 @@ public class UFDPolynomials<E> extends UniqueFactorizationDomain<Polynomial<E>> 
 		return a;
 	}
 
-	/** Computes the primitive part of a polynomial. */
+	/** Computes the primitive part of a polynomial given its content. */
 	public Polynomial<E> primitivePart(Polynomial<E> r, E c) {
 		List<E> coefficients = new ArrayList<E>();
 		for (int i = 0; i < r.size(); i++) {
@@ -106,5 +107,14 @@ public class UFDPolynomials<E> extends UniqueFactorizationDomain<Polynomial<E>> 
 	@Override
 	public Polynomial<E> getProductIdentity() {
 		return polyRing.getProductIdentity();
+	}
+
+	/** Computes the formal derivative of the given polynomial. */
+	public Polynomial<E> derivative(Polynomial<E> f) {
+		return polyRing.derivative(f);
+	}
+
+	public Triple<BigInteger, Polynomial<E>> pseudoDivision(Polynomial<E> a, Polynomial<E> b) {
+		return polyRing.pseudoDivision(a, b);
 	}
 }

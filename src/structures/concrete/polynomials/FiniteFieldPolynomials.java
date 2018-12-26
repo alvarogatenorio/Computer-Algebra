@@ -99,4 +99,42 @@ public class FiniteFieldPolynomials<E extends FiniteFieldElement> extends FieldP
 	public List<Polynomial<E>> berlekamp(Polynomial<E> f) {
 		return null;
 	}
+
+	/**
+	 * Computes the square free decomposition of the given polynomial. See the
+	 * documentation for details.
+	 */
+	public List<Polynomial<E>> squareFreeDecomposition(Polynomial<E> f) {
+		List<Polynomial<E>> result = new ArrayList<Polynomial<E>>();
+		do {
+			Polynomial<E> g = quotient(f, gcd(f, derivative(f)));
+			while (!g.equals(getProductIdentity())) {
+				f = quotient(f, g);
+				Polynomial<E> h = gcd(f, g);
+				Polynomial<E> m = quotient(g, h);
+				if (!m.equals(getProductIdentity())) {
+					result.add(m);
+				}
+				g = h;
+			}
+			if (!f.equals(getProductIdentity())) {
+				f = pthRoot(f);
+			}
+		} while (!f.equals(getProductIdentity()));
+		return result;
+	}
+
+	/**
+	 * Computes the exact p-th root of the given polynomial, being p the
+	 * characteristic of the field. See the documentation for details.
+	 */
+	public Polynomial<E> pthRoot(Polynomial<E> f) {
+		int p = Fq.getCharacteristic().intValue();
+		List<E> root = new ArrayList<E>();
+		for (int i = 0; i <= f.degree(); i += p) {
+			root.add(f.get(i));
+		}
+		return new Polynomial<E>(root, Fq);
+	}
+
 }

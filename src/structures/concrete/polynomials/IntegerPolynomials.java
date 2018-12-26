@@ -44,6 +44,11 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 		}
 	}
 
+	/** Computes the square free part of the given monic polynomial. */
+	public Polynomial<BigInteger> squareFree(Polynomial<BigInteger> f) {
+		return pseudoDivision(f,gcd(f,derivative(f))).getSecond();
+	}
+
 	public List<Polynomial<BigInteger>> kronecker(Polynomial<BigInteger> f) {
 		return null;
 	}

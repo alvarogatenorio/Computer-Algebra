@@ -379,7 +379,7 @@ public class Polynomials<E> extends Ring<Polynomial<E>> {
 
 		/* Evaluating the huge polynomial modulo f... */
 		Polynomial<E> p = new Polynomial<E>(hPowers.get(hPowers.size() - 1), baseRing);
-		return evaluate(p, b, f);
+		return modularEvaluation(p, b, f);
 	}
 
 	/**
@@ -428,8 +428,8 @@ public class Polynomials<E> extends Ring<Polynomial<E>> {
 	 * Evaluates the polynomial g modulo f in the specified value. See the
 	 * documentation for details.
 	 */
-	private Polynomial<E> evaluate(Polynomial<E> a, Polynomial<Polynomial<E>> g, Polynomial<E> f) {
-		/* Horner's algorithm */
+	public Polynomial<E> modularEvaluation(Polynomial<E> a, Polynomial<Polynomial<E>> g, Polynomial<E> f) {
+		/* Modular Horner's algorithm. */
 		Polynomial<E> evaluation = getAddIdentity();
 		for (int i = g.degree(); i >= 0; i--) {
 			evaluation = pseudoDivision(add(multiply(evaluation, a), g.get(i)), f).getThird();
@@ -437,15 +437,29 @@ public class Polynomials<E> extends Ring<Polynomial<E>> {
 		return evaluation;
 	}
 
+	/**
+	 * Returns remainder(g(h),f). f has to be a monic polynomial such that deg(g),
+	 * deg(h)<deg(f). The implemented algorithm is the obvious one, it is here for
+	 * testing purposes only.
+	 */
 	@Deprecated
 	public Polynomial<E> bruteForceModularComposition(Polynomial<E> f, Polynomial<E> g, Polynomial<E> h) {
-		/* This is just the brute force algorithm. */
+		/* Obvious algorithm. */
 		Polynomial<E> composition = getAddIdentity();
 		int n = g.degree();
 		for (int i = 0; i <= n; i++) {
 			composition = add(composition, multiply(power(h, new BigInteger(Integer.toString(i))), g.get(i)));
 		}
 		return pseudoDivision(composition, f).getThird();
+	}
+
+	/** Computes the formal derivative of the given polynomial. */
+	public Polynomial<E> derivative(Polynomial<E> f) {
+		List<E> d = new ArrayList<E>();
+		for (int i = 1; i < f.size(); i++) {
+			d.add(baseRing.intMultiply(f.get(i), new BigInteger(Integer.toString(i))));
+		}
+		return new Polynomial<E>(d, baseRing);
 	}
 
 }
