@@ -64,4 +64,25 @@ public class PrimeField extends FiniteField<PrimeFieldElement> {
 		return p;
 	}
 
+	@Override
+	public FiniteFieldElement getGenerator() {
+		/* Checks every element in the field. */
+		for (BigInteger i = new BigInteger("2"); i.compareTo(p) == -1; i = i.add(BigInteger.ONE)) {
+			PrimeFieldElement g = new PrimeFieldElement(i);
+			PrimeFieldElement aux = g;
+			for (BigInteger j = new BigInteger("2"); j.compareTo(p) <= 0; j = j.add(BigInteger.ONE)) {
+				aux = multiply(aux, g);
+				if (aux.equals(getProductIdentity())) {
+					if (!j.equals(p)) {
+						break;
+					} else {
+						return g;
+					}
+				}
+			}
+		}
+		/* This should never be reached. */
+		return null;
+	}
+
 }

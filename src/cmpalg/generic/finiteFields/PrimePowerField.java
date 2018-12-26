@@ -98,4 +98,10 @@ public class PrimePowerField extends FiniteField<PrimePowerFieldElement> {
 	public BigInteger getCharacteristic() {
 		return p;
 	}
+
+	@Override
+	public FiniteFieldElement getGenerator() {
+		// think about it...
+		return null;
+	}
 }
