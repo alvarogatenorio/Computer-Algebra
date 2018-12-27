@@ -37,7 +37,7 @@ public abstract class EuclideanDomain<E> extends UniqueFactorizationDomain<E> {
 	 * Computes the coefficients of the Bezout identity of the elements a and b. See
 	 * the documentation for details.
 	 */
-	public Pair<E> bezout(E a, E b) {
+	public Pair<E, E> bezout(E a, E b) {
 		/* Extended Euclid's algorithm. */
 		E alphaMinus1 = getAddIdentity();
 		E alphaMinus2 = getProductIdentity();
@@ -65,7 +65,7 @@ public abstract class EuclideanDomain<E> extends UniqueFactorizationDomain<E> {
 			a = b;
 			b = r;
 		}
-		return new Pair<E>(alphaMinus2, betaMinus2);
+		return new Pair<E, E>(alphaMinus2, betaMinus2);
 	}
 
 	/**

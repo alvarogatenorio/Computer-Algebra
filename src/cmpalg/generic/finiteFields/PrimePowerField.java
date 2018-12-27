@@ -104,4 +104,13 @@ public class PrimePowerField extends FiniteField<PrimePowerFieldElement> {
 		// think about it...
 		return null;
 	}
+
+	@Override
+	public FiniteFieldElement getRandomElement() {
+		List<PrimeFieldElement> coefficients = new ArrayList<PrimeFieldElement>();
+		for (int i = 0; i < tupleSize; i++) {
+			coefficients.add((PrimeFieldElement) Zp.getRandomElement());
+		}
+		return new PrimePowerFieldElement(new Polynomial<PrimeFieldElement>(coefficients, Zp), tupleSize);
+	}
 }

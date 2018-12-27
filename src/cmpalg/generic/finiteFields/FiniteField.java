@@ -16,4 +16,5 @@ public abstract class FiniteField<E extends FiniteFieldElement> extends Field<E>
 
 	public abstract FiniteFieldElement getGenerator();
 
+	public abstract FiniteFieldElement getRandomElement();
 }

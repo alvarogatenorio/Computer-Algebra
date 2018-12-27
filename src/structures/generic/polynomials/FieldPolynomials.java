@@ -62,7 +62,7 @@ public class FieldPolynomials<E> extends EuclideanDomain<Polynomial<E>> {
 		return polyRing.intMultiply(a, k);
 	}
 
-	public Pair<Polynomial<E>> division(Polynomial<E> a, Polynomial<E> b) {
+	public Pair<Polynomial<E>, Polynomial<E>> division(Polynomial<E> a, Polynomial<E> b) {
 		Polynomial<E> q = null;
 		Polynomial<E> r = null;
 		if (a.degree() < b.degree()) {
@@ -80,14 +80,14 @@ public class FieldPolynomials<E> extends EuclideanDomain<Polynomial<E>> {
 							baseField.multiply(a.leading(), baseField.getProductInverse(b.leading())));
 					r = h;
 				} else {
-					Pair<Polynomial<E>> aux = division(h, b);
+					Pair<Polynomial<E>, Polynomial<E>> aux = division(h, b);
 					q = add(multiply(parseElement("t^" + (a.degree() - b.degree())),
 							baseField.multiply(a.leading(), baseField.getProductInverse(b.leading()))), aux.getFirst());
 					r = aux.getSecond();
 				}
 			}
 		}
-		return new Pair<Polynomial<E>>(q, r);
+		return new Pair<Polynomial<E>, Polynomial<E>>(q, r);
 	}
 
 	private Polynomial<E> multiply(Polynomial<E> a, E e) {

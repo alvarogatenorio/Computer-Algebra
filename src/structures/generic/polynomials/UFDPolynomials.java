@@ -114,7 +114,7 @@ public class UFDPolynomials<E> extends UniqueFactorizationDomain<Polynomial<E>> 
 		return polyRing.derivative(f);
 	}
 
-	public Triple<BigInteger, Polynomial<E>> pseudoDivision(Polynomial<E> a, Polynomial<E> b) {
+	public Triple<BigInteger, Polynomial<E>, Polynomial<E>> pseudoDivision(Polynomial<E> a, Polynomial<E> b) {
 		return polyRing.pseudoDivision(a, b);
 	}
 }

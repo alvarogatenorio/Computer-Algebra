@@ -321,7 +321,7 @@ public class Polynomials<E> extends Ring<Polynomial<E>> {
 	 * Returns a triple representing the pseudo division of two polynomials over an
 	 * arbitrary ring. See the documentation for details.
 	 */
-	public Triple<BigInteger, Polynomial<E>> pseudoDivision(Polynomial<E> a, Polynomial<E> b) {
+	public Triple<BigInteger, Polynomial<E>, Polynomial<E>> pseudoDivision(Polynomial<E> a, Polynomial<E> b) {
 		BigInteger k = BigInteger.ZERO;
 		Polynomial<E> q = null;
 		Polynomial<E> r = null;
@@ -343,7 +343,7 @@ public class Polynomials<E> extends Ring<Polynomial<E>> {
 					q = multiply(parseElement(variable + "^" + (a.degree() - b.degree())), a.leading());
 					r = h;
 				} else {
-					Triple<BigInteger, Polynomial<E>> aux = pseudoDivision(h, b);
+					Triple<BigInteger, Polynomial<E>, Polynomial<E>> aux = pseudoDivision(h, b);
 					k = aux.getFirst().add(BigInteger.ONE);
 					q = add(aux.getSecond(), multiply(parseElement(variable + "^" + (a.degree() - b.degree())),
 							baseRing.multiply((baseRing.power(b.leading(), aux.getFirst())), a.leading())));
@@ -351,7 +351,7 @@ public class Polynomials<E> extends Ring<Polynomial<E>> {
 				}
 			}
 		}
-		return new Triple<BigInteger, Polynomial<E>>(k, q, r);
+		return new Triple<BigInteger, Polynomial<E>, Polynomial<E>>(k, q, r);
 	}
 
 	/**

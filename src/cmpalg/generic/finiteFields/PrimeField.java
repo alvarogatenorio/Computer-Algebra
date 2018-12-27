@@ -1,6 +1,7 @@
 package cmpalg.generic.finiteFields;
 
 import java.math.BigInteger;
+import java.util.Random;
 
 import structures.concrete.euclideanDomains.Integers;
 
@@ -83,6 +84,17 @@ public class PrimeField extends FiniteField<PrimeFieldElement> {
 		}
 		/* This should never be reached. */
 		return null;
+	}
+
+	@Override
+	public FiniteFieldElement getRandomElement() {
+		Random random = new Random();
+		BigInteger r;
+		do {
+			r = new BigInteger(p.toString(2).length(), random);
+		} while (r.compareTo(p) >= 0);
+
+		return new PrimeFieldElement(r);
 	}
 
 }
