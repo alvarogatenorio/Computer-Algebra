@@ -137,4 +137,21 @@ public class FiniteFieldPolynomials<E extends FiniteFieldElement> extends FieldP
 		return new Polynomial<E>(root, Fq);
 	}
 
+	/**
+	 * Computes the distinct degree decomposition of the given polynomial. See the
+	 * documentation for details.
+	 */
+	public List<Polynomial<E>> distinctDegreeFactorization(Polynomial<E> f) {
+		List<Polynomial<E>> result = new ArrayList<Polynomial<E>>();
+		Polynomial<E> h = remainder(parseElement("t"), f);
+		Polynomial<E> g = f;
+		do {
+			h = power(h, Fq.getOrder(), f);
+			Polynomial<E> t = gcd(add(h, getAddInverse(parseElement("t"))), g);
+			result.add(t);
+			g = quotient(g, t);
+		} while (!g.equals(getProductIdentity()));
+		return result;
+	}
+
 }
