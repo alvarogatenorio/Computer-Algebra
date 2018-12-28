@@ -90,7 +90,7 @@ public class FieldPolynomials<E> extends EuclideanDomain<Polynomial<E>> {
 		return new Pair<Polynomial<E>, Polynomial<E>>(q, r);
 	}
 
-	private Polynomial<E> multiply(Polynomial<E> a, E e) {
+	public Polynomial<E> multiply(Polynomial<E> a, E e) {
 		return polyRing.multiply(a, e);
 	}
 
@@ -211,6 +211,70 @@ public class FieldPolynomials<E> extends EuclideanDomain<Polynomial<E>> {
 
 	public Polynomial<E> derivative(Polynomial<E> f) {
 		return polyRing.derivative(f);
+	}
+
+	@Override
+	public Polynomial<E> gcd(Polynomial<E> a, Polynomial<E> b) {
+		/* Euclid's algorithm with normal form. */
+		if (!a.leading().equals(baseField.getAddIdentity())) {
+			a = multiply(a, baseField.getProductInverse(a.leading()));
+		}
+		if (!b.leading().equals(baseField.getAddIdentity())) {
+			b = multiply(b, baseField.getProductInverse(b.leading()));
+		}
+
+		while (!b.equals(getAddIdentity())) {
+			Polynomial<E> r = remainder(a, b);
+
+			E factor = baseField.getProductInverse(r.leading());
+			r = multiply(r, factor);
+
+			a = b;
+			b = r;
+		}
+		return a;
+	}
+
+	@Override
+	public Pair<Polynomial<E>, Polynomial<E>> bezout(Polynomial<E> a, Polynomial<E> b) {
+		/* Extended Euclid's algorithm with normal form. */
+		if (!a.leading().equals(baseField.getAddIdentity())) {
+			a = multiply(a, baseField.getProductInverse(a.leading()));
+		}
+		if (!b.leading().equals(baseField.getAddIdentity())) {
+			b = multiply(b, baseField.getProductInverse(b.leading()));
+		}
+
+		Polynomial<E> alphaMinus1 = getAddIdentity();
+		Polynomial<E> alphaMinus2 = getProductIdentity();
+		Polynomial<E> betaMinus1 = getProductIdentity();
+		Polynomial<E> betaMinus2 = getAddIdentity();
+		while (!b.equals(getAddIdentity())) {
+			/* Computes division of a and b */
+			Polynomial<E> q = quotient(a, b);
+			Polynomial<E> r = remainder(a, b);
+
+			E factor = baseField.getProductInverse(r.leading());
+			r = multiply(r, factor);
+
+			/*
+			 * Just follow the formula for the new pseudo-bezout identity coefficients
+			 */
+			Polynomial<E> alphaAux = multiply(add(alphaMinus2, getAddInverse(multiply(q, alphaMinus1))), factor);
+			Polynomial<E> betaAux = multiply(add(betaMinus2, getAddInverse(multiply(q, betaMinus1))), factor);
+
+			/* Maintaining alphaMinusX and betaMinusX coherent */
+			alphaMinus2 = alphaMinus1;
+			betaMinus2 = betaMinus1;
+
+			alphaMinus1 = alphaAux;
+			betaMinus1 = betaAux;
+
+			/* By euclid's lemma gcd(a,b) = gcd(b,r) */
+			a = b;
+			b = r;
+		}
+		return new Pair<Polynomial<E>, Polynomial<E>>(alphaMinus2, betaMinus2);
 	}
 
 }

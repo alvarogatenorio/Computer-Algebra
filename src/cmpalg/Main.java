@@ -35,7 +35,7 @@ public class Main {
 
 		PrimePowerField Fq = new PrimePowerField(new BigInteger("5"), Z5T.parseElement("t^3+4t+2"));
 		FiniteFieldPolynomials<PrimePowerFieldElement> FqT = new FiniteFieldPolynomials<PrimePowerFieldElement>(Fq);
-		Polynomial<PrimePowerFieldElement> ff = FqT.parseElement("t");
-		System.out.println(FqT.isIrreducible(ff));
+		Polynomial<PrimePowerFieldElement> ff = FqT.parseElement("t^40+t^2+t+(2,2,2)t");
+		System.out.println(FqT.printFactorization(ff));
 	}
 }

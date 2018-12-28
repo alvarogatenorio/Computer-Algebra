@@ -18,4 +18,9 @@ public class PrimeFieldElement extends FiniteFieldElement {
 		PrimeFieldElement other = (PrimeFieldElement) (o);
 		return element.equals(other.getElement());
 	}
+
+	public String toString() {
+		return element.toString();
+	}
+
 }

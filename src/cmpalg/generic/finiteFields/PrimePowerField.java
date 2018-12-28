@@ -26,15 +26,9 @@ public class PrimePowerField extends FiniteField<PrimePowerFieldElement> {
 
 	@Override
 	public PrimePowerFieldElement getProductInverse(PrimePowerFieldElement a) {
-
-		/*
-		 * Inverse of the greatest common divisor of a and f, which is guaranteed to be
-		 * a unit.
-		 */
-		BigInteger factor = Zp.getProductInverse(ZpX.gcd(a.getElement(), f).leading()).getElement();
-
-		return new PrimePowerFieldElement(
-				ZpX.remainder(ZpX.intMultiply((ZpX.bezout(a.getElement(), f).getFirst()), factor), f), tupleSize);
+		return new PrimePowerFieldElement(ZpX.remainder(
+				ZpX.multiply(ZpX.bezout(a.getElement(), f).getFirst(), Zp.getProductInverse(a.getElement().leading())),
+				f), tupleSize);
 	}
 
 	@Override
@@ -110,6 +104,12 @@ public class PrimePowerField extends FiniteField<PrimePowerFieldElement> {
 		List<PrimeFieldElement> coefficients = new ArrayList<PrimeFieldElement>();
 		for (int i = 0; i < tupleSize; i++) {
 			coefficients.add((PrimeFieldElement) Zp.getRandomElement());
+		}
+		for (int i = coefficients.size() - 1; i > 0; i--) {
+			if (!coefficients.get(i).equals(Zp.getAddIdentity())) {
+				break;
+			}
+			coefficients.remove(i);
 		}
 		return new PrimePowerFieldElement(new Polynomial<PrimeFieldElement>(coefficients, Zp), tupleSize);
 	}

@@ -203,7 +203,7 @@ public class FiniteFieldPolynomials<E extends FiniteFieldElement> extends FieldP
 	public List<Polynomial<E>> equalDegreeFactorization(Polynomial<E> f, int k) {
 		List<Polynomial<E>> result = new ArrayList<Polynomial<E>>();
 		Polynomial<E> g = f;
-		for (int i = 0; i < f.degree() / k; i++) {
+		for (int i = 1; i < f.degree() / k; i++) {
 			Polynomial<E> p;
 			do {
 				p = equalDegreeSplit(g, k);
@@ -211,6 +211,7 @@ public class FiniteFieldPolynomials<E extends FiniteFieldElement> extends FieldP
 			result.add(p);
 			g = quotient(g, p);
 		}
+		result.add(g);
 		return result;
 	}
 
@@ -255,6 +256,12 @@ public class FiniteFieldPolynomials<E extends FiniteFieldElement> extends FieldP
 		List<E> coefficients = new ArrayList<E>();
 		for (int i = 0; i <= n; i++) {
 			coefficients.add((E) Fq.getRandomElement());
+		}
+		for (int i = coefficients.size() - 1; i > 0; i--) {
+			if (!coefficients.get(i).equals(Fq.getAddIdentity())) {
+				break;
+			}
+			coefficients.remove(i);
 		}
 		return new Polynomial<E>(coefficients, Fq);
 	}

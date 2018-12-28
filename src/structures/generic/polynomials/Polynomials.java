@@ -459,6 +459,12 @@ public class Polynomials<E> extends Ring<Polynomial<E>> {
 		for (int i = 1; i < f.size(); i++) {
 			d.add(baseRing.intMultiply(f.get(i), new BigInteger(Integer.toString(i))));
 		}
+		for (int i = d.size() - 1; i > 0; i--) {
+			if (!d.get(i).equals(baseRing.getAddIdentity())) {
+				break;
+			}
+			d.remove(i);
+		}
 		return new Polynomial<E>(d, baseRing);
 	}
 
