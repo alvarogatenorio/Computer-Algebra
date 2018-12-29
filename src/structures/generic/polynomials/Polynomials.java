@@ -256,7 +256,7 @@ public class Polynomials<E> extends Ring<Polynomial<E>> {
 	}
 
 	private List<E> cleanIdentities(List<E> coefficients) {
-		for (int i = coefficients.size() - 1; i >= 0; i--) {
+		for (int i = coefficients.size() - 1; i > 0; i--) {
 			if (coefficients.get(i).equals(baseRing.getAddIdentity())) {
 				coefficients.remove(i);
 			} else {

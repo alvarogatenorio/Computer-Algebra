@@ -3,6 +3,7 @@ package structures.concrete.polynomials;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.concurrent.ThreadLocalRandom;
 
 import cmpalg.generic.finiteFields.FiniteField;
@@ -94,13 +95,22 @@ public class FiniteFieldPolynomials<E extends FiniteFieldElement> extends FieldP
 		}
 	}
 
-	public String printFactorization(Polynomial<E> f) {
-		List<Pair<Polynomial<E>, Integer>> factorization = factor(f);
+	public String printFactorization(List<Pair<Polynomial<E>, Integer>> f) {
 		String result = "";
-		for (int i = 0; i < factorization.size(); i++) {
-			result = result + " (" + factorization.get(i).getFirst() + ")^" + factorization.get(i).getSecond();
+		for (int i = 0; i < f.size(); i++) {
+			result = result + "(" + f.get(i).getFirst() + ")^" + f.get(i).getSecond() + "\n";
 		}
-		return result.substring(1);
+		return result;
+	}
+
+	public String printFactorizationCheck(List<Pair<Polynomial<E>, Integer>> f) {
+		Polynomial<E> result = getProductIdentity();
+
+		for (int i = 0; i < f.size(); i++) {
+			result = multiply(result,
+					power(f.get(i).getFirst(), new BigInteger(Integer.toString(f.get(i).getSecond()))));
+		}
+		return result.toString();
 	}
 
 	public List<Pair<Polynomial<E>, Integer>> cantor(Polynomial<E> f) {
@@ -108,16 +118,13 @@ public class FiniteFieldPolynomials<E extends FiniteFieldElement> extends FieldP
 
 		/* Gets the square free decomposition. */
 		List<Pair<Polynomial<E>, Integer>> sfd = squareFreeDecomposition(f);
-
 		for (int i = 0; i < sfd.size(); i++) {
 			/* For each square free factor, performs the distinct degree factorization. */
 			List<Polynomial<E>> ddf = distinctDegreeFactorization(sfd.get(i).getFirst());
-
 			/* For each distinct degree factor, gets the equal degree factorization. */
 			for (int j = 0; j < ddf.size(); j++) {
 				if (!ddf.get(j).equals(getProductIdentity())) {
 					List<Polynomial<E>> edf = equalDegreeFactorization(ddf.get(j), j + 1);
-
 					/* Append each true factor to the list. */
 					for (int k = 0; k < edf.size(); k++) {
 						factorization.add(new Pair<Polynomial<E>, Integer>(edf.get(k), sfd.get(i).getSecond()));
@@ -193,6 +200,12 @@ public class FiniteFieldPolynomials<E extends FiniteFieldElement> extends FieldP
 			result.add(t);
 			g = quotient(g, t);
 		} while (g.degree() >= 2 * (i + 1));
+		if (!g.equals(getProductIdentity())) {
+			while (result.size() < g.degree() - 1) {
+				result.add(getProductIdentity());
+			}
+			result.add(g);
+		}
 		return result;
 	}
 
@@ -202,21 +215,37 @@ public class FiniteFieldPolynomials<E extends FiniteFieldElement> extends FieldP
 	 */
 	public List<Polynomial<E>> equalDegreeFactorization(Polynomial<E> f, int k) {
 		List<Polynomial<E>> result = new ArrayList<Polynomial<E>>();
-		Polynomial<E> g = f;
-		for (int i = 1; i < f.degree() / k; i++) {
+
+		Stack<Polynomial<E>> toSplit = new Stack<Polynomial<E>>();
+		if (f.degree() == k) {
+			result.add(f);
+		} else {
+			toSplit.add(f);
+		}
+
+		while (!toSplit.isEmpty()) {
+			Polynomial<E> g = toSplit.pop();
 			Polynomial<E> p;
 			do {
 				p = equalDegreeSplit(g, k);
 			} while (p == null);
-			result.add(p);
-			g = quotient(g, p);
+			if (p.degree() == k) {
+				result.add(p);
+			} else {
+				toSplit.add(p);
+			}
+			Polynomial<E> h = quotient(g, p);
+			if (h.degree() == k) {
+				result.add(h);
+			} else {
+				toSplit.add(h);
+			}
 		}
-		result.add(g);
 		return result;
 	}
 
 	private Polynomial<E> equalDegreeSplit(Polynomial<E> f, int k) {
-		Polynomial<E> a = getRandomPolynomial(f.degree());
+		Polynomial<E> a = getRandomMonicPolynomial(f.degree());
 		if (a.degree() == 0) {
 			return null;
 		}
@@ -251,18 +280,13 @@ public class FiniteFieldPolynomials<E extends FiniteFieldElement> extends FieldP
 
 	/** The maximum is exclusive. */
 	@SuppressWarnings("unchecked")
-	public Polynomial<E> getRandomPolynomial(int maxDegree) {
+	public Polynomial<E> getRandomMonicPolynomial(int maxDegree) {
 		int n = ThreadLocalRandom.current().nextInt(0, maxDegree);
 		List<E> coefficients = new ArrayList<E>();
-		for (int i = 0; i <= n; i++) {
+		for (int i = 0; i < n; i++) {
 			coefficients.add((E) Fq.getRandomElement());
 		}
-		for (int i = coefficients.size() - 1; i > 0; i--) {
-			if (!coefficients.get(i).equals(Fq.getAddIdentity())) {
-				break;
-			}
-			coefficients.remove(i);
-		}
+		coefficients.add(Fq.getProductIdentity());
 		return new Polynomial<E>(coefficients, Fq);
 	}
 }

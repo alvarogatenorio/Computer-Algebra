@@ -100,7 +100,18 @@ public class Integers extends EuclideanDomain<BigInteger> {
 	}
 
 	public BigInteger sqrtFloor(BigInteger a) {
-		return null;
+		BigInteger k = new BigInteger(Integer.toString(((a.toString(2).length() - 1) / 2)));
+
+		BigInteger two = BigInteger.ONE.add(BigInteger.ONE);
+		BigInteger result = power(two, k);
+		for (BigInteger i = k.subtract(BigInteger.ONE); i.compareTo(BigInteger.ZERO) >= 0; i = i
+				.subtract(BigInteger.ONE)) {
+			BigInteger aux = add(result, power(two, i));
+			if (power(aux, two).compareTo(a) <= 0) {
+				result = aux;
+			}
+		}
+		return result;
 	}
 
 	public BigInteger nthrootFloor() {
