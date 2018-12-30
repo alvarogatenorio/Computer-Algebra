@@ -9,6 +9,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import cmpalg.generic.finiteFields.FiniteField;
 import cmpalg.generic.finiteFields.FiniteFieldElement;
 import structures.concrete.euclideanDomains.Integers;
+import structures.generic.matrixes.FieldMatrixes;
+import structures.generic.matrixes.Matrix;
 import structures.generic.polynomials.FieldPolynomials;
 import structures.generic.polynomials.Polynomial;
 import utils.Pair;
@@ -135,8 +137,67 @@ public class FiniteFieldPolynomials<E extends FiniteFieldElement> extends FieldP
 		return factorization;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Pair<Polynomial<E>, Integer>> berlekamp(Polynomial<E> f) {
-		return null;
+		List<Pair<Polynomial<E>, Integer>> factorization = new ArrayList<Pair<Polynomial<E>, Integer>>();
+
+		/* Gets the square free decomposition. */
+		List<Pair<Polynomial<E>, Integer>> sfd = squareFreeDecomposition(f);
+		for (int i = 0; i < sfd.size(); i++) {
+
+			Stack<Polynomial<E>> toSplit = new Stack<Polynomial<E>>();
+			toSplit.add(f);
+
+			while (!toSplit.isEmpty()) {
+				Polynomial<E> h = toSplit.pop();
+
+				FieldMatrixes<E> MFq = new FieldMatrixes<E>(Fq);
+				List<Polynomial<E>> B = MFq.hermite(buildBerlekampMatrix(h));
+				if (B.size() == 1) {
+					factorization.add(new Pair<Polynomial<E>, Integer>(h, sfd.get(i).getSecond()));
+				}
+
+				Polynomial<E> a = getAddIdentity();
+				for (int j = 0; j < B.size(); j++) {
+					E randomElement = (E) Fq.getRandomElement();
+					a = add(a, multiply(B.get(j), randomElement));
+				}
+
+				Polynomial<E> b = getMagicalPolynomial(a, h, 1);
+				Polynomial<E> g = gcd(add(b, getAddInverse(getProductIdentity())), h);
+				if (!g.equals(getProductIdentity()) && !g.equals(h)) {
+					toSplit.add(g);
+					h = quotient(h, g);
+					toSplit.add(h);
+				}
+			}
+
+		}
+		return factorization;
+	}
+
+	private Matrix<E> buildBerlekampMatrix(Polynomial<E> f) {
+		List<Polynomial<E>> M = new ArrayList<Polynomial<E>>();
+		Polynomial<E> tq = power(parseElement("t"), Fq.getOrder(), f);
+		M.add(getProductIdentity());
+		M.add(tq);
+		for (int i = 2; i < f.degree(); i++) {
+			M.add(remainder(multiply(M.get(i - 1), tq), f));
+		}
+		List<List<E>> coefficients = new ArrayList<List<E>>();
+		for (int i = 0; i < f.degree(); i++) {
+			List<E> c = M.get(i).getCoefficients();
+			int toFill = f.degree() - c.size();
+			for (int k = 0; k < toFill; k++) {
+				c.add(Fq.getAddIdentity());
+			}
+			coefficients.add(c);
+		}
+
+		for (int i = 0; i < coefficients.size(); i++) {
+			coefficients.get(i).set(i, Fq.add(coefficients.get(i).get(i), Fq.getAddInverse(Fq.getProductIdentity())));
+		}
+		return new Matrix<E>(coefficients);
 	}
 
 	/**

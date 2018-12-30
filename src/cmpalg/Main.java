@@ -9,6 +9,7 @@ import cmpalg.generic.finiteFields.PrimeFieldElement;
 import cmpalg.generic.finiteFields.PrimePowerField;
 import cmpalg.generic.finiteFields.PrimePowerFieldElement;
 import structures.concrete.polynomials.FiniteFieldPolynomials;
+import structures.concrete.polynomials.FiniteFieldPolynomials.FactorAlgorithm;
 import structures.concrete.rationals.Rational;
 import structures.concrete.rationals.Rationals;
 import structures.generic.polynomials.FieldPolynomials;
@@ -41,7 +42,8 @@ public class Main {
 	public static void cantorZassenhaussTesting(PrimePowerField Fq) {
 		for (int i = 0; i < 10; i++) {
 			FiniteFieldPolynomials<PrimePowerFieldElement> FqT = new FiniteFieldPolynomials<PrimePowerFieldElement>(Fq);
-			int n = ThreadLocalRandom.current().nextInt(2, 21);
+			FqT.setFactorAlgorithm(FactorAlgorithm.BERLEKAMP);
+			int n = ThreadLocalRandom.current().nextInt(2, 10);
 			Polynomial<PrimePowerFieldElement> ff;
 			do {
 				ff = FqT.getRandomMonicPolynomial(n);
