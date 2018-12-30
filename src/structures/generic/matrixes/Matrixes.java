@@ -41,4 +41,14 @@ public class Matrixes<T> {
 		return new Matrix<T>(product);
 	}
 
+	public Matrix<T> transpose(Matrix<T> M) {
+		List<List<T>> transposeCoefficients = new ArrayList<List<T>>();
+		for (int i = 0; i < M.getColumns(); i++) {
+			transposeCoefficients.add(new ArrayList<T>());
+			for (int j = 0; j < M.getRows(); j++) {
+				transposeCoefficients.get(i).add(M.get(j, i));
+			}
+		}
+		return new Matrix<T>(transposeCoefficients);
+	}
 }

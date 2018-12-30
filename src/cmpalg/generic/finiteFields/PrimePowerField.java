@@ -95,7 +95,24 @@ public class PrimePowerField extends FiniteField<PrimePowerFieldElement> {
 
 	@Override
 	public FiniteFieldElement getGenerator() {
-		// think about it...
+		BigInteger i;
+		do {
+			i = BigInteger.ZERO;
+			PrimePowerFieldElement a = (PrimePowerFieldElement) getRandomElement();
+			
+			PrimePowerFieldElement aux = getProductIdentity();
+			for (BigInteger j = BigInteger.ONE; j.compareTo(getOrder()) <= 0; j = j.add(BigInteger.ONE)) {
+				aux = multiply(aux, a);
+				if (aux.equals(getProductIdentity())) {
+					if (!j.equals(p)) {
+						break;
+					} else {
+						return a;
+					}
+				}
+			}
+			
+		} while (i.equals(getOrder().subtract(BigInteger.ONE)));
 		return null;
 	}
 

@@ -24,7 +24,9 @@ public class Main {
 		FieldPolynomials<PrimeFieldElement> Z5T = new FieldPolynomials<PrimeFieldElement>(Z5);
 		PrimePowerField Fq = new PrimePowerField(new BigInteger("5"), Z5T.parseElement("t^3+4t+2"));
 
-		fastModularTesting(QT);
+		System.out.println(Fq.multiply(Fq.parseElement("(4,1,4)"), Fq.parseElement("(4,1,1)")));
+
+		// fastModularTesting(QT);
 		cantorZassenhaussTesting(Fq);
 	}
 
@@ -43,16 +45,26 @@ public class Main {
 		for (int i = 0; i < 10; i++) {
 			FiniteFieldPolynomials<PrimePowerFieldElement> FqT = new FiniteFieldPolynomials<PrimePowerFieldElement>(Fq);
 			FqT.setFactorAlgorithm(FactorAlgorithm.BERLEKAMP);
-			int n = ThreadLocalRandom.current().nextInt(2, 10);
+			int n = ThreadLocalRandom.current().nextInt(2, 40);
 			Polynomial<PrimePowerFieldElement> ff;
 			do {
-				ff = FqT.getRandomMonicPolynomial(n);
+				ff = FqT.getRandomMonicPolynomial(2, n);
 			} while (ff.degree() < 1);
+
+			//ff = FqT.parseElement("t^3+(1,3,1)t^2+(0,2,2)t+(4,2,2)");
+
 			System.out.println("To factor: " + ff);
 			List<Pair<Polynomial<PrimePowerFieldElement>, Integer>> factor = FqT.factor(ff);
-			System.out.println("\nFactorization: ");
+			System.out.println("\nBerlekamp factorization: ");
 			System.out.println(FqT.printFactorization(factor));
-			System.out.println("Factorization product: ");
+			System.out.println("Berlekamp factorization product: ");
+			System.out.println(FqT.printFactorizationCheck(factor));
+
+			FqT.setFactorAlgorithm(FactorAlgorithm.CANTOR);
+			factor = FqT.factor(ff);
+			System.out.println("\nCantor--Zassenhauss factorization: ");
+			System.out.println(FqT.printFactorization(factor));
+			System.out.println("Cantor--Zassenhauss factorization product: ");
 			System.out.println(FqT.printFactorizationCheck(factor));
 			System.out.println("\n......\n");
 		}
