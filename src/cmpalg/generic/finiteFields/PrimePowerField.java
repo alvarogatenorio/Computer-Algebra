@@ -71,8 +71,10 @@ public class PrimePowerField extends FiniteField<PrimePowerFieldElement> {
 			i--;
 		}
 
-		for (; i >= 0; i--) {
-			coefficients.add(new PrimeFieldElement(new BigInteger(aux[i])));
+		i = i == -1 ? 0 : i;
+		
+		for (int j = 0; j <= i; j++) {
+			coefficients.add(new PrimeFieldElement(new BigInteger(aux[j])));
 		}
 		Polynomial<PrimeFieldElement> pol = new Polynomial<PrimeFieldElement>(coefficients, Zp);
 		return new PrimePowerFieldElement(ZpX.remainder(pol, f), tupleSize);
@@ -99,7 +101,7 @@ public class PrimePowerField extends FiniteField<PrimePowerFieldElement> {
 		do {
 			i = BigInteger.ZERO;
 			PrimePowerFieldElement a = (PrimePowerFieldElement) getRandomElement();
-			
+
 			PrimePowerFieldElement aux = getProductIdentity();
 			for (BigInteger j = BigInteger.ONE; j.compareTo(getOrder()) <= 0; j = j.add(BigInteger.ONE)) {
 				aux = multiply(aux, a);
@@ -111,7 +113,7 @@ public class PrimePowerField extends FiniteField<PrimePowerFieldElement> {
 					}
 				}
 			}
-			
+
 		} while (i.equals(getOrder().subtract(BigInteger.ONE)));
 		return null;
 	}

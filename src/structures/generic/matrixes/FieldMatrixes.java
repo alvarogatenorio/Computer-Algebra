@@ -17,16 +17,16 @@ public class FieldMatrixes<E> extends Matrixes<E> {
 
 	public List<Polynomial<E>> hermite(Matrix<E> M) {
 		List<Integer> badColumns = new ArrayList<Integer>();
-		
+
 		/* Number of columns with a found pivot. */
 		int j = 0;
 		/* Column in which we are searching for the pivot. */
 		int i = 0;
-		
+
 		while (j < Math.max(M.getRows(), M.getColumns()) && i < M.getColumns()) {
 			/* Search pivot in the from j-th row (included) in the i-th column. */
 			int pivotRow = searchPivot(j, i, M.getRows(), M);
-			
+
 			/*
 			 * If no pivot is found, we go to the next column, and add the current to the
 			 * "bad columns" list.
@@ -36,13 +36,13 @@ public class FieldMatrixes<E> extends Matrixes<E> {
 				i++;
 				continue;
 			}
-			
+
 			/* Interchange rows. */
 			List<List<E>> coefficients = interchangeRows(M, j, pivotRow);
-			
+
 			/* Operate. */
 			M = operate(coefficients, M, j, i);
-			
+
 			/* Updating indexes. */
 			i++;
 			j++;
@@ -100,16 +100,26 @@ public class FieldMatrixes<E> extends Matrixes<E> {
 
 	private List<Polynomial<E>> buildBerlekampBasis(int kernelDimension, List<Integer> badColumns, Matrix<E> M) {
 		List<Polynomial<E>> basis = new ArrayList<Polynomial<E>>();
+
+		/* There are exactly kernelDimension vectors in the base. */
 		for (int k = 0; k < kernelDimension; k++) {
+
+			/* This vectors are, in part, the bad columns. */
 			int c = badColumns.get(k);
 			List<E> coefficients = new ArrayList<E>();
 
+			/* The vectors in the base have the same number of coordinates as columns. */
+			int bads = 0;
 			for (int l = 0; l < M.getColumns(); l++) {
-				if (l < M.getColumns() - kernelDimension) {
-					coefficients.add(M.get(l, c));
+				if (bads < badColumns.size() && badColumns.get(bads) == l && l != c) {
+					coefficients.add(baseField.getAddIdentity());
+					bads++;
+				} else if (l == c) {
+					coefficients.add(baseField.getAddInverse(baseField.getProductIdentity()));
+					bads++;
 				} else {
-					if (l == M.getColumns() - kernelDimension + k) {
-						coefficients.add(baseField.getAddInverse(baseField.getProductIdentity()));
+					if (l - bads < M.getRows()) {
+						coefficients.add(M.get(l - bads, c));
 					} else {
 						coefficients.add(baseField.getAddIdentity());
 					}
