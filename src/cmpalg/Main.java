@@ -30,6 +30,7 @@ public class Main {
 
 		// fastModularTesting(QT);
 		cantorZassenhaussTesting(Z5);
+		cantorZassenhaussTesting(Fq);
 	}
 
 	public static void fastModularTesting(FieldPolynomials<Rational> QT) {
@@ -47,7 +48,7 @@ public class Main {
 		for (int i = 0; i < 10; i++) {
 			FiniteFieldPolynomials<PrimePowerFieldElement> FqT = new FiniteFieldPolynomials<PrimePowerFieldElement>(Fq);
 			FqT.setFactorAlgorithm(FactorAlgorithm.BERLEKAMP);
-			int n = ThreadLocalRandom.current().nextInt(3, 40);
+			int n = ThreadLocalRandom.current().nextInt(3, 100);
 			Polynomial<PrimePowerFieldElement> ff;
 			do {
 				ff = FqT.getRandomMonicPolynomial(2, n);
@@ -77,7 +78,7 @@ public class Main {
 		for (int i = 0; i < 10; i++) {
 			FiniteFieldPolynomials<PrimeFieldElement> ZpT = new FiniteFieldPolynomials<PrimeFieldElement>(Zp);
 			ZpT.setFactorAlgorithm(FactorAlgorithm.BERLEKAMP);
-			int n = ThreadLocalRandom.current().nextInt(3, 40);
+			int n = ThreadLocalRandom.current().nextInt(3, 100);
 			Polynomial<PrimeFieldElement> ff;
 			do {
 				ff = ZpT.getRandomMonicPolynomial(2, n);

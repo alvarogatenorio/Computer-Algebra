@@ -161,17 +161,10 @@ public class FiniteFieldPolynomials<E extends FiniteFieldElement> extends FieldP
 			FieldMatrixes<E> MFq = new FieldMatrixes<E>(Fq);
 			List<Polynomial<E>> B = MFq.hermite(MFq.transpose(buildBerlekampMatrix(g)));
 			
-			for (int i = 0; i < B.size(); i++) {
-				System.out.println(power(B.get(i),Fq.getOrder(),g).equals(B.get(i)));
-			}
-			
 			Polynomial<E> p;
-			int intentos = 0;
 			do {
-				intentos++;
 				p = berlekampSplit(g,B);
 			} while (p == null);
-			System.out.println("INTENTOS: "+intentos);
 			if (p.equals(g)) {
 				result.add(g);
 			} else {
@@ -315,12 +308,9 @@ public class FiniteFieldPolynomials<E extends FiniteFieldElement> extends FieldP
 		while (!toSplit.isEmpty()) {
 			Polynomial<E> g = toSplit.pop();
 			Polynomial<E> p;
-			int intentos=0;
 			do {
-				intentos++;
 				p = equalDegreeSplit(g, k);
 			} while (p == null);
-			System.out.println("INTENTOS: "+intentos);
 			if (p.degree() == k) {
 				result.add(p);
 			} else {
@@ -362,7 +352,7 @@ public class FiniteFieldPolynomials<E extends FiniteFieldElement> extends FieldP
 				aux = multiply(aux, a);
 				b = add(b, aux);
 			}
-			return null;
+			return b;
 		} else {
 			Integers Z = new Integers();
 			return power(a, Z.quotient(Z.add(Z.power(Fq.getOrder(), new BigInteger(Integer.toString(k))),
