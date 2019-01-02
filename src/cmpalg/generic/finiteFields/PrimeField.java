@@ -66,7 +66,7 @@ public class PrimeField extends FiniteField<PrimeFieldElement> {
 	}
 
 	@Override
-	public FiniteFieldElement getGenerator() {
+	public PrimeFieldElement getGenerator() {
 		/* Checks every element in the field. */
 		for (BigInteger i = new BigInteger("2"); i.compareTo(p) == -1; i = i.add(BigInteger.ONE)) {
 			PrimeFieldElement g = new PrimeFieldElement(i);
@@ -87,7 +87,7 @@ public class PrimeField extends FiniteField<PrimeFieldElement> {
 	}
 
 	@Override
-	public FiniteFieldElement getRandomElement() {
+	public PrimeFieldElement getRandomElement() {
 		Random random = new Random();
 		BigInteger r;
 		do {

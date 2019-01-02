@@ -72,7 +72,7 @@ public class PrimePowerField extends FiniteField<PrimePowerFieldElement> {
 		}
 
 		i = i == -1 ? 0 : i;
-		
+
 		for (int j = 0; j <= i; j++) {
 			coefficients.add(new PrimeFieldElement(new BigInteger(aux[j])));
 		}
@@ -96,11 +96,11 @@ public class PrimePowerField extends FiniteField<PrimePowerFieldElement> {
 	}
 
 	@Override
-	public FiniteFieldElement getGenerator() {
+	public PrimePowerFieldElement getGenerator() {
 		BigInteger i;
 		do {
 			i = BigInteger.ZERO;
-			PrimePowerFieldElement a = (PrimePowerFieldElement) getRandomElement();
+			PrimePowerFieldElement a = getRandomElement();
 
 			PrimePowerFieldElement aux = getProductIdentity();
 			for (BigInteger j = BigInteger.ONE; j.compareTo(getOrder()) <= 0; j = j.add(BigInteger.ONE)) {
@@ -119,10 +119,10 @@ public class PrimePowerField extends FiniteField<PrimePowerFieldElement> {
 	}
 
 	@Override
-	public FiniteFieldElement getRandomElement() {
+	public PrimePowerFieldElement getRandomElement() {
 		List<PrimeFieldElement> coefficients = new ArrayList<PrimeFieldElement>();
 		for (int i = 0; i < tupleSize; i++) {
-			coefficients.add((PrimeFieldElement) Zp.getRandomElement());
+			coefficients.add(Zp.getRandomElement());
 		}
 		for (int i = coefficients.size() - 1; i > 0; i--) {
 			if (!coefficients.get(i).equals(Zp.getAddIdentity())) {

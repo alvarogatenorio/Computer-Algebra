@@ -157,13 +157,13 @@ public class FiniteFieldPolynomials<E extends FiniteFieldElement> extends FieldP
 		toSplit.add(f);
 		while (!toSplit.isEmpty()) {
 			Polynomial<E> g = toSplit.pop();
-			
+
 			FieldMatrixes<E> MFq = new FieldMatrixes<E>(Fq);
 			List<Polynomial<E>> B = MFq.hermite(MFq.transpose(buildBerlekampMatrix(g)));
-			
+
 			Polynomial<E> p;
 			do {
-				p = berlekampSplit(g,B);
+				p = berlekampSplit(g, B);
 			} while (p == null);
 			if (p.equals(g)) {
 				result.add(g);
@@ -176,7 +176,6 @@ public class FiniteFieldPolynomials<E extends FiniteFieldElement> extends FieldP
 	}
 
 	/** Returns a proper factor of the given polynomial or null. */
-	@SuppressWarnings("unchecked")
 	private Polynomial<E> berlekampSplit(Polynomial<E> f, List<Polynomial<E>> B) {
 		if (B.size() == 1) {
 			return f;
@@ -184,13 +183,13 @@ public class FiniteFieldPolynomials<E extends FiniteFieldElement> extends FieldP
 
 		Polynomial<E> a = getAddIdentity();
 		for (int j = 0; j < B.size(); j++) {
-			E randomElement = (E) Fq.getRandomElement();
+			E randomElement = Fq.getRandomElement();
 			a = add(a, multiply(B.get(j), randomElement));
 		}
-		
+
 		Polynomial<E> b = getMagicalPolynomial(a, f, 1);
 		Polynomial<E> g = gcd(add(b, getAddInverse(getProductIdentity())), f);
-		
+
 		if (!g.equals(getProductIdentity()) && !g.equals(f)) {
 			return g;
 		}
@@ -361,12 +360,11 @@ public class FiniteFieldPolynomials<E extends FiniteFieldElement> extends FieldP
 	}
 
 	/** The maximum is exclusive and minimum is inclusive. */
-	@SuppressWarnings("unchecked")
 	public Polynomial<E> getRandomMonicPolynomial(int minDegree, int maxDegree) {
 		int n = ThreadLocalRandom.current().nextInt(minDegree, maxDegree);
 		List<E> coefficients = new ArrayList<E>();
 		for (int i = 0; i < n; i++) {
-			coefficients.add((E) Fq.getRandomElement());
+			coefficients.add(Fq.getRandomElement());
 		}
 		coefficients.add(Fq.getProductIdentity());
 		return new Polynomial<E>(coefficients, Fq);
