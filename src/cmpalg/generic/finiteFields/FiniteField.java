@@ -12,6 +12,10 @@ public abstract class FiniteField<E extends FiniteFieldElement> extends Field<E>
 
 	public abstract BigInteger getCharacteristic();
 
+	/**
+	 * Computes the discrete logarithm of an element, given a generator of the
+	 * multiplicative group. See the documentation for details.
+	 */
 	public BigInteger discreteLogarithm(E generator, E a) {
 		Integers Z = new Integers();
 
@@ -20,7 +24,8 @@ public abstract class FiniteField<E extends FiniteFieldElement> extends Field<E>
 
 		HashMap<E, BigInteger> L = new HashMap<E, BigInteger>();
 		E aux = getProductIdentity();
-		for (BigInteger j = BigInteger.ZERO; j.compareTo(m) < 0; j = j.add(BigInteger.ONE)) {
+		L.put(aux, BigInteger.ZERO);
+		for (BigInteger j = BigInteger.ONE; j.compareTo(m) < 0; j = j.add(BigInteger.ONE)) {
 			aux = multiply(aux, generator);
 			L.put(aux, j);
 		}
@@ -40,6 +45,10 @@ public abstract class FiniteField<E extends FiniteFieldElement> extends Field<E>
 		return null;
 	}
 
+	/**
+	 * As finite fields without the additive identity are cyclic multiplicative
+	 * groups, this method returns a generator for this group.
+	 */
 	public abstract E getGenerator();
 
 	public abstract E getRandomElement();

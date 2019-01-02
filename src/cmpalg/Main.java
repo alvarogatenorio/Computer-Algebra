@@ -24,13 +24,47 @@ public class Main {
 		FieldPolynomials<PrimeFieldElement> Z5T = new FieldPolynomials<PrimeFieldElement>(Z5);
 		PrimePowerField Fq = new PrimePowerField(new BigInteger("5"), Z5T.parseElement("t^3+4t+2"));
 
-		System.out.println(Fq.getProductInverse(Fq.parseElement("(4,1,4)")));
-		System.out.println(Fq.parseElement("(4,1,1)").equals(Fq.getProductInverse(Fq.parseElement("(4,1,4)"))));
-		System.out.println(Fq.multiply(Fq.parseElement("(4,1,1)"), Fq.parseElement("(4,1,4)")));
-
+		//discreteLogTesting(Z5);
+		//discreteLogTesting(Fq);
 		// fastModularTesting(QT);
-		cantorZassenhaussTesting(Z5);
-		cantorZassenhaussTesting(Fq);
+		// cantorZassenhaussTesting(Z5);
+		// cantorZassenhaussTesting(Fq);
+	}
+
+	public static void discreteLogTesting(PrimePowerField Fq) {
+		PrimePowerFieldElement g = Fq.getGenerator();
+		for (int i = 0; i < 10; i++) {
+			PrimePowerFieldElement a = Fq.getRandomElement();
+			if (a.equals(Fq.getAddIdentity())) {
+				a = Fq.add(a, Fq.getProductIdentity());
+			}
+			BigInteger log = Fq.discreteLogarithm(g, a);
+			PrimePowerFieldElement check = Fq.power(g, log);
+			System.out.println("Generator: " + g);
+			System.out.println("Element: " + a);
+			System.out.println("Log: " + log);
+			System.out.println("Generator^Log: " + Fq.power(g, log));
+			System.out.println(a.equals(check));
+			System.out.println("......");
+		}
+	}
+
+	public static void discreteLogTesting(PrimeField Zp) {
+		PrimeFieldElement g = Zp.getGenerator();
+		for (int i = 0; i < 10; i++) {
+			PrimeFieldElement a = Zp.getRandomElement();
+			if (a.equals(Zp.getAddIdentity())) {
+				a = Zp.add(a, Zp.getProductIdentity());
+			}
+			BigInteger log = Zp.discreteLogarithm(g, a);
+			PrimeFieldElement check = Zp.power(g, log);
+			System.out.println("Generator: " + g);
+			System.out.println("Element: " + a);
+			System.out.println("Log: " + log);
+			System.out.println("Generator^Log: " + check);
+			System.out.println(a.equals(check));
+			System.out.println("......");
+		}
 	}
 
 	public static void fastModularTesting(FieldPolynomials<Rational> QT) {
@@ -53,9 +87,6 @@ public class Main {
 			do {
 				ff = FqT.getRandomMonicPolynomial(2, n);
 			} while (ff.degree() < 1);
-
-			// ff =
-			// FqT.parseElement("t^5+(0,4,3)t^4+(2,2,1)t^3+(3,3,4)t^2+(4,1,4)t+(1,2,4)");
 
 			System.out.println("To factor: " + ff);
 			List<Pair<Polynomial<PrimePowerFieldElement>, Integer>> factor = FqT.factor(ff);
@@ -83,9 +114,6 @@ public class Main {
 			do {
 				ff = ZpT.getRandomMonicPolynomial(2, n);
 			} while (ff.degree() < 1);
-
-			// ff =
-			// FqT.parseElement("t^5+(0,4,3)t^4+(2,2,1)t^3+(3,3,4)t^2+(4,1,4)t+(1,2,4)");
 
 			System.out.println("To factor: " + ff);
 			List<Pair<Polynomial<PrimeFieldElement>, Integer>> factor = ZpT.factor(ff);

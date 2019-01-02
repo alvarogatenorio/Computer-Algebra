@@ -22,5 +22,8 @@ public class PrimeFieldElement extends FiniteFieldElement {
 	public String toString() {
 		return element.toString();
 	}
-
+	
+	public int hashCode() {
+		return 0;
+	}
 }

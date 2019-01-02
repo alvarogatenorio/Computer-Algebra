@@ -34,4 +34,8 @@ public class PrimePowerFieldElement extends FiniteFieldElement {
 		PrimePowerFieldElement other = (PrimePowerFieldElement) o;
 		return other.getElement().equals(getElement());
 	}
+	
+	public int hashCode() {
+		return 0;
+	}
 }

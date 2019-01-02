@@ -67,22 +67,34 @@ public class PrimeField extends FiniteField<PrimeFieldElement> {
 
 	@Override
 	public PrimeFieldElement getGenerator() {
-		/* Checks every element in the field. */
+		/*
+		 * Checks every element in the field. The multiplicative identity is obviously
+		 * not the generator.
+		 */
 		for (BigInteger i = new BigInteger("2"); i.compareTo(p) == -1; i = i.add(BigInteger.ONE)) {
 			PrimeFieldElement g = new PrimeFieldElement(i);
+
+			/* In the j-th iteration, aux equals g to the j-th power */
 			PrimeFieldElement aux = g;
 			for (BigInteger j = new BigInteger("2"); j.compareTo(p) <= 0; j = j.add(BigInteger.ONE)) {
 				aux = multiply(aux, g);
+
+				/* A generator is an element whose order equals the order of the group. */
 				if (aux.equals(getProductIdentity())) {
-					if (!j.equals(p)) {
+					if (!j.equals(p.subtract(BigInteger.ONE))) {
 						break;
 					} else {
 						return g;
 					}
 				}
 			}
+
 		}
-		/* This should never be reached. */
+
+		/*
+		 * This should never be reached as it is guaranteed to be a generator in the
+		 * group.
+		 */
 		return null;
 	}
 

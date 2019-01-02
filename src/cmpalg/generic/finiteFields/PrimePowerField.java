@@ -102,11 +102,12 @@ public class PrimePowerField extends FiniteField<PrimePowerFieldElement> {
 			i = BigInteger.ZERO;
 			PrimePowerFieldElement a = getRandomElement();
 
+			/* At the end of the j-th iteration, aux equals the j-th power of a. */
 			PrimePowerFieldElement aux = getProductIdentity();
 			for (BigInteger j = BigInteger.ONE; j.compareTo(getOrder()) <= 0; j = j.add(BigInteger.ONE)) {
 				aux = multiply(aux, a);
 				if (aux.equals(getProductIdentity())) {
-					if (!j.equals(p)) {
+					if (!j.equals(getOrder().subtract(BigInteger.ONE))) {
 						break;
 					} else {
 						return a;
