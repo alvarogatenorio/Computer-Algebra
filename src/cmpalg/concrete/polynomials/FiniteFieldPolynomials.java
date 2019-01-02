@@ -1,4 +1,4 @@
-package structures.concrete.polynomials;
+package cmpalg.concrete.polynomials;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -31,6 +31,10 @@ public class FiniteFieldPolynomials<E extends FiniteFieldElement> extends FieldP
 
 	private FactorAlgorithm factorAlgorithm = FactorAlgorithm.CANTOR;
 
+	/**
+	 * Returns true if the given polynomial is irreducible, and false otherwise. See
+	 * the documentation for details.
+	 */
 	public boolean isIrreducible(Polynomial<E> f) {
 		BigInteger n = new BigInteger(Integer.toString(f.degree()));
 		BigInteger q = Fq.getOrder();
@@ -56,11 +60,13 @@ public class FiniteFieldPolynomials<E extends FiniteFieldElement> extends FieldP
 		return false;
 	}
 
-	/* revisar */
 	private Polynomial<E> computePower(String binaryN, List<Polynomial<E>> powers, Polynomial<E> f) {
-		Polynomial<E> tqn = powers.get(0);
-		for (int i = 1; i < binaryN.length(); i++) {
-			tqn = modularComposition(f, tqn, powers.get(i));
+		Polynomial<E> tqn = parseElement("t");
+
+		for (int i = binaryN.length() - 1; i >= 0; i--) {
+			if (binaryN.charAt(i) == '1') {
+				tqn = modularComposition(f, powers.get(binaryN.length() - 1 - i), tqn);
+			}
 		}
 		return tqn;
 	}

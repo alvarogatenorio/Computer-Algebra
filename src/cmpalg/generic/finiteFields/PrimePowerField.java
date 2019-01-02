@@ -97,9 +97,7 @@ public class PrimePowerField extends FiniteField<PrimePowerFieldElement> {
 
 	@Override
 	public PrimePowerFieldElement getGenerator() {
-		BigInteger i;
 		do {
-			i = BigInteger.ZERO;
 			PrimePowerFieldElement a = getRandomElement();
 
 			/* At the end of the j-th iteration, aux equals the j-th power of a. */
@@ -115,8 +113,7 @@ public class PrimePowerField extends FiniteField<PrimePowerFieldElement> {
 				}
 			}
 
-		} while (i.equals(getOrder().subtract(BigInteger.ONE)));
-		return null;
+		} while (true);
 	}
 
 	@Override

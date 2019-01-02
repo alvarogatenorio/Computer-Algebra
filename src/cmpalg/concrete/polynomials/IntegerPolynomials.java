@@ -1,4 +1,4 @@
-package structures.concrete.polynomials;
+package cmpalg.concrete.polynomials;
 
 import java.math.BigInteger;
 import java.util.List;

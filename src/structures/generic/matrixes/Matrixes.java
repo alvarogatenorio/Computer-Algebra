@@ -14,15 +14,20 @@ public class Matrixes<T> {
 	}
 
 	public Matrix<T> fill(List<List<T>> coefficients, int rows, int columns) {
-		while (coefficients.size() < rows) {
-			coefficients.add(new ArrayList<T>());
-		}
-		for (int i = 0; i < coefficients.size(); i++) {
-			while (coefficients.get(i).size() < columns) {
-				coefficients.get(i).add(baseRing.getAddIdentity());
+
+		List<List<T>> result = new ArrayList<List<T>>();
+		for (int i = 0; i < rows; i++) {
+			result.add(new ArrayList<T>());
+			for (int j = 0; j < columns; j++) {
+				if (i < coefficients.size() && j < coefficients.get(i).size()) {
+					result.get(i).add(coefficients.get(i).get(j));
+				} else {
+					result.get(i).add(baseRing.getAddIdentity());
+				}
 			}
 		}
-		return new Matrix<T>(coefficients);
+
+		return new Matrix<T>(result);
 	}
 
 	public Matrix<T> multiply(Matrix<T> a, Matrix<T> b) {

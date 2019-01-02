@@ -88,12 +88,14 @@ public class Integers extends EuclideanDomain<BigInteger> {
 	public List<BigInteger> factor(BigInteger a) {
 		/* Just a really dumb algorithm. */
 		ArrayList<BigInteger> factors = new ArrayList<BigInteger>();
+		BigInteger aux = a;
 		for (BigInteger i = new BigInteger("2"); i.compareTo(a) <= 0; i = i.add(BigInteger.ONE)) {
-			if (a.mod(i).equals(BigInteger.ZERO)) {
+			if (aux.mod(i).equals(BigInteger.ZERO)) {
 				factors.add(i);
-				if (!i.equals(a.divide(i))) {
-					factors.add(a.divide(i));
-				}
+				aux = aux.divide(i);
+			}
+			while (aux.mod(i).equals(BigInteger.ZERO)) {
+				aux = aux.divide(i);
 			}
 		}
 		return factors;

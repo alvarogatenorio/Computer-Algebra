@@ -162,7 +162,8 @@ public class FieldPolynomials<E> extends EuclideanDomain<Polynomial<E>> {
 		List<List<E>> coefficients = new ArrayList<List<E>>();
 		List<E> gCoefficients = g.getCoefficients();
 		int l = gCoefficients.size();
-		for (int i = 0; i < l % m; i++) {
+		int bound = m - (l % m);
+		for (int i = 0; i < bound; i++) {
 			gCoefficients.add(baseField.getAddIdentity());
 		}
 		l = gCoefficients.size();

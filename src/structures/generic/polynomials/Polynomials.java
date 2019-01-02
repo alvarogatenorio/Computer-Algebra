@@ -379,7 +379,7 @@ public class Polynomials<E> extends Ring<Polynomial<E>> {
 
 		/* Evaluating the huge polynomial modulo f... */
 		Polynomial<E> p = new Polynomial<E>(hPowers.get(hPowers.size() - 1), baseRing);
-		return modularEvaluation(p, b, f);
+		return evaluate(p, b, f);
 	}
 
 	/**
@@ -407,6 +407,11 @@ public class Polynomials<E> extends Ring<Polynomial<E>> {
 		List<List<E>> coefficients = new ArrayList<List<E>>();
 		List<E> gCoefficients = g.getCoefficients();
 		int l = gCoefficients.size();
+		int bound = m - (l % m);
+		for (int i = 0; i < bound; i++) {
+			gCoefficients.add(baseRing.getAddIdentity());
+		}
+		l = gCoefficients.size();
 		for (int i = 0; i < m; i++) {
 			if (m * i >= l || m * (1 + i) > l) {
 				break;
@@ -419,7 +424,20 @@ public class Polynomials<E> extends Ring<Polynomial<E>> {
 	private Polynomial<Polynomial<E>> buildHugePoly(Matrix<E> A) {
 		List<Polynomial<E>> coefficients = new ArrayList<Polynomial<E>>();
 		for (int i = 0; i < A.getRows(); i++) {
-			coefficients.add(new Polynomial<E>(A.getCoefficients().get(i), baseRing));
+			/* Cleaning extra identities. */
+			List<E> c = A.getCoefficients().get(i);
+			int k = c.size() - 1;
+			for (; k >= 0; k--) {
+				if (!c.get(k).equals(baseRing.getAddIdentity())) {
+					c = c.subList(0, k + 1);
+					break;
+				}
+			}
+			if (k != -1) {
+				coefficients.add(new Polynomial<E>(c, baseRing));
+			} else if (i != A.getRows() - 1) {
+				coefficients.add(new Polynomial<E>(c.subList(0, 1), baseRing));
+			}
 		}
 		return new Polynomial<Polynomial<E>>(coefficients, (Ring<Polynomial<E>>) this);
 	}
@@ -428,8 +446,8 @@ public class Polynomials<E> extends Ring<Polynomial<E>> {
 	 * Evaluates the polynomial g modulo f in the specified value. See the
 	 * documentation for details.
 	 */
-	public Polynomial<E> modularEvaluation(Polynomial<E> a, Polynomial<Polynomial<E>> g, Polynomial<E> f) {
-		/* Modular Horner's algorithm. */
+	public Polynomial<E> evaluate(Polynomial<E> a, Polynomial<Polynomial<E>> g, Polynomial<E> f) {
+		/* Horner's algorithm */
 		Polynomial<E> evaluation = getAddIdentity();
 		for (int i = g.degree(); i >= 0; i--) {
 			evaluation = pseudoDivision(add(multiply(evaluation, a), g.get(i)), f).getThird();

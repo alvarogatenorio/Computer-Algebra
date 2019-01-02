@@ -4,12 +4,12 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import cmpalg.concrete.polynomials.FiniteFieldPolynomials;
+import cmpalg.concrete.polynomials.FiniteFieldPolynomials.FactorAlgorithm;
 import cmpalg.generic.finiteFields.PrimeField;
 import cmpalg.generic.finiteFields.PrimeFieldElement;
 import cmpalg.generic.finiteFields.PrimePowerField;
 import cmpalg.generic.finiteFields.PrimePowerFieldElement;
-import structures.concrete.polynomials.FiniteFieldPolynomials;
-import structures.concrete.polynomials.FiniteFieldPolynomials.FactorAlgorithm;
 import structures.concrete.rationals.Rational;
 import structures.concrete.rationals.Rationals;
 import structures.generic.polynomials.FieldPolynomials;
@@ -24,11 +24,13 @@ public class Main {
 		FieldPolynomials<PrimeFieldElement> Z5T = new FieldPolynomials<PrimeFieldElement>(Z5);
 		PrimePowerField Fq = new PrimePowerField(new BigInteger("5"), Z5T.parseElement("t^3+4t+2"));
 
-		//discreteLogTesting(Z5);
-		//discreteLogTesting(Fq);
-		// fastModularTesting(QT);
-		// cantorZassenhaussTesting(Z5);
-		// cantorZassenhaussTesting(Fq);
+		discreteLogTesting(Z5);
+		discreteLogTesting(Fq);
+
+		fastModularTesting(QT);
+
+		cantorZassenhaussTesting(Z5);
+		cantorZassenhaussTesting(Fq);
 	}
 
 	public static void discreteLogTesting(PrimePowerField Fq) {
@@ -68,9 +70,9 @@ public class Main {
 	}
 
 	public static void fastModularTesting(FieldPolynomials<Rational> QT) {
-		Polynomial<Rational> f = QT.parseElement("t^60+t^5+t^4+3t^2+1");
+		Polynomial<Rational> f = QT.parseElement("t^5+t^5+t^4+3t^2+1");
 		Polynomial<Rational> g = QT.parseElement("t^2+t");
-		Polynomial<Rational> h = QT.parseElement("t^2");
+		Polynomial<Rational> h = QT.parseElement("t^10");
 		Polynomial<Rational> r = QT.modularComposition(f, g, h);
 		System.out.println("f:= " + f);
 		System.out.println("g:= " + g);
@@ -82,14 +84,19 @@ public class Main {
 		for (int i = 0; i < 10; i++) {
 			FiniteFieldPolynomials<PrimePowerFieldElement> FqT = new FiniteFieldPolynomials<PrimePowerFieldElement>(Fq);
 			FqT.setFactorAlgorithm(FactorAlgorithm.BERLEKAMP);
-			int n = ThreadLocalRandom.current().nextInt(3, 100);
+			int n = ThreadLocalRandom.current().nextInt(3, 51);
 			Polynomial<PrimePowerFieldElement> ff;
 			do {
 				ff = FqT.getRandomMonicPolynomial(2, n);
 			} while (ff.degree() < 1);
 
 			System.out.println("To factor: " + ff);
+			System.out.println(FqT.isIrreducible(ff));
 			List<Pair<Polynomial<PrimePowerFieldElement>, Integer>> factor = FqT.factor(ff);
+
+			for (int j = 0; j < factor.size(); j++) {
+				System.out.println(FqT.isIrreducible(factor.get(j).getFirst()));
+			}
 			System.out.println("\nBerlekamp factorization: ");
 			System.out.println(FqT.printFactorization(factor));
 			System.out.println("Berlekamp factorization product: ");
@@ -109,14 +116,19 @@ public class Main {
 		for (int i = 0; i < 10; i++) {
 			FiniteFieldPolynomials<PrimeFieldElement> ZpT = new FiniteFieldPolynomials<PrimeFieldElement>(Zp);
 			ZpT.setFactorAlgorithm(FactorAlgorithm.BERLEKAMP);
-			int n = ThreadLocalRandom.current().nextInt(3, 100);
+			int n = ThreadLocalRandom.current().nextInt(3, 51);
 			Polynomial<PrimeFieldElement> ff;
 			do {
 				ff = ZpT.getRandomMonicPolynomial(2, n);
 			} while (ff.degree() < 1);
 
 			System.out.println("To factor: " + ff);
+			System.out.println(ZpT.isIrreducible(ff));
 			List<Pair<Polynomial<PrimeFieldElement>, Integer>> factor = ZpT.factor(ff);
+
+			for (int j = 0; j < factor.size(); j++) {
+				System.out.println(ZpT.isIrreducible(factor.get(j).getFirst()));
+			}
 			System.out.println("\nBerlekamp factorization: ");
 			System.out.println(ZpT.printFactorization(factor));
 			System.out.println("Berlekamp factorization product: ");
