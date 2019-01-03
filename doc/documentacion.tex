@@ -33,7 +33,7 @@
 	\begin{equation*}
 		\lfloor n/2^i\rfloor = \sum_{l=0}^{k-i}n_{l+i}2^{l}
 	\end{equation*}
-De esta manera, para obtener $a^n$ basta con calcular la sucesión desde el término $k$ hasta el término $0$. Como $k=\lfloor\log n\rfloor$, tenemos un algoritmo de exponenciación lineal respecto del número de cifras del exponente.
+De esta manera, para obtener $a^n$ basta con calcular la sucesión desde el término $k$ hasta el término $0$. Como $k=\lfloor\log n\rfloor$, tenemos un algoritmo de exponenciación \textbf{lineal respecto del número de cifras del exponente}.
 	\begin{figure}[h!]
 		\begin{minted}
 			[frame=lines,
@@ -63,7 +63,7 @@ public E power(E a, BigInteger k) {
 		\caption{Código Java del algoritmo de exponenciación binaria.}
 		\label{rep_sqr}
 	\end{figure}
-Este algoritmo está programado en la clase \mintinline{java}{Ring<E>}.
+Este algoritmo está programado en la clase \mintinline{java}{Ring<E>}, tal y como se muestra en la figura \ref{rep_sqr}.
 \subsection{Algoritmo de composición modular rápida}
 \section{Algoritmo de Euclides simple}
 	Sea $A$ un dominio euclídeo con función de grado $\varphi$. Recordemos, antes de comenzar, el siguiente resultado.
@@ -343,6 +343,35 @@ public FiniteFieldElement getProductInverse(FiniteFieldElement a) {
 		\label{inversion}
 	\end{figure}
 	\section{Criterio de irreducibilidad en $\mathbb{F}_q[\texttt{x}]$}
+	Antes de comenzar, conviene repasar algunos hechos acerca de los cuerpos finitos y los polinomios sobre los mismos.
+	\begin{theo}[Generalización del pequeño teorema de Fermat]
+		Para cada $d\geq 1$, consideremos $h:=\texttt{x}^{q^d}-\texttt{x}\in\mathbb{F}_q[\texttt{x}]$. Se cumple que $h$ es el producto de todos los polinomios irreducibles mónicos de $\mathbb{F}_q[\texttt{x}]$ cuyo grado divide a $d$.
+	\end{theo}
+	\begin{proof}
+		Veamos en primer lugar que \textbf{$h$ es libre de cuadrados.}
+		
+		Aplicando el pequeño teorema de Fermat sobre $\mathbb{F}_{q^d}[\texttt{x}]$ tenemos que
+		\begin{equation*}
+			h=\prod_{a\in\mathbb{F}_{q^d}}(\texttt{x}-a)
+		\end{equation*}
+		Por tanto, si hubiera un $g\in \mathbb{F}_q[\texttt{x}]$ con $\deg(g)\geq 1$ de manera que $g^2$ divida a $h$, entonces tendríamos que $g^2\alpha=\prod_{a\in\mathbb{F}_{q^d}}(\texttt{x}-a)$, y, como $\mathbb{F}_{q^d}$ es un DFU, cada factor de $g^2$ se corresponde con uno de los factores del productorio.
+	
+		O sea, que para cierto $b\in \mathbb{F}_{q^d}$, $\texttt{x}-b$ divide a $g$, luego, $(\texttt{x}-b)\beta = g$, o, lo que es lo mismo, $(\texttt{x}-b)^2\beta^2 = g^2$, y, como habíamos supuesto que $g^2\alpha = h$, tendríamos que $h=(\texttt{x}-b)^2\beta^2\alpha$, lo cual es absurdo, pues entonces el productorio contendría un factor cuadrático, contradiciendo el pequeño teorema de Fermat.
+	
+		Probemos ahora que para todo $f$ mónico e irreducible de grado $n$, \textbf{$f$ divide a $h$ si y solo si $n$ divide a $d$.}
+		
+		Si $f$ divide a $h$, por el pequeño teorema de Fermat aplicado a $\mathbb{F}_{q^d}$ tendríamos que $f$ es el producto de un conjunto selecto $A$ de polinomios de la forma $\texttt{x}-a$ con $a\in A\subset \mathbb{F}_{q^d}$. Tomando alguno de estos $a\in A$, podemos considerar el anillo de $q^n$ elementos
+		\begin{equation*}
+			\frac{\mathbb{F}_q[\texttt{x}]}{f}\cong \mathbb{F}_q[a]\subset \mathbb{F}_{q^d}
+		\end{equation*}
+	Por ende, $q^d$ debe ser potencia de $q^n$, y esto implica que $n$ divide a $d$.
+	
+	Recíprocamente, si $n$ divide a $d$, se cumple que $q^d-1$ divide a $q^n-1$ (el factor es $\gamma:=q^{d-n}+q^{d-2n}+\dots+1$), asimismo, también se cumple que $\texttt{x}^{q^n-1}-1$ divide a $\texttt{x}^{q^d-1}-1$, en este caso, el factor es $\xi:=\texttt{x}^{(q^n-1)(\gamma-1)}+\texttt{x}^{(q^n-1)(\gamma-2)}+\dots+1$. Con lo que finalmente concluímos que $\texttt{x}^{q^n}-\texttt{x}$ divide a $h$.
+	
+	Si de nuevo consideramos el anillo $\frac{\mathbb{F}_q[\texttt{x}]}{f}\cong \mathbb{F}_{q^n}$ junto con el elemento $a:=\texttt{x}\mod f$, que es una raíz de $f$, tenemos que, por el pequeño teorema de Fermat aplicado a $\mathbb{F}_{q^n}$, $\texttt{x}-a$ divide a $\texttt{x}^{q^n}-\texttt{x}$, que a su vez divide a $h$.
+	
+	En definitiva, $\texttt{x}-a$ divide a $f$, y $\texttt{x}-a$ divide a $h$, luego divide al máximo común divisor de ambos dos, que es un elemento de $\mathbb{F}_q[\texttt{x}]$, y, como $f$ es irreducible, dicho máximo común divisor será el propio $f$, concluyéndose finalmente que $f$ divide a $h$.
+	\end{proof}
 	\section{Algoritmo de Cantor y Zassenhaus en $\mathbb{F}_q[\texttt{x}]$}
 	\subsection{Fase I}
 	\subsection{Fase II}
@@ -352,4 +381,59 @@ public FiniteFieldElement getProductInverse(FiniteFieldElement a) {
 	\section{Algoritmo de factorización modular en $\mathbb{Z}[\texttt{x}]$}
 	\section{Criterio de primalidad AKS en $\Z$}
 	\section{Logaritmo discreto}
+	Dado un grupo multiplicativo cíclico $G$, sabemos que este tiene al menos un generador $g\in G$. En estas condiciones, el siguiente concepto está bien definido.
+	\begin{defi}[Logaritmo discreto]
+		Se define el \tbi[logaritmo!discreto]{logaritmo discreto} en base $g$ de un elemento $v\in G$, como el entero $x$ que verifica que $v = g^x$. Sabemos que este siempre existe, por ser $g$ un generador del grupo cíclico.
+	\end{defi}
+	Hay un algoritmo evidente de fuerza bruta que calcula el logaritmo discreto de cualquier elemento. Este símplemente iría probando con cada una de las potencias hasta que salga el elemento deseado. La complejidad de este algoritmo es $\mc{O}(n)$, siendo $n$ el orden de $G$.
+	
+	Una posible mejora consistiría en considerar $m:=\lceil\sqrt{n}\rceil$. Es claro que $x\in\{0,\dots,n-1\}$, entonces, dividiendo el número $x$ buscado entre $m$, obtenemos la igualdad $x=a+bm$ (siendo $a,b\in\{0,\dots,m-1\}$), y, por tanto $v=g^{a+bm}$, o, lo que es lo mismo, $vg^{-bm}=g^a$.
+	
+	Dicho esto, calcularemos las potencias sucesivas de $g$ (junto con su exponente asociado), las cuales serán almacenadas en una tabla que nos permita realizar búsquedas en tiempo constante (en nuestro caso concreto haremos uso de los \mintinline{java}{HashMap} que proporciona la librería estándar de Java).
+	
+	Tras esto, calcularemos $g^{-m}$ mediante el algoritmo de exponenciación rápida. Un vez calculado, iremos generando la sucesión $\{vg^{-im}\}_{i=0}^{m-1}$ (lo cual podemos hacer partiendo de $v$ y multiplicando por el ya calculado $g^{-m}$ en cada paso). Cada vez que generemos un nuevo término, miraremos en la tabla si el término generado se corresponde con alguno de los allí presentes.
+	
+	En caso afirmativo, hemos encontrado los entero $a$ y $b$ buscados, en caso negativo, debemos seguir generando términos. Este algoritmo tiene una complejidad del orden de $\mc{O}(\sqrt{n})$ en tiempo y espacio, lo cual mejora sustancialmente el algoritmo de fuerza bruta. No obstante, nótese que sigue siendo un algoritmo exponencial respecto del número de cifras del orden del grupo.
+			\begin{figure}[h!]
+		\begin{minted}
+			[frame=lines,
+			framesep=2mm,
+			baselinestretch=1,
+			fontsize=\scriptsize,
+			tabsize=4]
+			{java}
+			public BigInteger discreteLogarithm(E generator, E a) {
+				Integers Z = new Integers();
+				
+				BigInteger m = Z.add(Z.sqrtFloor(Z.add(getOrder(), Z.getAddInverse(
+				Z.getProductIdentity()))), Z.getProductIdentity());
+				
+				HashMap<E, BigInteger> L = new HashMap<E, BigInteger>();
+				E aux = getProductIdentity();
+				L.put(aux, BigInteger.ZERO);
+				for (BigInteger j = BigInteger.ONE; j.compareTo(m) < 0;
+					j = j.add(BigInteger.ONE)) {
+					aux = multiply(aux, generator);
+					L.put(aux, j);
+				}
+				
+				E gm = power(getProductInverse(generator), m);
+				E w = a;
+				for (BigInteger i = BigInteger.ZERO; i.compareTo(m) < 0;
+					i = i.add(BigInteger.ONE)) {
+					BigInteger match = L.get(w);
+					if (match == null) {
+						w = multiply(w, gm);
+					} else {
+						return Z.add(Z.multiply(i, m), match);
+					}
+				}
+				
+				/* This return is never reached. */
+				return null;
+			}
+		\end{minted}
+		\caption{Código Java del algoritmo de cómputo del logaritmo discreto para el grupo multiplicativo de cuerpos finitos.}
+		\label{log}
+	\end{figure}
 \end{document}
