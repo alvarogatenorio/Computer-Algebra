@@ -120,8 +120,28 @@ public class Integers extends EuclideanDomain<BigInteger> {
 		return null;
 	}
 
-	public boolean perfectPowerTest(BigInteger a) {
-
+	/** Returns true if the given number is a perfect power. */
+	public boolean perfectPowerTest(BigInteger n) {
+		int bound = n.toString(2).length();
+		BigInteger two = BigInteger.ONE.add(BigInteger.ONE);
+		for (int b = 2; b < bound; b++) {
+			BigInteger left = BigInteger.ONE;
+			BigInteger right = n;
+			BigInteger middle = quotient(add(left, right), two);
+			while (left.compareTo(right) <= 0) {
+				BigInteger p = power(middle, new BigInteger(Integer.toString(b)));
+				int compare = p.compareTo(n);
+				if (compare == 0) {
+					return true;
+				} else if (compare == -1) {
+					left = middle.add(BigInteger.ONE);
+					middle = quotient(add(left, right), two);
+				} else {
+					right = middle.subtract(BigInteger.ONE);
+					middle = quotient(add(left, right), two);
+				}
+			}
+		}
 		return false;
 	}
 }

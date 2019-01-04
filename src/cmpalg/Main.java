@@ -10,6 +10,7 @@ import cmpalg.generic.finiteFields.PrimeField;
 import cmpalg.generic.finiteFields.PrimeFieldElement;
 import cmpalg.generic.finiteFields.PrimePowerField;
 import cmpalg.generic.finiteFields.PrimePowerFieldElement;
+import structures.concrete.euclideanDomains.Integers;
 import structures.concrete.rationals.Rational;
 import structures.concrete.rationals.Rationals;
 import structures.generic.polynomials.FieldPolynomials;
@@ -23,14 +24,17 @@ public class Main {
 		FieldPolynomials<Rational> QT = new FieldPolynomials<Rational>(Q);
 		FieldPolynomials<PrimeFieldElement> Z5T = new FieldPolynomials<PrimeFieldElement>(Z5);
 		PrimePowerField Fq = new PrimePowerField(new BigInteger("5"), Z5T.parseElement("t^3+4t+2"));
+		
+		Integers Z = new Integers();
+		System.out.println(Z.perfectPowerTest(new BigInteger("26849")));
+		
+		//discreteLogTesting(Z5);
+		//discreteLogTesting(Fq);
 
-		discreteLogTesting(Z5);
-		discreteLogTesting(Fq);
+		//fastModularTesting(QT);
 
-		fastModularTesting(QT);
-
-		cantorZassenhaussTesting(Z5);
-		cantorZassenhaussTesting(Fq);
+		//cantorZassenhaussTesting(Z5);
+		//cantorZassenhaussTesting(Fq);
 	}
 
 	public static void discreteLogTesting(PrimePowerField Fq) {
