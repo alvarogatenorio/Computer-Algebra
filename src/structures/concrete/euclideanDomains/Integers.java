@@ -197,4 +197,16 @@ public class Integers extends EuclideanDomain<BigInteger> {
 		}
 		return false;
 	}
+
+	public List<BigInteger> divisors(BigInteger a) {
+		/* Just a really dumb algorithm. */
+		ArrayList<BigInteger> factors = new ArrayList<BigInteger>();
+		BigInteger aux = a;
+		for (BigInteger i = new BigInteger("2"); i.compareTo(a) <= 0; i = i.add(BigInteger.ONE)) {
+			if (aux.mod(i).equals(BigInteger.ZERO)) {
+				factors.add(i);
+			}
+		}
+		return factors;
+	}
 }
