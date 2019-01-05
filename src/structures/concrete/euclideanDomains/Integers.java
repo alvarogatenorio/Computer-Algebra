@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cmpalg.generic.basic.EuclideanDomain;
+import cmpalg.generic.finiteFields.PrimeField;
+import cmpalg.generic.finiteFields.PrimeFieldElement;
+import structures.generic.polynomials.Polynomial;
+import structures.generic.polynomials.Polynomials;
 
 /** Represents the euclidean domain of integer numbers (Z). */
 public class Integers extends EuclideanDomain<BigInteger> {
@@ -63,25 +67,70 @@ public class Integers extends EuclideanDomain<BigInteger> {
 		return a.multiply(k);
 	}
 
-	/** Returns true if a is prime. */
-	@SuppressWarnings("null")
+	/**
+	 * Returns true if a is prime and false otherwise. See the documentation for
+	 * details.
+	 */
 	public boolean isPrime(BigInteger a) {
 		/* Agrawal-Kayal-Saxena (AKS) algorithm. */
 		if (perfectPowerTest(a)) {
 			return false;
 		}
-		BigInteger r = null;
-		/* Find r */
+		BigInteger r = findR(a);
 		if (r.equals(a)) {
 			return true;
 		}
-		if (gcd(a, r).compareTo(BigInteger.ONE) > 1) {
+		if (gcd(a, r).compareTo(getProductIdentity()) == 1) {
 			return false;
 		}
-		for (BigInteger i = BigInteger.ZERO; i.compareTo(sqrtFloor(r)) <= 1; i = i.add(BigInteger.ONE)) {
 
+		BigInteger bound = multiply(new BigInteger("2"),
+				multiply(new BigInteger(Integer.toString(a.toString(2).length())), sqrtFloor(r))).add(BigInteger.ONE);
+
+		/*
+		 * A little trick just to save us from implementing the modular integers in
+		 * general.
+		 */
+		Polynomials<PrimeFieldElement> ZNT = new Polynomials<PrimeFieldElement>(new PrimeField(a));
+		Polynomial<PrimeFieldElement> T = ZNT.parseElement("t");
+		Polynomial<PrimeFieldElement> mod = ZNT.add(ZNT.power(T, r),
+				new PrimeFieldElement(getAddInverse(getAddIdentity())));
+		for (BigInteger i = BigInteger.ZERO; i.compareTo(bound) <= 0; i = i.add(BigInteger.ONE)) {
+			Polynomial<PrimeFieldElement> aux1 = ZNT.add(ZNT.power(T, a), new PrimeFieldElement(i.mod(a)));
+			Polynomial<PrimeFieldElement> aux2 = ZNT.power(ZNT.add(T, new PrimeFieldElement(i)), a);
+			if (!ZNT.pseudoDivision(aux1, mod).getThird().equals(ZNT.pseudoDivision(aux2, mod).getThird())) {
+				return false;
+			}
 		}
-		return false;
+		return true;
+	}
+
+	private BigInteger findR(BigInteger n) {
+
+		BigInteger r = BigInteger.ONE.add(BigInteger.ONE);
+		BigInteger bound = multiply(
+				power(new BigInteger(Integer.toString(n.toString(2).length())), new BigInteger("2")),
+				new BigInteger("4"));
+
+		while (r.compareTo(n) <= 0) {
+			if (gcd(n, r).compareTo(getProductIdentity()) == 1) {
+				return r;
+			} else {
+				BigInteger aux = remainder(n, r);
+				BigInteger order = getProductIdentity();
+				while (!aux.equals(getProductIdentity())) {
+					aux = remainder(multiply(aux, n), r);
+					order = order.add(BigInteger.ONE);
+				}
+				if (order.compareTo(bound) == 1) {
+					return r;
+				}
+			}
+			r = add(r, getProductIdentity());
+		}
+
+		/* This should never be reached. */
+		return null;
 	}
 
 	/** Returns a list with the prime factors of the given number. */
@@ -120,11 +169,15 @@ public class Integers extends EuclideanDomain<BigInteger> {
 		return null;
 	}
 
-	/** Returns true if the given number is a perfect power. */
+	/**
+	 * Returns true if the given number is a perfect power. See the documentation
+	 * for details.
+	 */
 	public boolean perfectPowerTest(BigInteger n) {
 		int bound = n.toString(2).length();
 		BigInteger two = BigInteger.ONE.add(BigInteger.ONE);
 		for (int b = 2; b < bound; b++) {
+			/* Binary search over the base. */
 			BigInteger left = BigInteger.ONE;
 			BigInteger right = n;
 			BigInteger middle = quotient(add(left, right), two);

@@ -24,17 +24,22 @@ public class Main {
 		FieldPolynomials<Rational> QT = new FieldPolynomials<Rational>(Q);
 		FieldPolynomials<PrimeFieldElement> Z5T = new FieldPolynomials<PrimeFieldElement>(Z5);
 		PrimePowerField Fq = new PrimePowerField(new BigInteger("5"), Z5T.parseElement("t^3+4t+2"));
-		
+
+		AKSTesting();
+		// discreteLogTesting(Z5);
+		// discreteLogTesting(Fq);
+
+		// fastModularTesting(QT);
+
+		// cantorZassenhaussTesting(Z5);
+		// cantorZassenhaussTesting(Fq);
+	}
+
+	public static void AKSTesting() {
 		Integers Z = new Integers();
-		System.out.println(Z.perfectPowerTest(new BigInteger("26849")));
-		
-		//discreteLogTesting(Z5);
-		//discreteLogTesting(Fq);
-
-		//fastModularTesting(QT);
-
-		//cantorZassenhaussTesting(Z5);
-		//cantorZassenhaussTesting(Fq);
+		for (int i = 2; i <= 100; i++) {
+			System.out.println("Is " + i + " prime? " + Z.isPrime(new BigInteger(Integer.toString(i))));
+		}
 	}
 
 	public static void discreteLogTesting(PrimePowerField Fq) {
