@@ -4,6 +4,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Stack;
+import java.util.TreeMap;
 
 import cmpalg.generic.basic.UniqueFactorizationDomain;
 import cmpalg.generic.finiteFields.PrimeField;
@@ -14,6 +16,8 @@ import structures.concrete.rationals.Rationals;
 import structures.generic.polynomials.FieldPolynomials;
 import structures.generic.polynomials.Polynomial;
 import structures.generic.polynomials.UFDPolynomials;
+import utils.Pair;
+import utils.Triple;
 
 public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 
@@ -125,18 +129,16 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 	/** The polynomial must be primitive and square free. */
 	public List<Polynomial<BigInteger>> modular(Polynomial<BigInteger> f) {
 		BigInteger p = choosePrime(f);
-
-		computeN(f, p);
+		BigInteger N = computeN(f, p);
 
 		PrimeField Zp = new PrimeField(p);
 		FiniteFieldPolynomials<PrimeFieldElement> ZpT = new FiniteFieldPolynomials<PrimeFieldElement>(Zp);
-		ZpT.factor(modularize(f, Zp));
+		List<Pair<Polynomial<PrimeFieldElement>, Integer>> factors = ZpT.factor(modularize(f, Zp));
 
-		// elevamos la factorizacion quiza varias veces
+		//elevamos la factorizacion quiza varias veces
 		multilift();
 
-		// arrejuntamos
-		trueFactors();
+		trueFactors( f, null, p, N);
 		return null;
 	}
 
@@ -217,8 +219,56 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 
 	}
 
-	private void trueFactors() {
+	private List<Polynomial<BigInteger>> trueFactors(Polynomial<BigInteger> f,
+			List<Pair<Polynomial<BigInteger>, Integer>> factors, BigInteger p, BigInteger N) {
+		int d = 1;
+		Polynomial<BigInteger> h = f;
+		List<Polynomial<BigInteger>> result = new ArrayList<Polynomial<BigInteger>>();
 
+		List<Integer> I = new ArrayList<Integer>();
+		for (int i = 0; i < factors.size(); i++) {
+			I.add(i);
+		}
+
+		while (2 * d < I.size()) {
+			int oldD = d;
+			List<List<Boolean>> L = subsets(I.size(), d);
+			while (!L.isEmpty() && 2 * d <= I.size()) {
+				List<Boolean> S = L.get(L.size() - 1);
+				L.remove(L.size() - 1);
+
+				Polynomial<BigInteger> product = getProductIdentity();
+				for (int i = 0; i < I.size(); i++) {
+					if (S.get(i)) {
+						product = multiply(product, factors.get(I.get(i)).getFirst());
+					}
+				}
+				Integers Z = new Integers();
+				product = intMultiply(product, f.leading());
+				product = modularize(product, Z.power(p, N));
+
+				if (divides(product, intMultiply(h, f.leading()))) {
+					BigInteger c = content(product);
+					Polynomial<BigInteger> pp = primitivePart(product, c);
+					result.add(pp);
+					h = pseudoDivision(h, pp).getSecond();
+
+					for (int i = 0; i < I.size(); i++) {
+						if (S.get(i)) {
+							I.remove(i);
+						}
+					}
+
+					L = subsets(I.size(), oldD);
+				}
+				d++;
+			}
+		}
+		
+		if (h.degree() > 0) {
+			result.add(h);
+		}
+		return result;
 	}
 
 	private Polynomial<PrimeFieldElement> modularize(Polynomial<BigInteger> f, PrimeField Zp) {
@@ -230,4 +280,51 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 		}
 		return new Polynomial<PrimeFieldElement>(result, Zp);
 	}
+
+	private Polynomial<BigInteger> modularize(Polynomial<BigInteger> f, BigInteger q) {
+		Integers Z = new Integers();
+		List<BigInteger> old = f.getCoefficients();
+		List<BigInteger> result = new ArrayList<BigInteger>();
+		for (int i = 0; i < old.size(); i++) {
+			BigInteger rep = Z.remainder(old.get(i), q);
+			if (rep.compareTo(Z.add(Z.quotient(q, new BigInteger("2")), BigInteger.ONE)) == 1) {
+				rep = Z.add(rep, Z.getAddInverse(q));
+			}
+			result.add(rep);
+		}
+		return new Polynomial<BigInteger>(result, Z);
+	}
+
+	private List<List<Boolean>> subsets(int n, int d) {
+		List<List<Boolean>> result = new ArrayList<List<Boolean>>();
+		Stack<Triple<Integer, Integer, List<Boolean>>> s = new Stack<Triple<Integer, Integer, List<Boolean>>>();
+		// first we represent the decision
+		Triple<Integer, Integer, List<Boolean>> root = new Triple<Integer, Integer, List<Boolean>>(0, 0,
+				new ArrayList<Boolean>());
+		s.push(root);
+		while (!s.isEmpty()) {
+			Triple<Integer, Integer, List<Boolean>> node = s.pop();
+			List<Boolean> list1 = new ArrayList<Boolean>(node.getThird());
+			List<Boolean> list2 = new ArrayList<Boolean>(node.getThird());
+			// checking if we have to drop things out
+			if (node.getSecond() >= d) {
+				int diff = n - node.getThird().size();
+				for (int i = 0; i < diff; i++) {
+					node.getThird().add(false);
+				}
+				result.add(node.getThird());
+			} else if (node.getFirst() >= n) {
+				continue;
+			} else {
+				// taken
+				list1.add(true);
+				s.push(new Triple<Integer, Integer, List<Boolean>>(node.getFirst() + 1, node.getSecond() + 1, list1));
+				// not taken
+				list2.add(false);
+				s.push(new Triple<Integer, Integer, List<Boolean>>(node.getFirst() + 1, node.getSecond(), list2));
+			}
+		}
+		return result;
+	}
+
 }

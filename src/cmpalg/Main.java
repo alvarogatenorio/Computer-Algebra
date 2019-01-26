@@ -6,6 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import cmpalg.concrete.polynomials.FiniteFieldPolynomials;
 import cmpalg.concrete.polynomials.FiniteFieldPolynomials.FactorAlgorithm;
+import cmpalg.concrete.polynomials.IntegerPolynomials;
 import cmpalg.generic.finiteFields.PrimeField;
 import cmpalg.generic.finiteFields.PrimeFieldElement;
 import cmpalg.generic.finiteFields.PrimePowerField;
@@ -24,8 +25,10 @@ public class Main {
 		FieldPolynomials<Rational> QT = new FieldPolynomials<Rational>(Q);
 		FieldPolynomials<PrimeFieldElement> Z5T = new FieldPolynomials<PrimeFieldElement>(Z5);
 		PrimePowerField Fq = new PrimePowerField(new BigInteger("5"), Z5T.parseElement("t^3+4t+2"));
-
-		AKSTesting();
+		
+		IntegerPolynomials ZT = new IntegerPolynomials();
+		
+		//AKSTesting();
 		// discreteLogTesting(Z5);
 		// discreteLogTesting(Fq);
 
