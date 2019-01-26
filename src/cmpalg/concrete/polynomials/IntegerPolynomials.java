@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Stack;
-import java.util.TreeMap;
 
 import cmpalg.generic.basic.UniqueFactorizationDomain;
 import cmpalg.generic.finiteFields.PrimeField;
@@ -128,18 +127,20 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 
 	/** The polynomial must be primitive and square free. */
 	public List<Polynomial<BigInteger>> modular(Polynomial<BigInteger> f) {
+
 		BigInteger p = choosePrime(f);
+
 		BigInteger N = computeN(f, p);
 
 		PrimeField Zp = new PrimeField(p);
 		FiniteFieldPolynomials<PrimeFieldElement> ZpT = new FiniteFieldPolynomials<PrimeFieldElement>(Zp);
-		List<Pair<Polynomial<PrimeFieldElement>, Integer>> factors = ZpT.factor(modularize(f, Zp));
+		Polynomial<PrimeFieldElement> ff = modularize(f, Zp);
+		List<Pair<Polynomial<PrimeFieldElement>, Integer>> factors = ZpT
+				.factor(ZpT.multiply(ff, Zp.getProductInverse(ff.leading())));
 
-		//elevamos la factorizacion quiza varias veces
-		multilift();
+		List<Polynomial<BigInteger>> l = multilift(factors, ZpT);
 
-		trueFactors( f, null, p, N);
-		return null;
+		return trueFactors(f, l, p, N);
 	}
 
 	private BigInteger choosePrime(Polynomial<BigInteger> f) {
@@ -166,12 +167,12 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 				Z.power(new BigInteger("2"), Z.add(new BigInteger(Integer.toString(f.degree())), BigInteger.ONE)));
 
 		BigInteger N = Z.getAddIdentity();
-		while (bound.compareTo(BigInteger.ZERO) >= 0) {
+		while (bound.compareTo(BigInteger.ZERO) > 0) {
 			bound = Z.quotient(bound, p);
 			N = Z.add(N, BigInteger.ONE);
 		}
 
-		return N;
+		return Z.add(N, BigInteger.ONE);
 	}
 
 	private BigInteger computeNorm(Polynomial<BigInteger> f) {
@@ -187,6 +188,7 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 		return norm;
 	}
 
+	/* sg+th cong 1 mod q */
 	private List<Polynomial<BigInteger>> lift(Polynomial<BigInteger> f, Polynomial<BigInteger> g,
 			Polynomial<BigInteger> h, Polynomial<BigInteger> t, Polynomial<BigInteger> s) {
 
@@ -215,12 +217,45 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 		return result;
 	}
 
-	private void multilift() {
+	private List<Polynomial<BigInteger>> multilift(List<Pair<Polynomial<PrimeFieldElement>, Integer>> factors,
+			FiniteFieldPolynomials<PrimeFieldElement> ZpT) {
+		List<Polynomial<BigInteger>> result = new ArrayList<Polynomial<BigInteger>>();
 
+		Polynomial<PrimeFieldElement> g = factors.get(0).getFirst();
+		Polynomial<PrimeFieldElement> h = factors.get(1).getFirst();
+		Polynomial<PrimeFieldElement> product = ZpT.multiply(g, h);
+		Pair<Polynomial<PrimeFieldElement>, Polynomial<PrimeFieldElement>> bez = ZpT.bezout(h, g);
+
+		List<Polynomial<BigInteger>> lifting = lift(toIntegerPol(product), toIntegerPol(g), toIntegerPol(h),
+				toIntegerPol(bez.getFirst()), toIntegerPol(bez.getSecond()));
+
+		result.add(lifting.get(0));
+		result.add(lifting.get(1));
+
+		for (int i = 2; i < factors.size(); i++) {
+			g = product;
+			h = factors.get(i).getFirst();
+			product = ZpT.multiply(g, h);
+			bez = ZpT.bezout(h, g);
+			lifting = lift(toIntegerPol(product), toIntegerPol(g), toIntegerPol(h), toIntegerPol(bez.getFirst()),
+					toIntegerPol(bez.getSecond()));
+			result.add(lifting.get(1));
+		}
+
+		return result;
 	}
 
-	private List<Polynomial<BigInteger>> trueFactors(Polynomial<BigInteger> f,
-			List<Pair<Polynomial<BigInteger>, Integer>> factors, BigInteger p, BigInteger N) {
+	private Polynomial<BigInteger> toIntegerPol(Polynomial<PrimeFieldElement> f) {
+		List<PrimeFieldElement> oldCoeffs = f.getCoefficients();
+		List<BigInteger> newCoeffs = new ArrayList<BigInteger>();
+		for (int i = 0; i < oldCoeffs.size(); i++) {
+			newCoeffs.add(oldCoeffs.get(i).getElement());
+		}
+		return new Polynomial<BigInteger>(newCoeffs, new Integers());
+	}
+
+	private List<Polynomial<BigInteger>> trueFactors(Polynomial<BigInteger> f, List<Polynomial<BigInteger>> factors,
+			BigInteger p, BigInteger N) {
 		int d = 1;
 		Polynomial<BigInteger> h = f;
 		List<Polynomial<BigInteger>> result = new ArrayList<Polynomial<BigInteger>>();
@@ -230,7 +265,7 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 			I.add(i);
 		}
 
-		while (2 * d < I.size()) {
+		while (2 * d <= I.size()) {
 			int oldD = d;
 			List<List<Boolean>> L = subsets(I.size(), d);
 			while (!L.isEmpty() && 2 * d <= I.size()) {
@@ -240,7 +275,7 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 				Polynomial<BigInteger> product = getProductIdentity();
 				for (int i = 0; i < I.size(); i++) {
 					if (S.get(i)) {
-						product = multiply(product, factors.get(I.get(i)).getFirst());
+						product = multiply(product, factors.get(I.get(i)));
 					}
 				}
 				Integers Z = new Integers();
@@ -264,7 +299,7 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 				d++;
 			}
 		}
-		
+
 		if (h.degree() > 0) {
 			result.add(h);
 		}

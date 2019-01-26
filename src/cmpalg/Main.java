@@ -25,10 +25,15 @@ public class Main {
 		FieldPolynomials<Rational> QT = new FieldPolynomials<Rational>(Q);
 		FieldPolynomials<PrimeFieldElement> Z5T = new FieldPolynomials<PrimeFieldElement>(Z5);
 		PrimePowerField Fq = new PrimePowerField(new BigInteger("5"), Z5T.parseElement("t^3+4t+2"));
-		
+
 		IntegerPolynomials ZT = new IntegerPolynomials();
+		List<Polynomial<BigInteger>> f = ZT.factor(ZT.parseElement("t^9+-2t^5+t^4+-2t^3+t^2+3t+3"));
 		
-		//AKSTesting();
+		for (int i = 0; i < f.size(); i++) {
+			System.out.println(f.get(i));
+		}
+		
+		// AKSTesting();
 		// discreteLogTesting(Z5);
 		// discreteLogTesting(Fq);
 
