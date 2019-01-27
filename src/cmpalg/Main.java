@@ -27,7 +27,7 @@ public class Main {
 		PrimePowerField Fq = new PrimePowerField(new BigInteger("5"), Z5T.parseElement("t^3+4t+2"));
 
 		IntegerPolynomials ZT = new IntegerPolynomials();
-		List<Polynomial<BigInteger>> f = ZT.factor(ZT.parseElement("t^9+-2t^5+t^4+-2t^3+t^2+3t+3"));
+		List<Polynomial<BigInteger>> f = ZT.factor(ZT.parseElement("t^7+2t^5+t^4+-2t^3+t^2+-3t+-3"));
 		
 		for (int i = 0; i < f.size(); i++) {
 			System.out.println(f.get(i));
