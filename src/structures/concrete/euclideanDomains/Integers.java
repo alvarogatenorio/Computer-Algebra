@@ -29,7 +29,7 @@ public class Integers extends EuclideanDomain<BigInteger> {
 
 	@Override
 	public BigInteger remainder(BigInteger a, BigInteger b) {
-		return a.mod(b);
+		return b.compareTo(BigInteger.ZERO) == -1 ? a.multiply(b.negate()) : a.mod(b);
 	}
 
 	@Override

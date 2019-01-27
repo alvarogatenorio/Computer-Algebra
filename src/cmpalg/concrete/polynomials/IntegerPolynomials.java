@@ -140,7 +140,19 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 
 		Integers Z = new Integers();
 		List<Polynomial<BigInteger>> l;
-		l = multilift(factors, ZpT, Z.power(p, new BigInteger("2")), Z.power(p, N));
+		List<Polynomial<BigInteger>> fact = new ArrayList<Polynomial<BigInteger>>();
+		for (int i = 0; i < factors.size(); i++) {
+			fact.add(modularize(toIntegerPol(factors.get(i).getFirst()), p));
+		}
+		l = multilift(p, fact, f, N);
+
+		Polynomial<BigInteger> product = getProductIdentity();
+		for (int i = 0; i < l.size(); i++) {
+			product = multiply(product, l.get(i));
+		}
+		System.out.println("FINAL TEST");
+		System.out.println(
+				modularize(f, Z.power(p, N)).equals(modularize(intMultiply(product, f.leading()), Z.power(p, N))));
 		return trueFactors(f, l, p, N);
 	}
 
@@ -159,8 +171,8 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 			dff = ZpT.derivative(ff);
 		} while (!Z.isPrime(p) || dff.equals(ZpT.getAddIdentity())
 				|| !ZpT.gcd(ff, dff).equals(ZpT.getProductIdentity()));
-		// return p;
-		return new BigInteger("7");
+		return p;
+		// return new BigInteger("41");
 	}
 
 	private BigInteger computeN(Polynomial<BigInteger> f, BigInteger p) {
@@ -190,27 +202,29 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 		return norm;
 	}
 
-	// REVISAR
 	/* sg+th cong 1 mod q */
 	private List<Polynomial<BigInteger>> lift(Polynomial<BigInteger> f, Polynomial<BigInteger> g,
 			Polynomial<BigInteger> h, Polynomial<BigInteger> s, Polynomial<BigInteger> t, BigInteger q2) {
 
 		// Delta = f-gh
-		Polynomial<BigInteger> Delta = add(f, multiply(getAddInverse(g), h));
+		Polynomial<BigInteger> Delta = modularize(add(f, multiply(getAddInverse(g), h)), q2);
 		// gg = g(1+(sDelta/h))+tDelta
-		Polynomial<BigInteger> gg = add(
-				multiply(g, (add(getProductIdentity(), pseudoDivision(multiply(s, Delta), h).getSecond()))),
-				multiply(t, Delta));
+		Polynomial<BigInteger> gg = modularize(
+				add(multiply(g, (add(getProductIdentity(), pseudoDivision(multiply(s, Delta), h).getSecond()))),
+						multiply(t, Delta)),
+				q2);
 		// hh=h+(sDelta rem h)
-		Polynomial<BigInteger> hh = add(h, (pseudoDivision(multiply(s, Delta), h).getThird()));
+		Polynomial<BigInteger> hh = modularize(add(h, (pseudoDivision(multiply(s, Delta), h).getThird())), q2);
 
 		// delta = sgg+thh-1
-		Polynomial<BigInteger> delta = add(add(multiply(s, gg), multiply(t, hh)), getAddInverse(getProductIdentity()));
+		Polynomial<BigInteger> delta = modularize(
+				add(add(multiply(s, gg), multiply(t, hh)), getAddInverse(getProductIdentity())), q2);
 		// ss = s-(sdelta rem hh)
-		Polynomial<BigInteger> ss = add(s, getAddInverse((pseudoDivision(multiply(s, delta), hh).getThird())));
+		Polynomial<BigInteger> ss = modularize(
+				add(s, getAddInverse((pseudoDivision(multiply(s, delta), hh).getThird()))), q2);
 		// tt = (1-delta)t-gg(sdelta/hh)
-		Polynomial<BigInteger> tt = add(multiply(add(getProductIdentity(), getAddInverse(delta)), t),
-				getAddInverse(multiply(gg, (pseudoDivision(multiply(s, delta), hh).getSecond()))));
+		Polynomial<BigInteger> tt = modularize(add(multiply(add(getProductIdentity(), getAddInverse(delta)), t),
+				getAddInverse(multiply(gg, (pseudoDivision(multiply(s, delta), hh).getSecond())))), q2);
 
 		List<Polynomial<BigInteger>> result = new ArrayList<Polynomial<BigInteger>>();
 		result.add(modularize(gg, q2));
@@ -218,112 +232,70 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 		result.add(modularize(ss, q2));
 		result.add(modularize(tt, q2));
 
-		/*
-		 * System.out.println("hensel self check begins");
-		 * System.out.println(modularize(add(multiply(ss, gg), multiply(hh, tt)),
-		 * q2).equals(getProductIdentity()));
-		 * System.out.println(modularize(f,q2).equals(modularize(multiply(hh,gg),q2)));
-		 * System.out.println("hensel self check ends");
-		 */
-
 		return result;
 	}
 
-	private List<Polynomial<BigInteger>> multilift(List<Pair<Polynomial<PrimeFieldElement>, Integer>> factors,
-			FiniteFieldPolynomials<PrimeFieldElement> ZpT, BigInteger q2, BigInteger bound) {
+	private List<Polynomial<BigInteger>> multilift(BigInteger p, List<Polynomial<BigInteger>> factors,
+			Polynomial<BigInteger> f, BigInteger l) {
+
 		Integers Z = new Integers();
 		List<Polynomial<BigInteger>> result = new ArrayList<Polynomial<BigInteger>>();
 
-		/* If we don't have factors we have nothing to do... */
-		if (factors.size() >= 2) {
-			
-			/* First iteration, first elements... */
-			List<Polynomial<BigInteger>> coeffs = new ArrayList<Polynomial<BigInteger>>();
+		int r = factors.size();
 
-			Polynomial<PrimeFieldElement> g = factors.get(0).getFirst();
-			Polynomial<PrimeFieldElement> h = factors.get(1).getFirst();
-			
-			Polynomial<PrimeFieldElement> product = ZpT.multiply(g, h);
-			Pair<Polynomial<PrimeFieldElement>, Polynomial<PrimeFieldElement>> bez = ZpT.bezout(h, g);
-
-			List<Polynomial<BigInteger>> lifting = lift(toIntegerPol(product), toIntegerPol(g), toIntegerPol(h),
-					toIntegerPol(bez.getFirst()), toIntegerPol(bez.getSecond()), q2);
-
-			result.add(lifting.get(0));
-			result.add(lifting.get(1));
-
-			coeffs.add(lifting.get(2));
-			coeffs.add(lifting.get(3));
-
-			/* First iteration, the other elements... */
-			for (int i = 2; i < factors.size(); i++) {
-				g = product;
-				h = factors.get(i).getFirst();
-				product = ZpT.multiply(g, h);
-				bez = ZpT.bezout(h, g);
-				lifting = lift(toIntegerPol(product), toIntegerPol(g), toIntegerPol(h), toIntegerPol(bez.getFirst()),
-						toIntegerPol(bez.getSecond()), q2);
-				result.add(lifting.get(1));
-
-				coeffs.add(lifting.get(2));
-				coeffs.add(lifting.get(3));
+		/* Easy case... */
+		if (r == 1) {
+			// calcular el inverso de leading
+			BigInteger pl = Z.power(p, l);
+			BigInteger aux = Z.gcd(f.leading(), pl);
+			if (aux.equals(Z.getProductIdentity())) {
+				result.add(modularize(intMultiply(f, Z.bezout(f.leading(), pl).getFirst()), pl));
+			} else {
+				System.out.println("!!!");
+				result.add(f);
 			}
-
-			/* Other iterations... */
-			while (q2.compareTo(bound) < 0) {
-				q2 = Z.power(q2, new BigInteger("2"));
-				List<Polynomial<BigInteger>> factorAux = result;
-				List<Polynomial<BigInteger>> coeffAux = coeffs;
-				result = new ArrayList<Polynomial<BigInteger>>();
-				coeffs = new ArrayList<Polynomial<BigInteger>>();
-
-				/* Other iterations, first elements... */
-				Polynomial<BigInteger> gg = factorAux.get(0);
-				Polynomial<BigInteger> hh = factorAux.get(1);
-				Polynomial<BigInteger> prod = multiply(gg, hh);
-				Polynomial<BigInteger> ss = coeffAux.get(0);
-				Polynomial<BigInteger> tt = coeffAux.get(1);
-
-				lifting = lift(prod, gg, hh, tt, ss, q2);
-
-				result.add(lifting.get(0));
-				result.add(lifting.get(1));
-
-				coeffs.add(lifting.get(2));
-				coeffs.add(lifting.get(3));
-
-				/* Other iterations, the other elements... */
-				for (int i = 2; i < factorAux.size(); i++) {
-					gg = prod;
-					hh = factorAux.get(i);
-					prod = multiply(gg, hh);
-
-					// TEST ZONE
-					System.out.println(modularize(
-							add(multiply(gg, coeffAux.get(i + i - 2)), multiply(tt, coeffAux.get(i + i - 1))),
-							Z.sqrtFloor(q2)).equals(getProductIdentity()));
-					// END TEST ZONE
-
-					lifting = lift(prod, gg, hh, coeffAux.get(i + i - 1), coeffAux.get(i + i - 2), q2);
-
-					result.add(lifting.get(1));
-
-					coeffs.add(lifting.get(2));
-					coeffs.add(lifting.get(3));
-				}
-
-				// TEST ZONE
-				Polynomial<BigInteger> test = getProductIdentity();
-				for (int i = 0; i < result.size(); i++) {
-					test = multiply(test, result.get(i));
-				}
-				System.out.println(modularize(toIntegerPol(product), q2).equals(modularize(test, q2)));
-				// END TEST ZONE
-
-			}
-		} else {
-			result.add(toIntegerPol(factors.get(0).getFirst()));
+			return result;
 		}
+
+		int k = r / 2;
+		BigInteger d = new BigInteger(Integer.toString(l.toString(2).length()));
+
+		// computar el producto de la mitad1
+		Polynomial<BigInteger> g = getProductIdentity();
+		for (int i = 0; i < k; i++) {
+			g = modularize(multiply(g, factors.get(i)), p);
+		}
+		g = modularize(intMultiply(g, f.leading()), p);
+
+		// computar el producto de la mitad2
+		Polynomial<BigInteger> h = getProductIdentity();
+		for (int i = k; i < factors.size(); i++) {
+			h = modularize(multiply(h, factors.get(i)), p);
+		}
+
+		// computar los coeficientillos
+		PrimeField Zp = new PrimeField(p);
+		FiniteFieldPolynomials<PrimeFieldElement> ZpT = new FiniteFieldPolynomials<PrimeFieldElement>(Zp);
+		Pair<Polynomial<PrimeFieldElement>, Polynomial<PrimeFieldElement>> bez = ZpT.bezout(modularize(g, Zp),
+				modularize(h, Zp));
+		Polynomial<BigInteger> s = modularize(toIntegerPol(bez.getFirst()), p);
+		Polynomial<BigInteger> t = modularize(toIntegerPol(bez.getSecond()), p);
+
+		// computar la elevacion
+		for (BigInteger j = BigInteger.ONE; j.compareTo(d) <= 0; j = j.add(BigInteger.ONE)) {
+			BigInteger q = Z.power(p, Z.power(new BigInteger("2"), j.subtract(BigInteger.ONE)));
+			List<Polynomial<BigInteger>> lifting = lift(f, g, h, s, t, q);
+			g = lifting.get(0);
+			h = lifting.get(1);
+			s = lifting.get(2);
+			t = lifting.get(3);
+		}
+
+		// llamada reursiva1
+		result.addAll(multilift(p, factors.subList(0, k), g, l));
+
+		// llamada recursiva2
+		result.addAll(multilift(p, factors.subList(k, factors.size()), h, l));
 		return result;
 	}
 
@@ -364,7 +336,7 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 				product = intMultiply(product, f.leading());
 				product = modularize(product, Z.power(p, N));
 
-				if (divides(product, intMultiply(h, f.leading()))) {
+				if (divides(intMultiply(h, f.leading()), product)) {
 					BigInteger c = content(product);
 					Polynomial<BigInteger> pp = primitivePart(product, c);
 					result.add(pp);
@@ -378,12 +350,12 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 
 					L = subsets(I.size(), oldD);
 				}
-				d++;
 			}
+			d++;
 		}
 
 		if (h.degree() > 0) {
-			result.add(h);
+			result.add(primitivePart(h, content(h)));
 		}
 		return result;
 	}
@@ -395,7 +367,7 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 		for (int i = 0; i < old.size(); i++) {
 			result.add(new PrimeFieldElement(Z.remainder(old.get(i), Zp.getCharacteristic())));
 		}
-		for (int i = old.size() - 1; i >= 0; i--) {
+		for (int i = old.size() - 1; i > 0; i--) {
 			if (result.get(i).equals(Zp.getAddIdentity())) {
 				result.remove(result.size() - 1);
 			} else {
@@ -411,12 +383,12 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 		List<BigInteger> result = new ArrayList<BigInteger>();
 		for (int i = 0; i < old.size(); i++) {
 			BigInteger rep = Z.remainder(old.get(i), q);
-			if (rep.compareTo(Z.add(Z.quotient(q, new BigInteger("2")), BigInteger.ONE)) == 1) {
+			if (rep.compareTo(Z.add(Z.quotient(q, new BigInteger("2")), BigInteger.ONE)) >= 0) {
 				rep = Z.add(rep, Z.getAddInverse(q));
 			}
 			result.add(rep);
 		}
-		for (int i = old.size() - 1; i >= 0; i--) {
+		for (int i = old.size() - 1; i > 0; i--) {
 			if (result.get(i).equals(Z.getAddIdentity())) {
 				result.remove(result.size() - 1);
 			} else {
