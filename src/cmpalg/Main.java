@@ -6,7 +6,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import cmpalg.concrete.polynomials.FiniteFieldPolynomials;
 import cmpalg.concrete.polynomials.FiniteFieldPolynomials.FactorAlgorithm;
-import cmpalg.concrete.polynomials.IntegerPolynomials;
 import cmpalg.generic.finiteFields.PrimeField;
 import cmpalg.generic.finiteFields.PrimeFieldElement;
 import cmpalg.generic.finiteFields.PrimePowerField;
@@ -26,23 +25,14 @@ public class Main {
 		FieldPolynomials<PrimeFieldElement> Z5T = new FieldPolynomials<PrimeFieldElement>(Z5);
 		PrimePowerField Fq = new PrimePowerField(new BigInteger("5"), Z5T.parseElement("t^3+4t+2"));
 
-		IntegerPolynomials ZT = new IntegerPolynomials();
-		List<Polynomial<BigInteger>> f = ZT.factor(ZT.parseElement("4t^4+-1t^2+4t^3+-1t"));
-		//no funciona bien por no ser libre de cuadrados
-		List<Polynomial<BigInteger>> g = ZT.factor(ZT.parseElement("t^4+-16"));
-		
-		for (int i = 0; i < f.size(); i++) {
-			System.out.println(f.get(i));
-		}
-		
-		// AKSTesting();
-		// discreteLogTesting(Z5);
-		// discreteLogTesting(Fq);
+		AKSTesting();
+		discreteLogTesting(Z5);
+		discreteLogTesting(Fq);
 
-		// fastModularTesting(QT);
+		fastModularTesting(QT);
 
-		// cantorZassenhaussTesting(Z5);
-		// cantorZassenhaussTesting(Fq);
+		cantorZassenhaussTesting(Z5);
+		cantorZassenhaussTesting(Fq);
 	}
 
 	public static void AKSTesting() {
@@ -110,12 +100,9 @@ public class Main {
 			} while (ff.degree() < 1);
 
 			System.out.println("To factor: " + ff);
-			System.out.println(FqT.isIrreducible(ff));
+			System.out.println("Is irreducible?: " + FqT.isIrreducible(ff));
 			List<Pair<Polynomial<PrimePowerFieldElement>, Integer>> factor = FqT.factor(ff);
 
-			for (int j = 0; j < factor.size(); j++) {
-				System.out.println(FqT.isIrreducible(factor.get(j).getFirst()));
-			}
 			System.out.println("\nBerlekamp factorization: ");
 			System.out.println(FqT.printFactorization(factor));
 			System.out.println("Berlekamp factorization product: ");
@@ -142,12 +129,9 @@ public class Main {
 			} while (ff.degree() < 1);
 
 			System.out.println("To factor: " + ff);
-			System.out.println(ZpT.isIrreducible(ff));
+			System.out.println("Is irreducible?: " + ZpT.isIrreducible(ff));
 			List<Pair<Polynomial<PrimeFieldElement>, Integer>> factor = ZpT.factor(ff);
 
-			for (int j = 0; j < factor.size(); j++) {
-				System.out.println(ZpT.isIrreducible(factor.get(j).getFirst()));
-			}
 			System.out.println("\nBerlekamp factorization: ");
 			System.out.println(ZpT.printFactorization(factor));
 			System.out.println("Berlekamp factorization product: ");

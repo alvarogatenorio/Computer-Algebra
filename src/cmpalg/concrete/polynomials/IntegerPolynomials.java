@@ -2,6 +2,7 @@ package cmpalg.concrete.polynomials;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Stack;
@@ -47,7 +48,7 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 	 * Returns the factors list of the given polynomial. See the documentation for
 	 * details.
 	 */
-	public List<Polynomial<BigInteger>> factor(Polynomial<BigInteger> f) {
+	public List<Polynomial<Rational>> factor(Polynomial<BigInteger> f) {
 		switch (factorAlgorithm) {
 		case KRONECKER:
 			return kronecker(f);
@@ -63,29 +64,55 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 		return pseudoDivision(f, gcd(f, derivative(f))).getSecond();
 	}
 
-	public List<Polynomial<BigInteger>> kronecker(Polynomial<BigInteger> f) {
-		return null;
+	public List<Polynomial<Rational>> kronecker(Polynomial<BigInteger> f) {
+		FieldPolynomials<Rational> QT = new FieldPolynomials<Rational>(new Rationals());
+		Polynomial<Rational> h = rationalize(f);
+		List<Polynomial<Rational>> result = new ArrayList<Polynomial<Rational>>();
+		Stack<Polynomial<BigInteger>> s = new Stack<Polynomial<BigInteger>>();
+		s.push(f);
+		while (!s.empty()) {
+			Polynomial<BigInteger> aux = s.peek();
+			Polynomial<Rational> g = kroneckerSplit(s.pop());
+			result.add(g);
+			if (!rationalize(aux).equals(g)) {
+				h = QT.quotient(h, g);
+				s.push(integerize(h));
+				s.push(integerize(g));
+			}
+		}
+		return result;
 	}
 
-	public Polynomial<BigInteger> kroneckerSplit(Polynomial<BigInteger> f) {
+	public Polynomial<Rational> kroneckerSplit(Polynomial<BigInteger> f) {
 		/* Auxiliary stuff. */
+		HashMap<BigInteger, BigInteger> blackList = new HashMap<BigInteger, BigInteger>();
 		Integers Z = new Integers();
 		int bound = f.degree() / 2;
 		FieldPolynomials<Rational> QT = new FieldPolynomials<Rational>(new Rationals());
 
 		/* Choose these different and at random. */
-		BigInteger a0 = null;
-		BigInteger a1 = null;
+		BigInteger a0 = getRandomNumber(blackList);
+		blackList.put(a0, null);
+		BigInteger a1 = getRandomNumber(blackList);
+		blackList.put(a1, null);
 
-		/* Check if we are lucky. (COMPROBAR LA COMPOSICIÓN MODULAR YA QUE ESTÁS) */
+		/* Check if we are lucky. */
+		if (f.evaluate(a0).equals(Z.getAddIdentity())) {
+			Rational aux = new Rational(a0);
+			return QT.parseElement("t+-" + aux);
+		}
+		if (f.evaluate(a1).equals(Z.getAddIdentity())) {
+			Rational aux = new Rational(a1);
+			return QT.parseElement("t+-" + aux);
+		}
 
 		/* Initializing loop stuff. */
 		List<BigInteger> as = new ArrayList<BigInteger>();
-		as.add(a0);
-		as.add(a1);
+		as.add(f.evaluate(a0));
+		as.add(f.evaluate(a1));
 
 		List<List<BigInteger>> M = new ArrayList<List<BigInteger>>();
-		M.add(Z.divisors(a0));
+		M.add(Z.divisors(as.get(0)));
 
 		/* Try every single degree. */
 		for (int e = 1; e <= bound; e++) {
@@ -96,20 +123,34 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 			/* Try every single divisor. */
 			while (Mp.size() > 0) {
 				Mp.get(Mp.size() - 1);
-				/* Solve the system over Q. (MODIFICAR HERMITE) */
+				/* Mount and solve the system over Q. */
+
 				/* Mount g. */
 				Polynomial<Rational> g = null;
+				if (QT.divides(g, rationalize(f))) {
+					return g;
+				}
 
 				/* Discarding the divisor election. */
 				Mp.remove(Mp.get(Mp.size() - 1));
 			}
 
 			/* Choosing another integer. */
-			BigInteger aee = null;
-			as.add(aee);
+			BigInteger aee = getRandomNumber(blackList);
+			blackList.put(aee, null);
+			as.add(f.evaluate(aee));
 		}
 
-		return null;
+		return rationalize(f);
+	}
+
+	private BigInteger getRandomNumber(HashMap<BigInteger, BigInteger> blackList) {
+		Random random = new Random();
+		BigInteger r;
+		do {
+			r = new BigInteger(10, random);
+		} while (blackList.containsKey(r));
+		return r;
 	}
 
 	private List<List<BigInteger>> cartesianProduct(List<List<BigInteger>> M, List<BigInteger> Me) {
@@ -126,7 +167,7 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 	}
 
 	/** The polynomial must be primitive and square free. */
-	public List<Polynomial<BigInteger>> modular(Polynomial<BigInteger> f) {
+	public List<Polynomial<Rational>> modular(Polynomial<BigInteger> f) {
 
 		BigInteger p = choosePrime(f);
 
@@ -308,7 +349,7 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 		return new Polynomial<BigInteger>(newCoeffs, new Integers());
 	}
 
-	private List<Polynomial<BigInteger>> trueFactors(Polynomial<BigInteger> f, List<Polynomial<BigInteger>> factors,
+	private List<Polynomial<Rational>> trueFactors(Polynomial<BigInteger> f, List<Polynomial<BigInteger>> factors,
 			BigInteger p, BigInteger N) {
 		int d = 1;
 		Polynomial<BigInteger> h = f;
@@ -357,7 +398,21 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 		if (h.degree() > 0) {
 			result.add(primitivePart(h, content(h)));
 		}
-		return result;
+
+		List<Polynomial<Rational>> finalResult = new ArrayList<Polynomial<Rational>>();
+		for (int i = 0; i < result.size(); i++) {
+			finalResult.add(rationalize(result.get(i)));
+		}
+		return finalResult;
+	}
+
+	private Polynomial<Rational> rationalize(Polynomial<BigInteger> f) {
+		List<BigInteger> coeff = f.getCoefficients();
+		List<Rational> result = new ArrayList<Rational>();
+		for (int i = 0; i < coeff.size(); i++) {
+			result.add(new Rational(coeff.get(i)));
+		}
+		return new Polynomial<Rational>(result, new Rationals());
 	}
 
 	private Polynomial<PrimeFieldElement> modularize(Polynomial<BigInteger> f, PrimeField Zp) {
@@ -430,4 +485,29 @@ public class IntegerPolynomials extends UFDPolynomials<BigInteger> {
 		return result;
 	}
 
+	@SuppressWarnings("unused")
+	private List<List<Rational>> rationalize(List<List<BigInteger>> a) {
+		List<List<Rational>> result = new ArrayList<List<Rational>>();
+		for (int i = 0; i < a.size(); i++) {
+			result.add(new ArrayList<Rational>());
+			for (int j = 0; j < a.get(i).size(); j++) {
+				result.get(i).add(new Rational(a.get(i).get(j)));
+			}
+		}
+		return result;
+	}
+
+	private Polynomial<BigInteger> integerize(Polynomial<Rational> a) {
+		Integers Z = new Integers();
+		List<Rational> coeffs = a.getCoefficients();
+		BigInteger k = Z.getProductIdentity();
+		List<BigInteger> result = new ArrayList<BigInteger>();
+		for (int i = 0; i < coeffs.size(); i++) {
+			k = Z.multiply(k, coeffs.get(i).getDenominator());
+		}
+		for (int i = 0; i < coeffs.size(); i++) {
+			result.add(Z.quotient(Z.multiply(coeffs.get(i).getNumerator(), k), coeffs.get(i).getDenominator()));
+		}
+		return new Polynomial<BigInteger>(result, Z);
+	}
 }
